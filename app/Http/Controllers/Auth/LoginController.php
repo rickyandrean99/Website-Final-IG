@@ -36,7 +36,6 @@ class LoginController extends Controller
             return route('panitia');
         }
     }
-
  
     public function __construct()
     {

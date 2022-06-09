@@ -31,15 +31,15 @@ class AuthServiceProvider extends ServiceProvider
         });
 
         Gate::define('upgrade', function($user) {
-            return ($user->role == 'upgrade') ? Response::allow() : Response::deny('No Access');
+            return ($user->role == 'upgrade' || $user->role == 'administrator') ? Response::allow() : Response::deny('No Access');
         });
 
         Gate::define('pasar', function($user) {
-            return ($user->role == 'pasar') ? Response::allow() : Response::deny('No Access');
+            return ($user->role == 'pasar' || $user->role == 'administrator') ? Response::allow() : Response::deny('No Access');
         });
 
         Gate::define('acara', function($user) {
-            return ($user->role == 'acara') ? Response::allow() : Response::deny('No Access');
+            return ($user->role == 'acara' || $user->role == 'administrator') ? Response::allow() : Response::deny('No Access');
         });
 
         Gate::define('superadmin', function($user) {
