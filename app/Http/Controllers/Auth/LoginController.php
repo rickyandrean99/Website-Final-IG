@@ -24,10 +24,16 @@ class LoginController extends Controller
     use AuthenticatesUsers;
 
     public function redirectTo() {
-        if (Auth::user()->role == "panitia") {
-            return route('panitia');
-        } else {
+        if (Auth::user()->role == "peserta") {
             return route('peserta');
+        } else if (Auth::user()->role == "upgrade") {
+            return route('panitia');
+        } else if (Auth::user()->role == "pasar") {
+            return route('panitia');
+        } else if (Auth::user()->role == "acara") {
+            return route('panitia');
+        } else if (Auth::user()->role == "administrator") {
+            return route('panitia');
         }
     }
 

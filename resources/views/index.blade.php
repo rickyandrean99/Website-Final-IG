@@ -749,6 +749,7 @@
           </div>
           <!-- End of Modal Content -->
         </div>
+        
         <div class="col-lg-1 align-items-center">
           <!-- Button Modal -->
           <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modal-default">Market</button>
@@ -774,9 +775,10 @@
           </div>
           <!-- End of Modal Content -->
         </div>
-        <div class="col-lg-1 ">
+
+        <div class="col-lg-1 align-items-center">
           <!-- Button Modal -->
-          <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modal-default">Transportasi</button>
+          <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modal-default">Transportation </button>
           <!-- Modal Content -->
           <div class="modal fade" id="modal-default" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered" role="document">

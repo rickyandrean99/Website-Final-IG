@@ -16,13 +16,10 @@ use App\Demand;
 */
 
 Route::middleware(['auth'])->group(function() {
-    Route::get('/', function () {
-        return view('index');
-    })->name('peserta');
-    
-    Route::get('/test', function () {
-        return view('test');
-    })->name('panitia');
+    Route::get('/', 'ToPostController@dashboard')->name('peserta');
+    Route::get('/test', 'UpgradePostController@dashboard')->name('panitia');
+    // sementara halaman panitianya di arahkan ke controller UpgradePostController
+    // nanti halaman panitia punya dashboardnya masing" sesuai role
 });
 
 Auth::routes();

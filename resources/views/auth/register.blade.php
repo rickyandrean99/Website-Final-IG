@@ -30,7 +30,10 @@
                             <div class="col-md-6">
                                 <select name="role" id="role" class="form-control" required>
                                     <option value="peserta">Peserta</option>
-                                    <option value="panitia">Panitia</option>
+                                    <option value="upgrade">Upgrade</option>
+                                    <option value="pasar">Pasar</option>
+                                    <option value="acara">Acara</option>
+                                    <option value="administrator">Super Admin</option>
                                 </select>
                             </div>
                         </div>
