@@ -61,6 +61,9 @@
 <!-- Volt CSS -->
 <link type="text/css" href="{{ asset('') }}css/volt.css" rel="stylesheet">
 
+<!-- Import Jquery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
 <!-- NOTICE: You can use the _analytics.html partial to include production code specific code & trackers -->
 
 </head>
@@ -340,13 +343,13 @@
 </nav> --}}
     
 <main class="content contentBaru">
-
   <nav class="navbar navbar-top navbar-expand navbar-dashboard navbar-dark ps-0 pe-2 pb-0">
   <div class="container-fluid px-0">
     <div class="d-flex justify-content-between w-100" id="navbarSupportedContent">
       {{-- SALDO --}}
-      <div class="bg-white rounded shadow p-3" >
-        10,000 TC
+      <div class="bg-white rounded shadow p-3 d-flex align-items-center">
+        <img src="{{ asset('') }}assets/icon/coin.png" height="20"  alt="Coin" >
+        <div>10,000 TC</div>
       </div>
       {{-- NAMA PERUSAHAAN --}}
       <div class="bg-white rounded shadow p-3 align-items-center" >
@@ -464,107 +467,114 @@
             </div>
           </div>
         </li>
+        
         {{-- BATCH --}}
         <div class="bg-white rounded shadow p-3" >
           BATCH-1
+        </div>
+
+        {{-- LOGOUT --}}
+        <div class="bg-white rounded shadow p-3 ms-4" >
+            <span class="h5 text-capitalize fw-bold" style="border-radius: 20px"><a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="text-light"> {{ __('Logout') }}</a></span>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
         </div>
       </ul>
     </div>
   </div>
 </nav>
-            <div class="row mt-4">
-                <div class="col-12 col-sm-6 col-xl-4 mb-4">
-                    <div class="card border-0 shadow">
-                        <div class="card-body">
-                            <div class="row d-block d-xl-flex align-items-center">
-                                <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
-                                    <div class="icon-shape icon-shape-primary rounded me-4 me-sm-0">
-                                        <svg class="icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path></svg>
-                                    </div>
-                                    <div class="d-sm-none">
-                                        <h2 class="h5">Customers</h2>
-                                        <h3 class="fw-extrabold mb-1">345,678</h3>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-xl-7 px-xl-0">
-                                    <div class="d-none d-sm-block">
-                                        <h2 class="h6 text-gray-400 mb-0">Customers</h2>
-                                        <h3 class="fw-extrabold mb-2">345k</h3>
-                                    </div>
-                                    <small class="d-flex align-items-center text-gray-500">
-                                        Feb 1 - Apr 1,  
-                                        <svg class="icon icon-xxs text-gray-500 ms-2 me-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd"></path></svg>
-                                        USA
-                                    </small> 
-                                    <div class="small d-flex mt-1">                               
-                                        <div>Since last month <svg class="icon icon-xs text-success" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg><span class="text-success fw-bolder">22%</span></div>
-                                    </div>
-                                </div>
-                            </div>
+<div class="row mt-4">
+    <div class="col-12 col-sm-6 col-xl-4 mb-4">
+        <div class="card border-0 shadow">
+            <div class="card-body">
+                <div class="row d-block d-xl-flex align-items-center">
+                    <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
+                        <div class="icon-shape icon-shape-primary rounded me-4 me-sm-0">
+                            <svg class="icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z"></path></svg>
+                        </div>
+                        <div class="d-sm-none">
+                            <h2 class="h5">Customers</h2>
+                            <h3 class="fw-extrabold mb-1">345,678</h3>
                         </div>
                     </div>
-                </div>
-                <div class="col-12 col-sm-6 col-xl-4 mb-4">
-                    <div class="card border-0 shadow">
-                        <div class="card-body">
-                            <div class="row d-block d-xl-flex align-items-center">
-                                <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
-                                    <div class="icon-shape icon-shape-secondary rounded me-4 me-sm-0">
-                                        <svg class="icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"></path></svg>
-                                    </div>
-                                    <div class="d-sm-none">
-                                        <h2 class="fw-extrabold h5">Revenue</h2>
-                                        <h3 class="mb-1">$43,594</h3>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-xl-7 px-xl-0">
-                                    <div class="d-none d-sm-block">
-                                        <h2 class="h6 text-gray-400 mb-0">Revenue</h2>
-                                        <h3 class="fw-extrabold mb-2">$43,594</h3>
-                                    </div>
-                                    <small class="d-flex align-items-center text-gray-500">
-                                        Feb 1 - Apr 1,  
-                                        <svg class="icon icon-xxs text-gray-500 ms-2 me-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd"></path></svg>
-                                        GER
-                                    </small> 
-                                    <div class="small d-flex mt-1">                               
-                                        <div>Since last month <svg class="icon icon-xs text-danger" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg><span class="text-danger fw-bolder">2%</span></div>
-                                    </div>
-                                </div>
-                            </div>
+                    <div class="col-12 col-xl-7 px-xl-0">
+                        <div class="d-none d-sm-block">
+                            <h2 class="h6 text-gray-400 mb-0">Customers</h2>
+                            <h3 class="fw-extrabold mb-2">345k</h3>
                         </div>
-                    </div>
-                </div>
-                <div class="col-12 col-sm-6 col-xl-4 mb-4">
-                    <div class="card border-0 shadow">
-                        <div class="card-body">
-                            <div class="row d-block d-xl-flex align-items-center">
-                                <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
-                                    <div class="icon-shape icon-shape-tertiary rounded me-4 me-sm-0">
-                                        <svg class="icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                    </div>
-                                    <div class="d-sm-none">
-                                        <h2 class="fw-extrabold h5"> Bounce Rate</h2>
-                                        <h3 class="mb-1">50.88%</h3>
-                                    </div>
-                                </div>
-                                <div class="col-12 col-xl-7 px-xl-0">
-                                    <div class="d-none d-sm-block">
-                                        <h2 class="h6 text-gray-400 mb-0"> Bounce Rate</h2>
-                                        <h3 class="fw-extrabold mb-2">50.88%</h3>
-                                    </div>
-                                    <small class="text-gray-500">
-                                        Feb 1 - Apr 1
-                                    </small> 
-                                    <div class="small d-flex mt-1">                               
-                                        <div>Since last month <svg class="icon icon-xs text-success" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg><span class="text-success fw-bolder">4%</span></div>
-                                    </div>
-                                </div>
-                            </div>
+                        <small class="d-flex align-items-center text-gray-500">
+                            Feb 1 - Apr 1,  
+                            <svg class="icon icon-xxs text-gray-500 ms-2 me-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd"></path></svg>
+                            USA
+                        </small> 
+                        <div class="small d-flex mt-1">                               
+                            <div>Since last month <svg class="icon icon-xs text-success" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg><span class="text-success fw-bolder">22%</span></div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-4 mb-4">
+        <div class="card border-0 shadow">
+            <div class="card-body">
+                <div class="row d-block d-xl-flex align-items-center">
+                    <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
+                        <div class="icon-shape icon-shape-secondary rounded me-4 me-sm-0">
+                            <svg class="icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 2a4 4 0 00-4 4v1H5a1 1 0 00-.994.89l-1 9A1 1 0 004 18h12a1 1 0 00.994-1.11l-1-9A1 1 0 0015 7h-1V6a4 4 0 00-4-4zm2 5V6a2 2 0 10-4 0v1h4zm-6 3a1 1 0 112 0 1 1 0 01-2 0zm7-1a1 1 0 100 2 1 1 0 000-2z" clip-rule="evenodd"></path></svg>
+                        </div>
+                        <div class="d-sm-none">
+                            <h2 class="fw-extrabold h5">Revenue</h2>
+                            <h3 class="mb-1">$43,594</h3>
+                        </div>
+                    </div>
+                    <div class="col-12 col-xl-7 px-xl-0">
+                        <div class="d-none d-sm-block">
+                            <h2 class="h6 text-gray-400 mb-0">Revenue</h2>
+                            <h3 class="fw-extrabold mb-2">$43,594</h3>
+                        </div>
+                        <small class="d-flex align-items-center text-gray-500">
+                            Feb 1 - Apr 1,  
+                            <svg class="icon icon-xxs text-gray-500 ms-2 me-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM4.332 8.027a6.012 6.012 0 011.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 019 7.5V8a2 2 0 004 0 2 2 0 011.523-1.943A5.977 5.977 0 0116 10c0 .34-.028.675-.083 1H15a2 2 0 00-2 2v2.197A5.973 5.973 0 0110 16v-2a2 2 0 00-2-2 2 2 0 01-2-2 2 2 0 00-1.668-1.973z" clip-rule="evenodd"></path></svg>
+                            GER
+                        </small> 
+                        <div class="small d-flex mt-1">                               
+                            <div>Since last month <svg class="icon icon-xs text-danger" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg><span class="text-danger fw-bolder">2%</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-sm-6 col-xl-4 mb-4">
+        <div class="card border-0 shadow">
+            <div class="card-body">
+                <div class="row d-block d-xl-flex align-items-center">
+                    <div class="col-12 col-xl-5 text-xl-center mb-3 mb-xl-0 d-flex align-items-center justify-content-xl-center">
+                        <div class="icon-shape icon-shape-tertiary rounded me-4 me-sm-0">
+                            <svg class="icon" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11.707 4.707a1 1 0 00-1.414-1.414L10 9.586 8.707 8.293a1 1 0 00-1.414 0l-2 2a1 1 0 101.414 1.414L8 10.414l1.293 1.293a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        </div>
+                        <div class="d-sm-none">
+                            <h2 class="fw-extrabold h5"> Bounce Rate</h2>
+                            <h3 class="mb-1">50.88%</h3>
+                        </div>
+                    </div>
+                    <div class="col-12 col-xl-7 px-xl-0">
+                        <div class="d-none d-sm-block">
+                            <h2 class="h6 text-gray-400 mb-0"> Bounce Rate</h2>
+                            <h3 class="fw-extrabold mb-2">50.88%</h3>
+                        </div>
+                        <small class="text-gray-500">
+                            Feb 1 - Apr 1
+                        </small> 
+                        <div class="small d-flex mt-1">                               
+                            <div>Since last month <svg class="icon icon-xs text-success" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path></svg><span class="text-success fw-bolder">4%</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
             <div class="theme-settings card bg-gray-800 pt-2 collapse" id="theme-settings">
     <div class="card-body bg-gray-800 text-white pt-4">
         <button type="button" class="btn-close theme-settings-close" aria-label="Close" data-bs-toggle="collapse"
@@ -625,9 +635,98 @@
                 </li>
             </ul>
         </div> --}}
+
+        <!-- PRODUKSI -->
+        <div class="col-lg-1 align-items-center">
+          <!-- Button Modal Produksi -->
+          <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modal-produksi">Produksi</button>
+          <!-- Modal Content Produksi -->
+          <div class="modal fade" id="modal-produksi" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+            <div class="modal-dialog modal-fullscreen" role="document">
+              <div class="modal-content">
+                <div class="modal-header text-center">
+                  <h5 class="modal-title w-100" id="modalProduksiLabel">PRODUKSI</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">No.</th>
+                      <th scope="col">Produk</th>
+                      <th scope="col">Bahan</th>
+                      <th scope="col">Mesin</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope='row'>1</th>
+                      <td>
+                        <select name='produk' id='produk'>
+                            <option value='Keripik Apel'>Keripik Apel</option>
+                            <option value='Dodol'>Dodol</option>
+                            <option value='Sari Buah Apel'>Sari Buah Apel </option>
+                        </select>
+                      </td>
+                      <td>- 2 unit buah apel <br>
+                          - 2 unit air <br>
+                          - 1 unit minyak nabati</td>
+                      <td>
+                        <select name='fruitWasher' id='fruitWasher'>
+                            <option value='' disabled selected hidden> --Pilih Fruit Washer-- </option>
+                            <option value='Fruit Washer X'>Fruit Washer & Seed Remover X</option>
+                            <option value='Fruit Washer Y'>Fruit Washer & Seed Remover Y</option>
+                            <option value='Fruit Washer Z'>Fruit Washer & Seed Remover Z</option>
+                        </select> <br>
+                        <select name='pealer' id='pealer'>
+                            <option value='' disabled selected hidden> --Pilih Pealer-- </option>
+                            <option value='Pealer X'>Pealer X</option>
+                            <option value='Pealer Y'>Pealer Y</option>
+                            <option value='Pealer Z'>Pealer Z</option>
+                        </select> <br>
+                        <select name='cuttingMachine' id='cuttingMachine'>
+                            <option value='' disabled selected hidden> --Pilih Cutting Machine-- </option>
+                            <option value='Cutting Machine X'>Cutting Machine X</option>
+                            <option value='Cutting Machine Y'>Cutting Machine Y</option>
+                            <option value='Cutting Machine Z'>Cutting Machine Z</option>
+                        </select> <br>
+                        <select name='deepFryer' id='deepFryer'>
+                            <option value='' disabled selected hidden> --Pilih Deep Fryer-- </option>
+                            <option value='Deep Fryer X'>Deep Fryer X</option>
+                            <option value='Deep Fryer Y'>Deep Fryer Y</option>
+                            <option value='Deep Fryer Z'>Deep Fryer Z</option>
+                        </select> <br>
+                        <select name='sealer' id='sealer'>
+                            <option value='' disabled selected hidden> --Pilih Sealer-- </option>
+                            <option value='Sealer X'>Sealer X</option>
+                            <option value='Sealer Y'>Sealer Y</option>
+                            <option value='Sealer Z'>Sealer Z</option>
+                        </select> <br>
+                    </tr>
+                  </tbody>
+                </table>
+                <button id='btnAdd' class = 'btn btn-primary' style = "float: left;">Tambah Produk</button>
+                <button id='btnProduksi' class = 'btn btn-success' style = "float: right;">Mulai Produksi</button>
+                
+                <!-- <script>
+                        $("#btnAdd").click(function(){
+                            $("tbody").append();
+                        });
+                </script> -->
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- End of Modal Content -->
+        </div>
+
+
         <div class="col-lg-1">
           <!-- Button Modal -->
-          <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modal-default">Default</button>
+          <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modal-default">Inventory</button>
           <!-- Modal Content -->
           <div class="modal fade" id="modal-default" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered" role="document">
@@ -652,32 +751,7 @@
         </div>
         <div class="col-lg-1 align-items-center">
           <!-- Button Modal -->
-          <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modal-default">Default</button>
-          <!-- Modal Content -->
-          <div class="modal fade" id="modal-default" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered" role="document">
-                  <div class="modal-content">
-                      <div class="modal-header">
-                          <h2 class="h6 modal-title">Terms of Service</h2>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                          <p>With less than a month to go before the European Union enacts new consumer privacy laws for its citizens, companies around the world are updating their terms of service agreements to comply.</p>
-                          <p>The European Union’s General Data Protection Regulation (G.D.P.R.) goes into effect on May 25 and is meant to ensure a common set of data rights in the European Union. It requires organizations to notify users as
-                              soon as possible of high-risk data breaches that could personally affect them.</p>
-                      </div>
-                      <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary">Accept</button>
-                          <button type="button" class="btn btn-link text-gray-600 ms-auto" data-bs-dismiss="modal">Close</button>
-                      </div>
-                  </div>
-              </div>
-          </div>
-          <!-- End of Modal Content -->
-        </div>
-        <div class="col-lg-1 align-items-center">
-          <!-- Button Modal -->
-          <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modal-default">Default</button>
+          <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modal-default">Market</button>
           <!-- Modal Content -->
           <div class="modal fade" id="modal-default" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered" role="document">
@@ -702,7 +776,7 @@
         </div>
         <div class="col-lg-1 ">
           <!-- Button Modal -->
-          <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modal-default">Default</button>
+          <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modal-default">Transportasi</button>
           <!-- Modal Content -->
           <div class="modal fade" id="modal-default" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered" role="document">
@@ -727,7 +801,7 @@
         </div>
     </div>
 </footer>
-        </main>
+</main>
 
 <!-- Core -->
 <script src="{{ asset('') }}vendor/@popperjs/core/dist/umd/popper.min.js"></script>

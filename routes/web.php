@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Product;
+use App\Demand;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +15,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('index');
+Route::middleware(['auth'])->group(function() {
+    Route::get('/', function () {
+        return view('index');
+    })->name('peserta');
+    
+    Route::get('/test', function () {
+        return view('test');
+    })->name('panitia');
 });
+
+Auth::routes();
+Route::get('/home', 'HomeController@index')->name('home');
