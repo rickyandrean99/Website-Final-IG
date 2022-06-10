@@ -7,9 +7,15 @@ use Illuminate\Http\Request;
 
 class TransportationController extends Controller
 {
-    public function getTransport(Request $request){
-        $team = Team::find(Auth()->team);
-        // dd($team->transportations[0]->pivot->batch);
-        return view('index', compact('team'));
+    public function buyTransport() {
+
+    }
+
+    public function checkSellPrice() {
+        
+    }
+
+    public function sellTransport() {
+        
     }
 }
