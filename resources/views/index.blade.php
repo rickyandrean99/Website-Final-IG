@@ -250,12 +250,12 @@
                                 <button id='btnProduksi' class='btn btn-success' style="float: right;">Mulai
                                     Produksi</button>
 
-                                <!-- <script>
-                    $("#btnAdd").click(function(){
-                        $("tbody").append();
-                    });
-            </script> -->
-                            </div>
+                                    <!-- <script>
+                                            $("#btnAdd").click(function(){
+                                                $("tbody").append();
+                                            });
+                                    </script> -->
+                                </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                             </div>
@@ -265,7 +265,7 @@
                 <!-- End of Modal Content -->
             </div>
 
-
+            {{-- INVENTORY --}}
             <div class="col-lg-1 align-items-center">
                 <!-- Button Modal -->
                 <button type="button" class="btn btn-block btn-gray-800 m-2" data-bs-toggle="modal"
@@ -363,9 +363,7 @@
                                                                 class="form-control ingredient-amount w-50 text-center"
                                                                 id="ingredient-amount-{{ $i->id }}" value="0" min="0" onchange="updateIngredientPriceAndLimit()">
                                                         </td>
-                                                        <td>
-                                                            <input type="hidden" class="ingredient-price" id="ingredient-price-{{ $i->id }}" value="{{ $i->price }}">
-                                                        </td>
+                                                        <input type="hidden" class="ingredient-price" id="ingredient-price-{{ $i->id }}" value="{{ $i->price }}">
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
@@ -452,7 +450,7 @@
                                     </div>
                                     <div class="col-4 px-4 py-4">
                                         <!-- Total Pengeluaran -->
-                                        <div class="row position-fixed"></div>
+                                        <div class="row position-fixed">
                                             <div class="col-12 bg-primary rounded-top text-white text-center fw-bold ">
                                                 Pengeluaran
                                             </div>
@@ -463,17 +461,17 @@
 
                                         <!-- Buy Button -->
                                         <div class="row mt-5 pt-2 position-fixed" style="width:160px;">
-                                            <buton class="col-12 btn btn-success fw-bold p-3 text-white" style="font-size: 20px; font-weight: bold">Buy</button>
+                                            <button class="col-12 btn btn-success fw-bold p-3 text-white" style="font-size: 20px; font-weight: bold">Buy</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
                 </div>
-            </div>
 
                 {{-- MODAL MARKET TRANSPORT --}}
-                <div class="modal fade p-5" id="modalTransport" aria-hidden="true" aria-labelledby="modalTransportLabel"
+                <div class="modal fade p-5" id="modalMarketTransport" aria-hidden="true" aria-labelledby="modalMarketTransportLabel"
                     tabindex="-1">
                     <div class="modal-dialog modal-fullscreen w-100">
                         <div class="modal-content rounded">
@@ -486,23 +484,28 @@
                                 <table class="table">
                                     <thead>
                                         <tr>
+                                            <th scope="col">No</th>
                                             <th scope="col">Jenis</th>
                                             <th scope="col">Kapaistas</th>
                                             <th scope="col">Durasi</th>
                                             <th scope="col">Masa Pakai</th>
+                                            <th scope="col">Jual</th>
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        {{-- @php
+                                            $i = 1
+                                        @endphp
                                         @foreach ($team->transportations as $transportation)
                                         <tr>
-                                            <td></td>
+                                            <td>{{ $i++ }}</td>
                                             <td>{{ $transportation->name }}</td>
                                             <td>{{ $transportation->capacity }}</td>
                                             <td>{{ $transportation->duration }}</td>
                                             <td>{{ $batch -$transportation->pivot->batch  +1}}</td>
                                         </tr>
-                                        @endforeach
-                                </tbody>
+                                        @endforeach --}}
+                                    </tbody>
                                 </table>
                             </div>
                             <div class="modal-footer">
@@ -511,12 +514,84 @@
                             </div>
                         </div>
                     </div>
+                </div> 
+            </div>
+            
+            {{-- MODAL TRANSPORTATION --}}
+            <div class="col-lg-1 align-items-center">
+                <!-- Button Modal -->
+                <button type="button" class="btn btn-block btn-primary m-2" data-bs-toggle="modal"
+                    data-bs-target="#modalTransport">Transportation</button>
+                <!-- Modal Content -->
+                <div class="modal fade p-5" id="modalTransport" aria-hidden="true"
+                    aria-labelledby="modalTransportLabel" tabindex="-1">
+                    <div class="modal-dialog modal-fullscreen w-100">
+                        <div class="modal-content rounded">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalToggleLabel2">Transportation</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th class="border-0 text-center">No</th>
+                                            <th class="border-0 text-center">Jenis</th>
+                                            <th class="border-0 text-center">Kapaistas</th>
+                                            <th class="border-0 text-center">Durasi</th>
+                                            <th class="border-0 text-center">Masa Pakai</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @php
+                                            $i = 1
+                                        @endphp
+                                        @foreach ($team->transportations as $transportation)
+                                        <tr>
+                                            <td class="border-0 text-center align-middle">{{ $i++ }}</td>
+                                            <td class="border-0 text-center align-middle">{{ $transportation->name }}</td>
+                                            <td class="border-0 text-center align-middle">{{ $transportation->capacity }}</td>
+                                            <td class="border-0 text-center align-middle">{{ $transportation->duration }}</td>
+                                            <td class="border-0 text-center align-middle">{{ $batch -$transportation->pivot->batch  +1}}</td>
+                                            <td class="border-0 text-center align-middle">
+                                                <button type="button" class="btn btn-danger" data-bs-target="#modalJualTransport"
+                                                data-bs-toggle="modal">Jual</button>
+                                            </td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <!-- End of Modal Content -->
+
+                <div class="modal fade" id="modalJualTransport" aria-hidden="true"
+                    aria-labelledby="modalJualTransportLabel" tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalToggleLabel2">Transportation</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                               
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             {{-- MODAL  INPUT TC --}}
-            <div class="col-lg-1  align-items-right">
+            <div class="col-lg-1  align-items-center">
                 <!-- Button Modal -->
                 <button type="button" class="btn btn-block btn-warning m-2" data-bs-toggle="modal"
                     data-bs-target="#modalTambahTC">Tambah TC</button>
@@ -540,8 +615,8 @@
                         </div>
                     </div>
                 </div>
-                <!-- End of Modal Content -->
             </div>
+        
         </div>
     </main>
 
@@ -599,7 +674,7 @@
                     'ingredient_amount': ingredientAmount
                 },
                 success: function(data) {
-                    alert(data.status)
+                    alert(data.message)
                 }
             })
         }
