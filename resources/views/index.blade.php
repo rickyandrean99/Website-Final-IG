@@ -469,7 +469,7 @@
         </li>
         {{-- BATCH --}}
         <div class="bg-white rounded shadow p-3" >
-          BATCH-1
+          BATCH-{{ $batch }}
         </div>
 
         {{-- LOGOUT --}}
@@ -815,13 +815,15 @@
                   </tr>
                 </thead>
                 <tbody>
+                  @foreach ($team->transportations as $transportation)
                   <tr>
-                    <th scope='row'>1</th>
-                    <th>Pickup</th>
-                    <th>500 Unit</th>
-                    <th>45s</th>
-                    <th>3 batch</th>
+                    <td></td>
+                    <td>{{ $transportation->name }}</td>
+                    <td>{{ $transportation->capacity }}</td>
+                    <td>{{ $transportation->duration }}</td>
+                    <td>{{ $batch -$transportation->pivot->batch  +1}}</td>
                   </tr>
+                  @endforeach
                 </tbody>
               </table>
             </div>

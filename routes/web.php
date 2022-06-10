@@ -1,8 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Product;
-use App\Demand;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
