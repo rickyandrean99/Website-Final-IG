@@ -623,17 +623,18 @@
               <tbody>
                 <tr>
                   <th scope='row'>1</th>
-                  <td>
+                  <th>
                     <select name='produk' id='produk'>
                         <option value='Keripik Apel'>Keripik Apel</option>
                         <option value='Dodol'>Dodol</option>
                         <option value='Sari Buah Apel'>Sari Buah Apel </option>
                     </select>
-                  </td>
-                  <td>- 2 unit buah apel <br>
+                  </th>
+                  <th>- 2 unit buah apel <br>
                       - 2 unit air <br>
-                      - 1 unit minyak nabati</td>
-                  <td>
+                      - 1 unit minyak nabati
+                  </th>
+                  <th>
                     <select name='fruitWasher' id='fruitWasher'>
                         <option value='' disabled selected hidden> --Pilih Fruit Washer-- </option>
                         <option value='Fruit Washer X'>Fruit Washer & Seed Remover X</option>
@@ -664,6 +665,7 @@
                         <option value='Sealer Y'>Sealer Y</option>
                         <option value='Sealer Z'>Sealer Z</option>
                     </select> <br>
+                  </th>
                 </tr>
               </tbody>
             </table>
@@ -735,7 +737,7 @@
         </div>
       </div>
 
-      {{-- MODAL BAHAN BAKU --}}
+      {{-- MODAL MARKET BAHAN BAKU --}}
       <div class="modal fade" id="modalBahanBaku" aria-hidden="true" aria-labelledby="modalBahanBaku tabindex="-1">
         <div class="modal-dialog modal-fullscreen">
           <div class="modal-content">
@@ -752,7 +754,7 @@
         </div>
       </div>
 
-      {{-- MODAL MACHINE --}}
+      {{-- MODAL MARKET MACHINE --}}
       <div class="modal fade" id="modalMachine" aria-hidden="true" aria-labelledby="modalMachineLabel" tabindex="-1">
         <div class="modal-dialog modal-fullscreen">
           <div class="modal-content">
@@ -769,7 +771,7 @@
         </div>
       </div>
 
-      {{-- MODAL TRANSPORT --}}
+      {{-- MODAL MARKET TRANSPORT --}}
       <div class="modal fade" id="modalTransport" aria-hidden="true" aria-labelledby="modalTransportLabel" tabindex="-1">
         <div class="modal-dialog modal-fullscreen">
           <div class="modal-content">
@@ -778,6 +780,7 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+   
             </div>
             <div class="modal-footer">
               <button class="btn btn-primary" data-bs-target="#modalMarketMenu" data-bs-toggle="modal">Kembali</button>
@@ -801,6 +804,26 @@
               <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">No.</th>
+                    <th scope="col">Jenis</th>
+                    <th scope="col">Kapasitas</th>
+                    <th scope="col">Waktu Tempuh</th>
+                    <th scope="col">Masa Pakai</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope='row'>1</th>
+                    <th>Pickup</th>
+                    <th>500 Unit</th>
+                    <th>45s</th>
+                    <th>3 batch</th>
+                  </tr>
+                </tbody>
+              </table>
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
