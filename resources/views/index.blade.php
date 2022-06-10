@@ -576,8 +576,7 @@
     </div>
 </div>
 
-<footer class="bg-white rounded shadow p-5 mb-4 mt-4">  
-    <div class="row d-flex justify-content-center">
+<div class="row d-flex justify-content-center">
         {{-- <div class="col-12 col-md-4 col-xl-6 mb-4 mb-md-0">
             <p class="mb-0 text-center text-lg-start">© 2019-<span class="current-year"></span> <a class="text-primary fw-normal" href="https://themesberg.com" target="_blank">Themesberg</a></p>
         </div>
@@ -599,173 +598,219 @@
             </ul>
         </div> --}}
 
-        <!-- PRODUKSI -->
-        <div class="col-lg-1 align-items-center">
-          <!-- Button Modal Produksi -->
-          <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modal-produksi">Produksi</button>
-          <!-- Modal Content Produksi -->
-          <div class="modal fade" id="modal-produksi" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
-            <div class="modal-dialog modal-fullscreen" role="document">
-              <div class="modal-content">
-                <div class="modal-header text-center">
-                  <h5 class="modal-title w-100" id="modalProduksiLabel">PRODUKSI</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                <table class="table">
-                  <thead>
-                    <tr>
-                      <th scope="col">No.</th>
-                      <th scope="col">Produk</th>
-                      <th scope="col">Bahan</th>
-                      <th scope="col">Mesin</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <th scope='row'>1</th>
-                      <td>
-                        <select name='produk' id='produk'>
-                            <option value='Keripik Apel'>Keripik Apel</option>
-                            <option value='Dodol'>Dodol</option>
-                            <option value='Sari Buah Apel'>Sari Buah Apel </option>
-                        </select>
-                      </td>
-                      <td>- 2 unit buah apel <br>
-                          - 2 unit air <br>
-                          - 1 unit minyak nabati</td>
-                      <td>
-                        <select name='fruitWasher' id='fruitWasher'>
-                            <option value='' disabled selected hidden> --Pilih Fruit Washer-- </option>
-                            <option value='Fruit Washer X'>Fruit Washer & Seed Remover X</option>
-                            <option value='Fruit Washer Y'>Fruit Washer & Seed Remover Y</option>
-                            <option value='Fruit Washer Z'>Fruit Washer & Seed Remover Z</option>
-                        </select> <br>
-                        <select name='pealer' id='pealer'>
-                            <option value='' disabled selected hidden> --Pilih Pealer-- </option>
-                            <option value='Pealer X'>Pealer X</option>
-                            <option value='Pealer Y'>Pealer Y</option>
-                            <option value='Pealer Z'>Pealer Z</option>
-                        </select> <br>
-                        <select name='cuttingMachine' id='cuttingMachine'>
-                            <option value='' disabled selected hidden> --Pilih Cutting Machine-- </option>
-                            <option value='Cutting Machine X'>Cutting Machine X</option>
-                            <option value='Cutting Machine Y'>Cutting Machine Y</option>
-                            <option value='Cutting Machine Z'>Cutting Machine Z</option>
-                        </select> <br>
-                        <select name='deepFryer' id='deepFryer'>
-                            <option value='' disabled selected hidden> --Pilih Deep Fryer-- </option>
-                            <option value='Deep Fryer X'>Deep Fryer X</option>
-                            <option value='Deep Fryer Y'>Deep Fryer Y</option>
-                            <option value='Deep Fryer Z'>Deep Fryer Z</option>
-                        </select> <br>
-                        <select name='sealer' id='sealer'>
-                            <option value='' disabled selected hidden> --Pilih Sealer-- </option>
-                            <option value='Sealer X'>Sealer X</option>
-                            <option value='Sealer Y'>Sealer Y</option>
-                            <option value='Sealer Z'>Sealer Z</option>
-                        </select> <br>
-                    </tr>
-                  </tbody>
-                </table>
-                <button id='btnAdd' class = 'btn btn-primary' style = "float: left;">Tambah Produk</button>
-                <button id='btnProduksi' class = 'btn btn-success' style = "float: right;">Mulai Produksi</button>
-                
-                <!-- <script>
-                        $("#btnAdd").click(function(){
-                            $("tbody").append();
-                        });
-                </script> -->
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
+    <!-- PRODUKSI -->
+    <div class="col-lg-1 align-items-center">
+      <!-- Button Modal Produksi -->
+      <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modalProduksi">Produksi</button>
+      <!-- Modal Content Produksi -->
+      <div class="modal fade" id="modalProduksi" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+        <div class="modal-dialog modal-fullscreen" role="document">
+          <div class="modal-content">
+            <div class="modal-header text-center">
+              <h5 class="modal-title w-100" id="modalProduksiLabel">PRODUKSI</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">No.</th>
+                  <th scope="col">Produk</th>
+                  <th scope="col">Bahan</th>
+                  <th scope="col">Mesin</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope='row'>1</th>
+                  <td>
+                    <select name='produk' id='produk'>
+                        <option value='Keripik Apel'>Keripik Apel</option>
+                        <option value='Dodol'>Dodol</option>
+                        <option value='Sari Buah Apel'>Sari Buah Apel </option>
+                    </select>
+                  </td>
+                  <td>- 2 unit buah apel <br>
+                      - 2 unit air <br>
+                      - 1 unit minyak nabati</td>
+                  <td>
+                    <select name='fruitWasher' id='fruitWasher'>
+                        <option value='' disabled selected hidden> --Pilih Fruit Washer-- </option>
+                        <option value='Fruit Washer X'>Fruit Washer & Seed Remover X</option>
+                        <option value='Fruit Washer Y'>Fruit Washer & Seed Remover Y</option>
+                        <option value='Fruit Washer Z'>Fruit Washer & Seed Remover Z</option>
+                    </select> <br>
+                    <select name='pealer' id='pealer'>
+                        <option value='' disabled selected hidden> --Pilih Pealer-- </option>
+                        <option value='Pealer X'>Pealer X</option>
+                        <option value='Pealer Y'>Pealer Y</option>
+                        <option value='Pealer Z'>Pealer Z</option>
+                    </select> <br>
+                    <select name='cuttingMachine' id='cuttingMachine'>
+                        <option value='' disabled selected hidden> --Pilih Cutting Machine-- </option>
+                        <option value='Cutting Machine X'>Cutting Machine X</option>
+                        <option value='Cutting Machine Y'>Cutting Machine Y</option>
+                        <option value='Cutting Machine Z'>Cutting Machine Z</option>
+                    </select> <br>
+                    <select name='deepFryer' id='deepFryer'>
+                        <option value='' disabled selected hidden> --Pilih Deep Fryer-- </option>
+                        <option value='Deep Fryer X'>Deep Fryer X</option>
+                        <option value='Deep Fryer Y'>Deep Fryer Y</option>
+                        <option value='Deep Fryer Z'>Deep Fryer Z</option>
+                    </select> <br>
+                    <select name='sealer' id='sealer'>
+                        <option value='' disabled selected hidden> --Pilih Sealer-- </option>
+                        <option value='Sealer X'>Sealer X</option>
+                        <option value='Sealer Y'>Sealer Y</option>
+                        <option value='Sealer Z'>Sealer Z</option>
+                    </select> <br>
+                </tr>
+              </tbody>
+            </table>
+            <button id='btnAdd' class = 'btn btn-primary' style = "float: left;">Tambah Produk</button>
+            <button id='btnProduksi' class = 'btn btn-success' style = "float: right;">Mulai Produksi</button>
+            
+            <!-- <script>
+                    $("#btnAdd").click(function(){
+                        $("tbody").append();
+                    });
+            </script> -->
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End of Modal Content -->
+    </div>
+
+
+    <div class="col-lg-1 align-items-center">
+      <!-- Button Modal -->
+      <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modalInventory">Inventory</button>
+      <!-- Modal Content -->
+
+      {{-- MODAL INVENTORY --}}
+      <div class="modal fade" id="modalInventory" aria-hidden="true" aria-labelledby="modalInventoryLabel" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalToggleLabel2">Inventory</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End of Modal Content -->
+    </div>
+    
+    <!-- MARKET -->
+    <div class="col-lg-1 align-items-center">
+      <!-- Button Modal -->
+      <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modalMarketMenu">Market</button>
+      <!-- Modal Content -->
+
+      {{-- MODAL MARKET --}}
+      <div class="modal fade" id="modalMarketMenu" aria-hidden="true" aria-labelledby="modalMarketMenu" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header text-center">
+              <h5 class="modal-title w-100" id="marketPlaceLabel">Market</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <div class="text-center">
+                <button class="btn btn-primary" data-bs-target="#modalBahanBaku" data-bs-toggle="modal">Bahan Baku</button>
+                <button class="btn btn-primary" data-bs-target="#modalMachine" data-bs-toggle="modal">Machine</button>
+                <button class="btn btn-primary" data-bs-target="#modalTransport" data-bs-toggle="modal">Transport</button>
               </div>
             </div>
           </div>
-          <!-- End of Modal Content -->
         </div>
+      </div>
 
+      {{-- MODAL BAHAN BAKU --}}
+      <div class="modal fade" id="modalBahanBaku" aria-hidden="true" aria-labelledby="modalBahanBaku tabindex="-1">
+        <div class="modal-dialog modal-fullscreen">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalToggleLabel2">Bahan Baku</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" data-bs-target="#modalMarketMenu" data-bs-toggle="modal">Kembali</button>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        <div class="col-lg-1 align-items-center">
-          <!-- Button Modal -->
-          <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modal-default">Inventory</button>
-          <!-- Modal Content -->
-          <div class="modal fade" id="modal-default" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered" role="document">
-                  <div class="modal-content">
-                      <div class="modal-header">
-                          <h2 class="h6 modal-title">Terms of Service</h2>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                          <p>With less than a month to go before the European Union enacts new consumer privacy laws for its citizens, companies around the world are updating their terms of service agreements to comply.</p>
-                          <p>The European Union’s General Data Protection Regulation (G.D.P.R.) goes into effect on May 25 and is meant to ensure a common set of data rights in the European Union. It requires organizations to notify users as
-                              soon as possible of high-risk data breaches that could personally affect them.</p>
-                      </div>
-                      <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary">Accept</button>
-                          <button type="button" class="btn btn-link text-gray-600 ms-auto" data-bs-dismiss="modal">Close</button>
-                      </div>
-                  </div>
-              </div>
+      {{-- MODAL MACHINE --}}
+      <div class="modal fade" id="modalMachine" aria-hidden="true" aria-labelledby="modalMachineLabel" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalToggleLabel2">Machine</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" data-bs-target="#modalMarketMenu" data-bs-toggle="modal">Kembali</button>
+            </div>
           </div>
-          <!-- End of Modal Content -->
         </div>
-        
-        <div class="col-lg-1 align-items-center">
-          <!-- Button Modal -->
-          <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modal-default">Market</button>
-          <!-- Modal Content -->
-          <div class="modal fade" id="modal-default" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered" role="document">
-                  <div class="modal-content">
-                      <div class="modal-header">
-                          <h2 class="h6 modal-title">Terms of Service</h2>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                          <p>With less than a month to go before the European Union enacts new consumer privacy laws for its citizens, companies around the world are updating their terms of service agreements to comply.</p>
-                          <p>The European Union’s General Data Protection Regulation (G.D.P.R.) goes into effect on May 25 and is meant to ensure a common set of data rights in the European Union. It requires organizations to notify users as
-                              soon as possible of high-risk data breaches that could personally affect them.</p>
-                      </div>
-                      <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary">Accept</button>
-                          <button type="button" class="btn btn-link text-gray-600 ms-auto" data-bs-dismiss="modal">Close</button>
-                      </div>
-                  </div>
-              </div>
-          </div>
-          <!-- End of Modal Content -->
-        </div>
+      </div>
 
-        <div class="col-lg-1  align-items-center">
-          <!-- Button Modal -->
-          <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modal-default">Transportation </button>
-          <!-- Modal Content -->
-          <div class="modal fade" id="modal-default" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
-              <div class="modal-dialog modal-dialog-centered" role="document">
-                  <div class="modal-content">
-                      <div class="modal-header">
-                          <h2 class="h6 modal-title">Terms of Service</h2>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                          <p>With less than a month to go before the European Union enacts new consumer privacy laws for its citizens, companies around the world are updating their terms of service agreements to comply.</p>
-                          <p>The European Union’s General Data Protection Regulation (G.D.P.R.) goes into effect on May 25 and is meant to ensure a common set of data rights in the European Union. It requires organizations to notify users as
-                              soon as possible of high-risk data breaches that could personally affect them.</p>
-                      </div>
-                      <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary">Accept</button>
-                          <button type="button" class="btn btn-link text-gray-600 ms-auto" data-bs-dismiss="modal">Close</button>
-                      </div>
-                  </div>
-              </div>
+      {{-- MODAL TRANSPORT --}}
+      <div class="modal fade" id="modalTransport" aria-hidden="true" aria-labelledby="modalTransportLabel" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalToggleLabel2">Transport</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+              <button class="btn btn-primary" data-bs-target="#modalMarketMenu" data-bs-toggle="modal">Kembali</button>
+            </div>
           </div>
-          <!-- End of Modal Content -->
         </div>
+      </div>
+      <!-- End of Modal Content -->
     </div>
-</footer>
+    
+    {{-- MODAL TRANSPORT --}}
+    <div class="col-lg-1  align-items-center">
+      <!-- Button Modal -->
+      <button type="button" class="btn btn-block btn-gray-800 mb-3" data-bs-toggle="modal" data-bs-target="#modalTransportation">Transportation </button>
+      <!-- Modal Content -->
+      <div class="modal fade" id="modalTransportation" aria-hidden="true" aria-labelledby="modalTransportationLabel" tabindex="-1">
+        <div class="modal-dialog modal-fullscreen">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalToggleLabel2">Transportation</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End of Modal Content -->
+    </div>
+</div>
 </main>
 
 <!-- Core -->
