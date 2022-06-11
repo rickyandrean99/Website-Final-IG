@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Team;
+use App\Batch;
 use App\Ingredient;
 
 class IngredientController extends Controller
@@ -15,8 +16,10 @@ class IngredientController extends Controller
         $ingredient_id = $request->get('ingredient_id');
         $ingredient_amount = $request->get('ingredient_amount');
         $team = Team::find(Auth::user()->team);
+        $batch = Batch::find(1)->batch;
         $prices = [];
         $amounts = [];
+        $limit = 0;
         
         // Cek harga pembelian
         foreach ($ingredient_id as $index => $id) {
@@ -38,10 +41,7 @@ class IngredientController extends Controller
                 foreach ($ingredient_id as $index => $id) {
                     if ($amounts[$index] > 0) {
                         if ($team->ingredients->contains($id)) {
-                            $a = $team->ingredients->where('pivot.id', $id);
-                            var_dump($a);
-                            //$team->ingredients()->where('pivot.id', $id)->amount = $team->ingredients()->where('pivot.id', $id)->amount + $amounts[$index];
-                            //$team->ingredients->save();
+                            $team->ingredients()->wherePivot('ingredients_id', $id)->increment('ingredient_inventory.amount', $amounts[$index]);
                         } else {
                             $team->ingredients()->attach($id, ['amount' => $amounts[$index]]);
                         }
@@ -49,7 +49,14 @@ class IngredientController extends Controller
                 }
                 
                 // kurangi balance
-                // update limit package
+                $team->decrement('balance', array_sum($prices));
+
+                // update limit package pada batch terkait
+                $current_limit = ($team->packages()->wherePivot('packages_id', $batch)->get()[0])->pivot->remaining;
+                if ($current_limit > array_sum($ingredient_amount)) {
+                    $limit = $current_limit - array_sum($ingredient_amount);
+                }
+                $team->packages()->wherePivot('packages_id', $batch)->update(['team_package.remaining' => $limit]);
 
                 $status = "success";
                 $message = "Berhasil membeli ingredient";
@@ -63,8 +70,9 @@ class IngredientController extends Controller
         }
 
         return response()->json(array(
-            'status'=> $status,
-            'message' => $message
+            'status' => $status,
+            'message' => $message,
+            'limit' => $limit
         ), 200);
     }
 }

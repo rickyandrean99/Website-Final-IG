@@ -444,24 +444,30 @@
                                 <div class="row">
                                     <div class="col-7">
                                         <div class="table-responsive">
-                                            <table class="table table-centered table-wrap">
-                                                <thead>
+                                            <table class="table table-centered table-nowrap" style="width: 100%">
+                                                <thead class="thead-dark"
+                                                    style="table-layout: fixed; width: calc( 100% - 1em ); display: table;">
                                                     <tr>
-                                                        <th class="border-0 rouded-start text-center">No</th>
-                                                        <th class="border-0 text-center">Bahan Baku</th>
-                                                        <th class="border-0 rounded-end text-center">Jumlah</th>
+                                                        <th class="border-0 rounded-start text-center"
+                                                            style='width:10%'>No</th>
+                                                        <th class="border-0 text-center" style='width:40%'>Bahan Baku
+                                                        </th>
+                                                        <th class="border-0 rounded-end text-center" style='width:50%'>
+                                                            Jumlah</th>
                                                     </tr>
                                                 </thead>
-                                                <tbody>
+                                                <tbody class="border-0"
+                                                    style="display: block; overflow-y: auto; height: 70vh;">
                                                     @foreach($ingredient as $i)
-                                                    <tr>
-                                                        <td class="border-0 text-center">
+                                                    <tr style='display: table; table-layout: fixed; width: 100%'>
+                                                        <td class="border-0 text-center" style='width:10%'>
                                                             {{ $i->id }}
                                                             <input type="hidden" class="ingredient-id"
                                                                 value="{{ $i->id }}">
                                                         </td>
-                                                        <td class="border-0 text-center">{{ $i->name }}</td>
-                                                        <td class="border-0 text-center text-danger">
+                                                        <td class="border-0 text-center" style='width:40%'>
+                                                            {{ $i->name }}</td>
+                                                        <td class="border-0 text-center text-danger" style='width:50%'>
                                                             <input type="number" style="margin: auto"
                                                                 class="form-control ingredient-amount w-50 text-center"
                                                                 id="ingredient-amount-{{ $i->id }}" value="0" min="0"
@@ -475,32 +481,31 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <div class="col-4 px-4 py-5">
+                                    <div class="col-5 px-5">
                                         <!-- Package Limit -->
-                                        <div class="row position-fixed" style="width:160px;">
-                                            <div class="col-12 bg-info rounded-top text-white text-center fw-bold">
+                                        <div class="row mt-3">
+                                            <div class="col-6 bg-info text-white text-center fw-bold p-3 rounded-start">
                                                 Limit
                                             </div>
-                                            <div
-                                                class="col-12 bg-primary rounded-bottom text-white text-center fw-bold">
-                                                <span id="package-limit">50</span>
-                                                <input type="hidden" id="package-limit-hidden" value="50">
+                                            <div class="col-6 bg-primary text-white text-center fw-bold p-3 rounded-end">
+                                                <span id="package-limit">{{ $limit }}</span>
+                                                <input type="hidden" id="package-limit-hidden" value="{{ $limit }}">
                                             </div>
                                         </div>
 
                                         <!-- Total Pengeluaran -->
-                                        <div class="row position-fixed" style="width:160px; margin-top:60px;">
-                                            <div class="col-12 bg-info rounded-top text-white text-center fw-bold">
+                                        <div class="row mt-3">
+                                            <div class="col-6 bg-info text-white text-center fw-bold p-3 rounded-start">
                                                 Pengeluaran
                                             </div>
-                                            <div class="col-12 bg-primary rounded-bottom text-white text-center fw-bold"
+                                            <div class="col-6 bg-primary text-white text-center fw-bold p-3 rounded-end"
                                                 id="pengeluaran-ingredient">
-                                                0
+                                                0 TC
                                             </div>
                                         </div>
 
                                         <!-- Buy Button -->
-                                        <div class="row position-fixed" style="width:160px; margin-top:120px;">
+                                        <div class="row mt-4">
                                             <button class="btn btn-success fw-bold p-3 text-white"
                                                 style="font-size: 20px; font-weight: bold"
                                                 onclick="buyIngredients()">Buy</button>
@@ -824,7 +829,8 @@
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#modalTransport" onclick="sellTransportations()">Jual Transoprtasi</button>
+                                    data-bs-target="#modalTransport" onclick="sellTransportations()">Jual
+                                    Transoprtasi</button>
                             </div>
                         </div>
                     </div>
@@ -900,7 +906,7 @@
         for (let i = 0; i < ingredientsAmount.length; i++) {
             totalPrice += (ingredientsAmount[i] * ingredientsPrice[i])
         }
-        $(`#pengeluaran-ingredient`).text(totalPrice)
+        $(`#pengeluaran-ingredient`).text(`${totalPrice} TC`)
 
         // Update limit
         let limit = $(`#package-limit-hidden`).val()
@@ -924,18 +930,23 @@
         let ingredientAmount = $(`.ingredient-amount`).map(function() {
             return $(this).val()
         }).get()
-        
-        //alert(ingredientId + "; " + ingredientAmount)
-        
+
         $.ajax({
             type: 'POST',
             url: '{{ route("buy-ingredient") }}',
             data: {
-                '_token':'<?php echo csrf_token() ?>',
+                '_token': '<?php echo csrf_token() ?>',
                 'ingredient_id': ingredientId,
                 'ingredient_amount': ingredientAmount
             },
             success: function(data) {
+                if (data.status == "success") {
+                    $(`.ingredient-amount`).val(0)
+                    $(`#pengeluaran-ingredient`).text("0 TC")
+                    $(`#package-limit-hidden`).val(data.limit)
+                    $(`#package-limit`).text(data.limit)
+                }
+
                 alert(data.message)
             }
         })

@@ -20,7 +20,8 @@ class ToPostController extends Controller
         $ingredient = Ingredient::where('id', '<=', '12')->get();
         $machines = MachineType::all();
         $transportations = Transportation::all();
+        $limit = ($team->packages()->wherePivot('packages_id', $batch)->get()[0])->pivot->remaining;
 
-        return view('index', compact('batch', 'team', 'ingredient', 'machines', 'transportations'));
+        return view('index', compact('batch', 'team', 'ingredient', 'machines', 'transportations', 'limit'));
     }
 }
