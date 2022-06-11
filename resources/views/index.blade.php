@@ -4,9 +4,9 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-    <title>Volt - Free Bootstrap 5 Dashboard</title>
+    <title>Industrial Games 30</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="title" content="Volt - Free Bootstrap 5 Dashboard">
+    <meta name="title" content="Industrial Games 30">
     <meta name="author" content="Themesberg">
     <meta name="description"
         content="Volt Pro is a Premium Bootstrap 5 Admin Dashboard featuring over 800 components, 10+ plugins and 20 example pages using Vanilla JS.">
@@ -30,9 +30,9 @@
     <meta property="twitter:image"
         content="https://themesberg.s3.us-east-2.amazonaws.com/public/products/volt-pro-bootstrap-5-dashboard/volt-pro-preview.jpg">
 
-    <link rel="apple-touch-icon" sizes="120x120" href="{{ asset('') }}assets/img/favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('') }}assets/img/favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('') }}assets/img/favicon/favicon-16x16.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ asset('') }}assets/icons/logo.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('') }}assets/icons/logo.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('') }}assets/icons/logo.png">
     <link rel="manifest" href="{{ asset('') }}assets/img/favicon/site.webmanifest">
     <link rel="mask-icon" href="{{ asset('') }}assets/img/favicon/safari-pinned-tab.svg" color="#ffffff">
     <meta name="msapplication-TileColor" content="#ffffff">
@@ -48,15 +48,18 @@
     <main class="content contentBaru">
         <nav class="navbar navbar-top navbar-expand navbar-dashboard navbar-dark ps-0 pe-2 pb-0">
             <div class="container-fluid px-0">
-                <div class="d-flex justify-content-between w-100" id="navbarSupportedContent">
+                <div class="d-flex flex-row justify-content-between w-100" id="navbarSupportedContent">
                     {{-- SALDO --}}
-                    <div class="bg-white rounded shadow p-3 d-flex align-items-center">
-                        <img src="{{ asset('') }}assets/icon/coin.png" height="20" alt="Coin">
-                        <div>{{ $team->balance }} TC</div>
+                    <div class="navbar-nav align-items-center">
+                        <div class="bg-white rounded shadow p-3 d-flex flex-row align-items-center">
+                            <img src="{{ asset('') }}assets/icons/coin.png" height="20" alt="Coin">
+                            <div class="ms-2">{{ $team->balance }} TC</div>
+                        </div>
                     </div>
+
                     {{-- NAMA PERUSAHAAN --}}
-                    <div class="bg-white rounded shadow p-3 align-items-center">
-                        <div> {{ $team->name }}</div>
+                    <div class="bg-white rounded shadow p-3 ms-5 align-items-center">
+                        <div class="fs-2 fw-bolder"> {{ $team->name }}</div>
                     </div>
                     <!-- Navbar links -->
                     <ul class="navbar-nav align-items-center">
@@ -80,13 +83,13 @@
             </div>
         </nav>
 
-        <div class="row mt-4">
+        <div class="d-flex flex-row justify-content-center">
             <!-- PROFIT -->
-            <div class="col-12 col-sm-3 col-xl-3  mb-4 ">
+            <div class="p-5 w-25">
                 <div class="card border-0 shadow ">
                     <div class="card-body ">
                         <div class="row d-block d-xl-flex align-items-center">
-                            <div class="col-12 col-xl-7">
+                            <div class="col-12">
                                 <div class="d-flex d-sm-block">
                                     <h2 class="mb-0">Profit</h2>
                                     <h4 class="fw-extrabold text-success mb-2">+3,450 TC</h4>
@@ -106,11 +109,11 @@
             </div>
 
             <!-- PANGSA -->
-            <div class="col-12 col-sm-3 col-xl-4 mb-4">
+            <div class="p-5" style="width: 30%">
                 <div class="card border-0 shadow">
                     <div class="card-body">
                         <div class="row d-block d-xl-flex align-items-center">
-                            <div class="col-12 col-xl-7">
+                            <div class="col-12 ">
                                 <div class="d-flex d-sm-block">
                                     <h2 class="mb-0">Pangsa Pasar</h2>
                                     <h1 class="fw-extrabold text-success mb-2">+38%</h1>
@@ -122,7 +125,7 @@
             </div>
 
             <!-- SIGMA -->
-            <div class="col-12 col-sm-3 col-xl-3  mb-4">
+            <div class="p-5 w-25">
                 <div class="card border-0 shadow">
                     <div class="card-body">
                         <div class="row d-block d-xl-flex align-items-center">
@@ -141,7 +144,7 @@
             </div>
         </div>
 
-        <div class="row d-flex justify-content-center">
+        <div class="d-flex flex-row justify-content-center">
             {{-- <div class="col-12 col-md-4 col-xl-6 mb-4 mb-md-0">
             <p class="mb-0 text-center text-lg-start">© 2019-<span class="current-year"></span> <a class="text-primary fw-normal" href="https://themesberg.com" target="_blank">Themesberg</a></p>
         </div>
@@ -165,7 +168,7 @@
         </div> --}}
 
             <!-- PRODUKSI -->
-            <div class="col-lg-1 align-items-center">
+            <div class="p-1 align-items-center">
                 <!-- Button Modal Produksi -->
                 <button type="button" class="btn btn-block btn-gray-800 m-2" data-bs-toggle="modal"
                     data-bs-target="#modalProduksi">Produksi</button>
@@ -266,7 +269,7 @@
             </div>
 
             {{-- INVENTORY --}}
-            <div class="col-lg-1 align-items-center">
+            <div class="p-1 align-items-center">
                 <!-- Button Modal -->
                 <button type="button" class="btn btn-block btn-gray-800 m-2" data-bs-toggle="modal"
                     data-bs-target="#modalInventory">Inventory</button>
@@ -283,6 +286,87 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
+                                <div class="row">
+                                    {{-- BAHAN BAKU --}}
+                                    <div class="col-4">
+                                        <div class="bg-info rounded">
+                                            <h3 class="text-center text-gray-100">BAHAN BAKU</h3>
+                                        </div>
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">No.</th>
+                                                    <th scope="col">Nama Bahan</th>
+                                                    <th scope="col">Jumlah</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <th scope='row'>1</th>
+                                                    <th>
+                                                        test
+                                                    </th>
+                                                    <th>
+                                                        test
+                                                    </th>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    {{-- MESIN --}}
+                                    <div class="col-4">
+                                        <div class="bg-info rounded">
+                                            <h3 class="text-center text-gray-100">MESIN</h3>
+                                        </div>
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">No.</th>
+                                                    <th scope="col">Nama Mesin</th>
+                                                    <th scope="col">Jumlah</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <th scope='row'>1</th>
+                                                    <th>
+                                                        test
+                                                    </th>
+                                                    <th>
+                                                        test
+                                                    </th>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="col-4">
+                                        <div class="bg-info rounded">
+                                            <h3 class="text-center text-gray-100">PRODUK</h3>
+                                        </div>
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">No.</th>
+                                                    <th scope="col">Nama Produk</th>
+                                                    <th scope="col">Jumlah</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <th scope='row'>1</th>
+                                                    <th>
+                                                        test
+                                                    </th>
+                                                    <th>
+                                                        test
+                                                    </th>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -294,7 +378,7 @@
             </div>
 
             <!-- MARKET -->
-            <div class="col-lg-1 align-items-center">
+            <div class="p-1 align-items-center">
                 <!-- Button Modal -->
                 <button type="button" class="btn btn-block btn-gray-800 m-2" data-bs-toggle="modal"
                     data-bs-target="#modalMarketMenu">Market</button>
@@ -424,24 +508,22 @@
                                             <table class="table table-centered table-wrap">
                                                 <thead>
                                                     <tr>
-                                                        <th class="border-0 rouded-start text-center">No</th>
+                                                        <th class="border-0 text-center">No</th>
                                                         <th class="border-0 text-center">Mesin</th>
-                                                        <th class="border-0 rounded-end text-center">Jumlah</th>
+                                                        <th class="border-0 text-center">Jumlah</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     @foreach($machines as $machine)
                                                     <tr>
-                                                        <td class="border-0 text-center">{{ $machine->id }}</td>
-                                                        <td class="border-0 text-center">{{ $machine->name_type }}</td>
-                                                        <td class="border-0 text-center text-danger">
+                                                        <td class="border-0 text-center align-middle">{{ $machine->id }}</td>
+                                                        <td class="border-0 text-center align-middle">{{ $machine->name_type }}</td>
+                                                        <td class="border-0 text-center align-middle">
                                                             <input type="number" style="margin: auto"
-                                                                class="form-control machine-amount w-60 text-center"
+                                                                class="form-control machine-amount w-50 text-center"
                                                                 id="machine-amount-{{ $machine->id }}" value="0" min="0" onchange="updateMachinePrice()">
                                                         </td>
-                                                        <td></td>
-                                                            <input type="hidden"  class="machine-price" id="machine-price-{{ $machine->id }}" value="{{ $machine->price }}">
-                                                        </td>
+                                                        <input type="hidden"  class="machine-price" id="machine-price-{{ $machine->id }}" value="{{ $machine->price }}">
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
@@ -451,11 +533,11 @@
                                     <div class="col-4 px-4 py-4">
                                         <!-- Total Pengeluaran -->
                                         <div class="row position-fixed">
-                                            <div class="col-12 bg-primary rounded-top text-white text-center fw-bold ">
+                                            <div class="col-12 bg-info rounded-top text-white text-center fw-bold ">
                                                 Pengeluaran
                                             </div>
-                                            <div class="col-12 bg-info rounded-bottom text-white text-center fw-bold ", id="pengeluaran-machine">
-                                                0
+                                            <div class="col-12 bg-primary rounded-bottom text-white text-center" id="pengeluaran-machine">
+                                                0 TC
                                             </div>
                                         </div>
 
@@ -490,7 +572,7 @@
                                             <table class="table table-centered table-wrap">
                                                 <thead>
                                                     <tr>
-                                                        <th class="border-0 rouded-start text-center">No</th>
+                                                        <th class="border-0 rounded-start text-center">No</th>
                                                         <th class="border-0 text-center">Kendaraan</th>
                                                         <th class="border-0 rounded-end text-center">Jumlah</th>
                                                     </tr>
@@ -505,9 +587,8 @@
                                                                 class="form-control transportation-amount w-50 text-center"
                                                                 id="transportation-amount-{{ $transportation->id }}" value="0" min="0" onchange="updateTransportationPrice()">
                                                         </td>
-                                                        <td></td>
-                                                            <input type="hidden"  class="transportation-price" id="transportation-price-{{ $transportation->id }}" value="{{ $transportation->price }}">
-                                                        </td>
+                                                        <input type="hidden"  class="transportation-price" id="transportation-price-{{ $transportation->id }}" value="{{ $transportation->price }}">
+
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
@@ -521,7 +602,7 @@
                                                 Pengeluaran
                                             </div>
                                             <div class="col-12 bg-info rounded-bottom text-white text-center fw-bold ", id="pengeluaran-transportation">
-                                                0
+                                                0 TC
                                             </div>
                                         </div>
 
@@ -538,7 +619,7 @@
             </div>
             
             {{-- MODAL TRANSPORTATION --}}
-            <div class="col-lg-1 align-items-center">
+            <div class="p-1 align-items-center">
                 <!-- Button Modal -->
                 <button type="button" class="btn btn-block btn-primary m-2" data-bs-toggle="modal"
                     data-bs-target="#modalTransport">Transportation</button>
@@ -574,9 +655,11 @@
                                             <td class="border-0 text-center align-middle">{{ $transportation->capacity }}</td>
                                             <td class="border-0 text-center align-middle">{{ $transportation->duration }}</td>
                                             <td class="border-0 text-center align-middle">{{ $batch -$transportation->pivot->batch  +1}}</td>
+                                            
+                                            {{-- ku bingung cara lempar idnya ke modal jual tranport --}}
                                             <td class="border-0 text-center align-middle">
                                                 <button type="button" class="btn btn-danger" data-bs-target="#modalJualTransport"
-                                                data-bs-toggle="modal">Jual</button>
+                                                data-bs-toggle="modal" data-bs-id= "{{ $transportation->id }}">Jual</button>
                                             </td>
                                         </tr>
                                         @endforeach
@@ -595,15 +678,18 @@
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalToggleLabel2">Transportation</h5>
+                                <h5 class="modal-title" id="exampleModalToggleLabel2">Jual</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                               
+                               <p>Nama Transportasi : Pickup</p>
+                               <p>Masa Pakai : 2 Batch</p>
+                               <p>Harga Jual : 2500 TC</p>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                data-bs-target="#modalTransport">Jual Transoprtasi</button>
                             </div>
                         </div>
                     </div>
@@ -611,7 +697,7 @@
             </div>
 
             {{-- MODAL  INPUT TC --}}
-            <div class="col-lg-1  align-items-center">
+            <div class="p-1  align-items-center">
                 <!-- Button Modal -->
                 <button type="button" class="btn btn-block btn-warning m-2" data-bs-toggle="modal"
                     data-bs-target="#modalTambahTC">Tambah TC</button>
@@ -626,8 +712,16 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <input type="number" id="inputTC">
-                                <button type="button" id="btnTambahTC">Tambah</button>
+                                <div class="mb-3">
+                                    <label for="batch" class="col-form-label">Batch</label>
+                                    <input type="number" class="form-control w-25 mb-2" id="batch">
+                                    
+                                    <label for="jumlah-tc" class="col-form-label">Jumlah TC</label>
+                                    <div class="d-flex flex-row">
+                                        <input type="number" class="form-control w-50" id="jumlah-tc">
+                                        <button type="button" class="btn btn-success w-25 ms-2" id="btnTambahTC">Tambah</button>
+                                    </div>
+                                </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
@@ -709,7 +803,7 @@
                 totalPrice += (machinesAmount[i] * machinesPrice[i])
             }
 
-            $('#pengeluaran-machine').text(totalPrice)
+            $('#pengeluaran-machine').text(totalPrice + " TC")
         }
 
         // Method buy machine
@@ -741,7 +835,7 @@
                 totalPrice += (transportationsAmount[i] * transportationsPrice[i])
             }
 
-            $('#pengeluaran-transportation').text(totalPrice)
+            $('#pengeluaran-transportation').text(totalPrice + " TC")
         }
 
         // Method buy transportation
