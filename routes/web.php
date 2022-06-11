@@ -20,9 +20,8 @@ Route::middleware(['auth'])->group(function() {
     Route::post('/buy-ingredient', 'IngredientController@buyIngredient')->name('buy-ingredient');
     Route::post('/buy-machine', 'MachineController@buyMachine')->name('buy-machine');
     Route::post('/buy-transportation', 'TransportationController@buyTransportation')->name('buy-transportation');
-    
-    // sementara halaman panitianya di arahkan ke controller UpgradePostController
-    // nanti halaman panitia punya dashboardnya masing" sesuai role
+    Route::post('/transportation', 'TransportationController@getTransportById')->name('transportation.getbyid');
+    Route::post('/sell-transportation', 'TransportationController@sellTransport')->name('transportation.sell');
 });
 
 Auth::routes();

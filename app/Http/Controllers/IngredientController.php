@@ -15,27 +15,41 @@ class IngredientController extends Controller
         $ingredient_id = $request->get('ingredient_id');
         $ingredient_amount = $request->get('ingredient_amount');
         $team = Team::find(Auth::user()->team);
-        $total_price = 0;
-        $total_amount = 0;
+        $prices = [];
+        $amounts = [];
         
         // Cek harga pembelian
         foreach ($ingredient_id as $index => $id) {
-            $total_price += Ingredient::find($id)->price * $ingredient_amount[$index];
+            array_push($prices, Ingredient::find($id)->price * $ingredient_amount[$index]);
         }
 
-        if ($team->balance >= $total_price) {
-            // Cek jumlah
-            $filled_inventory = $team->ingredients()->sum('amount');
+        if ($team->balance >= array_sum($prices)) {
+            // Cek jumlah inventory saat ini dalam satuan unit
+            $filled_inventory = $team->ingredients->sum('pivot.amount');
 
-            // Cek jumlah paket yang dibeli
-            foreach ($ingredient_amount as $amount) {
-                $total_amount += $amount;
+            // Cek jumlah unit yang dibeli
+            foreach ($ingredient_id as $index => $id) {
+                array_push($amounts, Ingredient::find($id)->amount * $ingredient_amount[$index]);
             }
 
-            if (($filled_inventory + $total_amount) <= $team->ingredient_inventory) {
+            // Cek apakah inventory masih cukup untuk menampung bahan baku
+            if (($filled_inventory + array_sum($amounts)) <= $team->ingredient_inventory) {
+                // Memasukkan bahan baku yang dibeli ke dalam ingredient inventory
+                foreach ($ingredient_id as $index => $id) {
+                    if ($amounts[$index] > 0) {
+                        if ($team->ingredients->contains($id)) {
+                            $a = $team->ingredients->where('pivot.id', $id);
+                            var_dump($a);
+                            //$team->ingredients()->where('pivot.id', $id)->amount = $team->ingredients()->where('pivot.id', $id)->amount + $amounts[$index];
+                            //$team->ingredients->save();
+                        } else {
+                            $team->ingredients()->attach($id, ['amount' => $amounts[$index]]);
+                        }
+                    }
+                }
+                
                 // kurangi balance
                 // update limit package
-                // masukan inventory
 
                 $status = "success";
                 $message = "Berhasil membeli ingredient";

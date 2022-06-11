@@ -13,11 +13,11 @@ class Team extends Model
     }
     
     public function transportations() {
-        return $this->belongsToMany("App\Transportation", "team_transportation", "teams_id", "transportations_id")->withPivot("batch", "exist");
+        return $this->belongsToMany("App\Transportation", "team_transportation", "teams_id", "transportations_id")->withPivot("id", "batch", "exist");
     }
 
     public function ingredients() {
-        return $this->belongsToMany("App\Team", "ingredient_inventory", "teams_id", "ingredients_id")->withPivot("amount");
+        return $this->belongsToMany("App\Ingredient", "ingredient_inventory", "teams_id", "ingredients_id")->withPivot("amount");
     }
 
     public function products() {

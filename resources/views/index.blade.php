@@ -145,28 +145,6 @@
         </div>
 
         <div class="d-flex flex-row justify-content-center">
-            {{-- <div class="col-12 col-md-4 col-xl-6 mb-4 mb-md-0">
-            <p class="mb-0 text-center text-lg-start">© 2019-<span class="current-year"></span> <a class="text-primary fw-normal" href="https://themesberg.com" target="_blank">Themesberg</a></p>
-        </div>
-        
-        <div class="col-12 col-md-8 col-xl-6 text-center text-lg-start">
-            <!-- List -->
-            <ul class="list-inline list-group-flush list-group-borderless text-md-end mb-0">
-                <li class="list-inline-item px-0 px-sm-2">
-                    <a href="https://themesberg.com/about">About</a>
-                </li>
-                <li class="list-inline-item px-0 px-sm-2">
-                    <a href="https://themesberg.com/themes">Themes</a>
-                </li>
-                <li class="list-inline-item px-0 px-sm-2">
-                    <a href="https://themesberg.com/blog">Blog</a>
-                </li>
-                <li class="list-inline-item px-0 px-sm-2">
-                    <a href="https://themesberg.com/contact">Contact</a>
-                </li>
-            </ul>
-        </div> --}}
-
             <!-- PRODUKSI -->
             <div class="p-1 align-items-center">
                 <!-- Button Modal Produksi -->
@@ -253,12 +231,12 @@
                                 <button id='btnProduksi' class='btn btn-success' style="float: right;">Mulai
                                     Produksi</button>
 
-                                    <!-- <script>
+                                <!-- <script>
                                             $("#btnAdd").click(function(){
                                                 $("tbody").append();
                                             });
                                     </script> -->
-                                </div>
+                            </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
                             </div>
@@ -268,7 +246,7 @@
                 <!-- End of Modal Content -->
             </div>
 
-            {{-- INVENTORY --}}
+            <!-- INVENTORY -->
             <div class="p-1 align-items-center">
                 <!-- Button Modal -->
                 <button type="button" class="btn btn-block btn-gray-800 m-2" data-bs-toggle="modal"
@@ -295,21 +273,24 @@
                                         <table class="table">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col">No.</th>
-                                                    <th scope="col">Nama Bahan</th>
-                                                    <th scope="col">Jumlah</th>
+                                                    <th scope="col" class="border-0 text-center">No.</th>
+                                                    <th scope="col" class="border-0 text-center">Nama Bahan</th>
+                                                    <th scope="col" class="border-0 text-center">Jumlah</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                @php
+                                                $i = 1
+                                                @endphp
+                                                @foreach ($team->ingredients as $ingre)
                                                 <tr>
-                                                    <th scope='row'>1</th>
-                                                    <th>
-                                                        test
-                                                    </th>
-                                                    <th>
-                                                        test
-                                                    </th>
+                                                    <td class="border-0 text-center align-middle">{{ $i++ }}</td>
+                                                    <td class="border-0 text-center align-middle">{{ $ingre->name }}
+                                                    </td>
+                                                    <td class="border-0 text-center align-middle">
+                                                        {{ $ingre->pivot->amount}}</td>
                                                 </tr>
+                                                @endforeach
                                             </tbody>
                                         </table>
                                     </div>
@@ -322,25 +303,36 @@
                                         <table class="table">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col">No.</th>
-                                                    <th scope="col">Nama Mesin</th>
-                                                    <th scope="col">Jumlah</th>
+                                                    <th scope="col" class="border-0 text-center">No.</th>
+                                                    <th scope="col" class="border-0 text-center">Nama Mesin</th>
+                                                    <th scope="col" class="border-0 text-center">Defect</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 <tr>
-                                                    <th scope='row'>1</th>
-                                                    <th>
-                                                        test
-                                                    </th>
-                                                    <th>
-                                                        test
-                                                    </th>
+                                                    @php
+                                                    $i = 1
+                                                    @endphp
+                                                    @foreach ($team->machineTypes as $machine)
+                                                <tr>
+                                                    <td class="border-0 text-center align-middle">{{ $i++ }}</td>
+                                                    <td class="border-0 text-center align-middle">
+                                                        {{ $machine->name_type }}</td>
+                                                    <td class="border-0 text-center align-middle">
+                                                        {{ $machine->pivot->defact*100}}%</td>
+                                                    <td class="border-0 text-center align-middle">
+                                                        <button type="button" class="btn btn-danger"
+                                                            data-bs-target="#modalJualMesin" data-bs-toggle="modal"
+                                                            )>Jual</button>
+                                                    </td>
+                                                </tr>
+                                                @endforeach
                                                 </tr>
                                             </tbody>
                                         </table>
                                     </div>
 
+                                    {{-- PRODUK --}}
                                     <div class="col-4">
                                         <div class="bg-info rounded">
                                             <h3 class="text-center text-gray-100">PRODUK</h3>
@@ -348,28 +340,54 @@
                                         <table class="table">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col">No.</th>
-                                                    <th scope="col">Nama Produk</th>
-                                                    <th scope="col">Jumlah</th>
+                                                    <th scope="col" class="border-0 text-center">No.</th>
+                                                    <th scope="col" class="border-0 text-center">Nama Produk</th>
+                                                    <th scope="col" class="border-0 text-center">Jumlah</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
+                                                @php
+                                                $i = 1
+                                                @endphp
+                                                @foreach ($team->products as $product)
                                                 <tr>
-                                                    <th scope='row'>1</th>
-                                                    <th>
-                                                        test
-                                                    </th>
-                                                    <th>
-                                                        test
-                                                    </th>
+                                                    <td class="border-0 text-center align-middle">{{ $i++ }}</td>
+                                                    <td class="border-0 text-center align-middle">{{ $product->name }}
+                                                    </td>
+                                                    <td class="border-0 text-center align-middle">
+                                                        {{ $product->pivot->amount}}</td>
                                                 </tr>
+                                                @endforeach
                                             </tbody>
                                         </table>
                                     </div>
+
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- JUAL MESIN --}}
+                <div class="modal fade" id="modalJualMesin" aria-hidden="true" aria-labelledby="modalJualMesinLabel"
+                    tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="modalJualMesinToggleLabel2">Jual</h5>
+                                <button type="button" class="btn-close" data-bs-toggle="modal"
+                                    data-bs-target="#modalInventory" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Nama Mesin : <span id="">Pickup<span></p>
+                                <p>Harga Jual : 2.500 TC</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#modalInventory">Jual Mesin</button>
                             </div>
                         </div>
                     </div>
@@ -439,49 +457,83 @@
                                                     <tr>
                                                         <td class="border-0 text-center">
                                                             {{ $i->id }}
-                                                            <input type="hidden" class="ingredient-id" value="{{ $i->id }}">
+                                                            <input type="hidden" class="ingredient-id"
+                                                                value="{{ $i->id }}">
                                                         </td>
                                                         <td class="border-0 text-center">{{ $i->name }}</td>
                                                         <td class="border-0 text-center text-danger">
                                                             <input type="number" style="margin: auto"
                                                                 class="form-control ingredient-amount w-50 text-center"
-                                                                id="ingredient-amount-{{ $i->id }}" value="0" min="0" onchange="updateIngredientPriceAndLimit()">
+                                                                id="ingredient-amount-{{ $i->id }}" value="0" min="0"
+                                                                onchange="updateIngredientPriceAndLimit()">
                                                         </td>
-                                                        <input type="hidden" class="ingredient-price" id="ingredient-price-{{ $i->id }}" value="{{ $i->price }}">
+                                                        <input type="hidden" class="ingredient-price"
+                                                            id="ingredient-price-{{ $i->id }}" value="{{ $i->price }}">
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
                                             </table>
                                         </div>
                                     </div>
-                                    <div class="col-5 px-5 py-4">
+                                    <div class="col-4 px-4 py-5">
                                         <!-- Package Limit -->
-                                        <div class="row w-100">
-                                            <div class="col-7 p-3 bg-primary rounded-start text-white text-center fw-bold">
+                                        <div class="row position-fixed" style="width:160px;">
+                                            <div class="col-12 bg-info rounded-top text-white text-center fw-bold">
                                                 Limit
                                             </div>
-                                            <div class="col-5 p-3 bg-info rounded-end text-white text-center fw-bold">
+                                            <div
+                                                class="col-12 bg-primary rounded-bottom text-white text-center fw-bold">
                                                 <span id="package-limit">50</span>
                                                 <input type="hidden" id="package-limit-hidden" value="50">
                                             </div>
                                         </div>
 
                                         <!-- Total Pengeluaran -->
-                                        <div class="row w-100 mt-4">
-                                            <div class="col-7 p-3 bg-primary rounded-start text-white text-center fw-bold">
+                                        <div class="row position-fixed" style="width:160px; margin-top:60px;">
+                                            <div class="col-12 bg-info rounded-top text-white text-center fw-bold">
                                                 Pengeluaran
                                             </div>
-                                            <div class="col-5 p-3 bg-info rounded-end text-white text-center fw-bold" id="pengeluaran-ingredient">
+                                            <div class="col-12 bg-primary rounded-bottom text-white text-center fw-bold"
+                                                id="pengeluaran-ingredient">
                                                 0
                                             </div>
                                         </div>
 
                                         <!-- Buy Button -->
-                                        <div class="row w-100 mt-5 pt-2">
-                                            <buton class="btn btn-success fw-bold p-3 text-white" onclick="buyIngredients()" style="font-size: 20px; font-weight: bold">Buy</button>
+                                        <div class="row position-fixed" style="width:160px; margin-top:120px;">
+                                            <button class="btn btn-success fw-bold p-3 text-white"
+                                                style="font-size: 20px; font-weight: bold"
+                                                onclick="buyIngredients()">Buy</button>
+                                            <!-- <button class="btn btn-success fw-bold p-3 text-white" data-bs-toggle="modal"
+                                                data-bs-target="#modalBeliBahanBaku" style="font-size: 20px; font-weight: bold">Buy</button> -->
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- MODAL BUY CONFIRMATION BAHAN BAKU --}}
+                <div class="modal fade" id="modalBeliBahanBaku" aria-hidden="true" aria-labelledby="modalBeliBahanBaku"
+                    tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalToggleLabel2">Apakah yakin ingin membeli ?</h5>
+                                <button type="button" class="btn-close" data-bs-toggle="modal"
+                                    data-bs-target="#modalMarketTransport"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                <p>Harga Total : <span id="buy-transport-price">2500 TC</span></p>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success" onclick="buyIngredients()"
+                                    data-bs-toggle="modal" data-bs-target="#modalMarketMenu">Beli</button>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#modalBahanBaku">Batal</button>
                             </div>
                         </div>
                     </div>
@@ -516,14 +568,19 @@
                                                 <tbody>
                                                     @foreach($machines as $machine)
                                                     <tr>
-                                                        <td class="border-0 text-center align-middle">{{ $machine->id }}</td>
-                                                        <td class="border-0 text-center align-middle">{{ $machine->name_type }}</td>
+                                                        <td class="border-0 text-center align-middle">{{ $machine->id }}
+                                                        </td>
+                                                        <td class="border-0 text-center align-middle">
+                                                            {{ $machine->name_type }}</td>
                                                         <td class="border-0 text-center align-middle">
                                                             <input type="number" style="margin: auto"
                                                                 class="form-control machine-amount w-50 text-center"
-                                                                id="machine-amount-{{ $machine->id }}" value="0" min="0" onchange="updateMachinePrice()">
+                                                                id="machine-amount-{{ $machine->id }}" value="0" min="0"
+                                                                onchange="updateMachinePrice()">
                                                         </td>
-                                                        <input type="hidden"  class="machine-price" id="machine-price-{{ $machine->id }}" value="{{ $machine->price }}">
+                                                        <input type="hidden" class="machine-price"
+                                                            id="machine-price-{{ $machine->id }}"
+                                                            value="{{ $machine->price }}">
                                                     </tr>
                                                     @endforeach
                                                 </tbody>
@@ -532,18 +589,23 @@
                                     </div>
                                     <div class="col-4 px-4 py-4">
                                         <!-- Total Pengeluaran -->
-                                        <div class="row position-fixed">
+                                        <div class="row position-fixed" style="width:160px;">
                                             <div class="col-12 bg-info rounded-top text-white text-center fw-bold ">
                                                 Pengeluaran
                                             </div>
-                                            <div class="col-12 bg-primary rounded-bottom text-white text-center" id="pengeluaran-machine">
+                                            <div class="col-12 bg-primary rounded-bottom text-white text-center"
+                                                id="pengeluaran-machine">
                                                 0 TC
                                             </div>
                                         </div>
 
                                         <!-- Buy Button -->
-                                        <div class="row mt-5 pt-2 position-fixed" style="width:160px;">
-                                            <button class="col-12 btn btn-success fw-bold p-3 text-white"  onclick="buyMachines()" style="font-size: 20px; font-weight: bold">Buy</button>
+                                        <div class="row mt-5 pt-3 position-fixed" style="width:160px;">
+                                            <button class="btn btn-success fw-bold p-3 text-white"
+                                                style="font-size: 20px; font-weight: bold"
+                                                onclick="buyMachines()">Buy</button>
+                                            <!-- <button class="col-12 btn btn-success fw-bold p-3 text-white" data-bs-toggle="modal"
+                                                data-bs-target="#modalBeliMachine" style="font-size: 20px; font-weight: bold">Buy</button> -->
                                         </div>
                                     </div>
                                 </div>
@@ -552,18 +614,44 @@
                     </div>
                 </div>
 
-                {{-- MODAL MARKET TRANSPORT --}}
-                <div class="modal fade p-5" id="modalMarketTransport" aria-hidden="true" aria-labelledby="modalMarketTransportLabel"
+                {{-- MODAL BUY CONFIRMATION MACHINE --}}
+                <div class="modal fade" id="modalBeliMachine" aria-hidden="true" aria-labelledby="modalBeliMachine"
                     tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalToggleLabel2">Apakah yakin ingin membeli ?</h5>
+                                <button type="button" class="btn-close" data-bs-toggle="modal"
+                                    data-bs-target="#modalMachine"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                <p>Harga Total : <span id="buy-machine-price">2500 TC</span></p>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                                    data-bs-target="#modalMarketMenu" onclick="buyMachines()">Beli</button>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#modalMachine">Batal</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- MODAL MARKET TRANSPORTATION --}}
+                <div class="modal fade p-5" id="modalMarketTransport" aria-hidden="true"
+                    aria-labelledby="modalMarketTransportLabel" tabindex="-1">
                     <div class="modal-dialog modal-fullscreen" style="margin: auto; width: 60%">
                         <div class="modal-content rounded">
-                            <div class="modal-header d-flex align-items-center justify-content-center position-relative">
+                            <div
+                                class="modal-header d-flex align-items-center justify-content-center position-relative">
                                 <div>
                                     <h5 class="modal-title text-center fw-bolder">Transportation</h5>
                                 </div>
 
                                 <button type="button" class="btn-close position-absolute" data-bs-dismiss="modal"
-                                aria-label="Close" style="right: 20px"></button>
+                                    aria-label="Close" style="right: 20px"></button>
                             </div>
                             <div class="modal-body px-5 py-4">
                                 <div class="row">
@@ -581,13 +669,18 @@
                                                     @foreach($transportations as $transportation)
                                                     <tr>
                                                         <td class="border-0 text-center">{{ $transportation->id }}</td>
-                                                        <td class="border-0 text-center">{{ $transportation->name }}</td>
+                                                        <td class="border-0 text-center">{{ $transportation->name }}
+                                                        </td>
                                                         <td class="border-0 text-center text-danger">
                                                             <input type="number" style="margin: auto"
                                                                 class="form-control transportation-amount w-50 text-center"
-                                                                id="transportation-amount-{{ $transportation->id }}" value="0" min="0" onchange="updateTransportationPrice()">
+                                                                id="transportation-amount-{{ $transportation->id }}"
+                                                                value="0" min="0"
+                                                                onchange="updateTransportationPrice()">
                                                         </td>
-                                                        <input type="hidden"  class="transportation-price" id="transportation-price-{{ $transportation->id }}" value="{{ $transportation->price }}">
+                                                        <input type="hidden" class="transportation-price"
+                                                            id="transportation-price-{{ $transportation->id }}"
+                                                            value="{{ $transportation->price }}">
 
                                                     </tr>
                                                     @endforeach
@@ -597,35 +690,67 @@
                                     </div>
                                     <div class="col-4 px-4 py-4">
                                         <!-- Total Pengeluaran -->
-                                        <div class="row position-fixed">
+                                        <div class="row position-fixed" style="width:160px;">
                                             <div class="col-12 bg-primary rounded-top text-white text-center fw-bold ">
                                                 Pengeluaran
                                             </div>
-                                            <div class="col-12 bg-info rounded-bottom text-white text-center fw-bold ", id="pengeluaran-transportation">
+                                            <div class="col-12 bg-info rounded-bottom text-white text-center fw-bold " ,
+                                                id="pengeluaran-transportation">
                                                 0 TC
                                             </div>
                                         </div>
 
                                         <!-- Buy Button -->
                                         <div class="row mt-5 pt-2 position-fixed" style="width:160px;">
-                                            <button class="col-12 btn btn-success fw-bold p-3 text-white"  onclick="buyTransportations()" style="font-size: 20px; font-weight: bold">Buy</button>
+                                            <button class="btn btn-success fw-bold p-3 text-white"
+                                                style="font-size: 20px; font-weight: bold"
+                                                onclick="buyTransportations()">Buy</button>
+                                            <!-- <button class="col-12 btn btn-success fw-bold p-3 text-white" data-bs-toggle="modal"
+                                                data-bs-target="#modalBeliTransport"style="font-size: 20px; font-weight: bold">Buy</button> -->
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div> 
+                </div>
+
+                {{-- MODAL BUY CONFIRMATION TRANSPORTATION --}}
+                <div class="modal fade" id="modalBeliTransport" aria-hidden="true" aria-labelledby="modalBeliTransport"
+                    tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalToggleLabel2">Apakah yakin ingin membeli ?</h5>
+                                <button type="button" class="btn-close" data-bs-toggle="modal"
+                                    data-bs-target="#modalMarketTransport"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                <p>Harga Total : <span id="buy-transport-price">2500 TC</span></p>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                                    data-bs-target="#modalMarketMenu" onclick="buyTransportations()">Beli</button>
+                                <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                                    data-bs-target="#modalMarketTransport">Batal</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            
-            {{-- MODAL TRANSPORTATION --}}
+
+            <!-- TRANSPORTATION -->
             <div class="p-1 align-items-center">
                 <!-- Button Modal -->
                 <button type="button" class="btn btn-block btn-primary m-2" data-bs-toggle="modal"
                     data-bs-target="#modalTransport">Transportation</button>
                 <!-- Modal Content -->
-                <div class="modal fade p-5" id="modalTransport" aria-hidden="true"
-                    aria-labelledby="modalTransportLabel" tabindex="-1">
+
+                <!-- MODAL TRANSPORTATION -->
+                <div class="modal fade p-5" id="modalTransport" aria-hidden="true" aria-labelledby="modalTransportLabel"
+                    tabindex="-1">
                     <div class="modal-dialog modal-fullscreen w-100">
                         <div class="modal-content rounded">
                             <div class="modal-header">
@@ -639,29 +764,35 @@
                                         <tr>
                                             <th class="border-0 text-center">No</th>
                                             <th class="border-0 text-center">Jenis</th>
-                                            <th class="border-0 text-center">Kapaistas</th>
+                                            <th class="border-0 text-center">Kapasitas</th>
                                             <th class="border-0 text-center">Durasi</th>
                                             <th class="border-0 text-center">Masa Pakai</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @php
-                                            $i = 1
+                                        $i = 1
                                         @endphp
                                         @foreach ($team->transportations as $transportation)
+                                        @if($transportation->pivot->exist)
                                         <tr>
                                             <td class="border-0 text-center align-middle">{{ $i++ }}</td>
-                                            <td class="border-0 text-center align-middle">{{ $transportation->name }}</td>
-                                            <td class="border-0 text-center align-middle">{{ $transportation->capacity }}</td>
-                                            <td class="border-0 text-center align-middle">{{ $transportation->duration }}</td>
-                                            <td class="border-0 text-center align-middle">{{ $batch -$transportation->pivot->batch  +1}}</td>
-                                            
-                                            {{-- ku bingung cara lempar idnya ke modal jual tranport --}}
+                                            <td class="border-0 text-center align-middle">{{ $transportation->name }}
+                                            </td>
                                             <td class="border-0 text-center align-middle">
-                                                <button type="button" class="btn btn-danger" data-bs-target="#modalJualTransport"
-                                                data-bs-toggle="modal" data-bs-id= "{{ $transportation->id }}">Jual</button>
+                                                {{ $transportation->capacity }}</td>
+                                            <td class="border-0 text-center align-middle">
+                                                {{ $transportation->duration }}</td>
+                                            <td class="border-0 text-center align-middle">
+                                                {{ $batch -$transportation->pivot->batch  +1}}</td>
+
+                                            <td class="border-0 text-center align-middle">
+                                                <button type="button" class="btn btn-danger"
+                                                    data-bs-target="#modalJualTransport" data-bs-toggle="modal"
+                                                    onclick="showTransportSell({{ $transportation->pivot->id }})">Jual</button>
                                             </td>
                                         </tr>
+                                        @endif
                                         @endforeach
                                     </tbody>
                                 </table>
@@ -673,37 +804,41 @@
                     </div>
                 </div>
 
+                <!-- MODAL JUAL TRANSPORTATION -->
                 <div class="modal fade" id="modalJualTransport" aria-hidden="true"
                     aria-labelledby="modalJualTransportLabel" tabindex="-1">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalToggleLabel2">Jual</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
+                                <button type="button" class="btn-close" data-bs-toggle="modal"
+                                    data-bs-target="#modalTransport"></button>
                             </div>
+
                             <div class="modal-body">
-                               <p>Nama Transportasi : Pickup</p>
-                               <p>Masa Pakai : 2 Batch</p>
-                               <p>Harga Jual : 2500 TC</p>
+                                <p><input type="hidden" id="sell-transport-id" value=""></p>
+                                <p>Nama Transportasi : <span id="sell-transport-name"></span></p>
+                                <p>Masa Pakai : <span id="sell-transport-lifetime"></span></p>
+                                <p>Harga Jual : <span id="sell-transport-price"></span></p>
                             </div>
+
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                data-bs-target="#modalTransport">Jual Transoprtasi</button>
+                                    data-bs-target="#modalTransport" onclick="sellTransportations()">Jual Transoprtasi</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {{-- MODAL  INPUT TC --}}
+            <!-- INPUT TC -->
             <div class="p-1  align-items-center">
                 <!-- Button Modal -->
-                <button type="button" class="btn btn-block btn-warning m-2" data-bs-toggle="modal"
+                <button type="button" class="btn btn-block btn-primary m-2" data-bs-toggle="modal"
                     data-bs-target="#modalTambahTC">Tambah TC</button>
                 <!-- Modal Content -->
-                <div class="modal fade" id="modalTambahTC" aria-hidden="true"
-                    aria-labelledby="modalTambahTCLabel" tabindex="-1">
+                <div class="modal fade" id="modalTambahTC" aria-hidden="true" aria-labelledby="modalTambahTCLabel"
+                    tabindex="-1">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
@@ -715,11 +850,12 @@
                                 <div class="mb-3">
                                     <label for="batch" class="col-form-label">Batch</label>
                                     <input type="number" class="form-control w-25 mb-2" id="batch">
-                                    
+
                                     <label for="jumlah-tc" class="col-form-label">Jumlah TC</label>
                                     <div class="d-flex flex-row">
                                         <input type="number" class="form-control w-50" id="jumlah-tc">
-                                        <button type="button" class="btn btn-success w-25 ms-2" id="btnTambahTC">Tambah</button>
+                                        <button type="button" class="btn btn-success w-25 ms-2"
+                                            id="btnTambahTC">Tambah</button>
                                     </div>
                                 </div>
                             </div>
@@ -730,7 +866,6 @@
                     </div>
                 </div>
             </div>
-        
         </div>
     </main>
 
@@ -748,114 +883,180 @@
     <script src="{{ asset('') }}vendor/notyf/notyf.min.js"></script>
     <script src="{{ asset('') }}vendor/simplebar/dist/simplebar.min.js"></script>
     <script async defer src="https://buttons.github.io/buttons.js"></script>
-    <script src="{{ asset('') }}assets/js/volt.js"></script>
+    <script src="{{ asset('assets/js/update') }}assets/js/volt.js"></script>
 
     <script type="text/javascript">
-        // Update total ingredient dan limit
-        const updateIngredientPriceAndLimit = () => {
-            let ingredientsAmount = $(`.ingredient-amount`).map(function(){return $(this).val()}).get()
-            let ingredientsPrice = $(`.ingredient-price`).map(function(){return $(this).val()}).get()
-            
-            // Update total price
-            let totalPrice = 0
-            for(let i = 0; i < ingredientsAmount.length; i++) {
-                totalPrice += (ingredientsAmount[i] * ingredientsPrice[i])
+    // Update total bahan baku dan limit
+    const updateIngredientPriceAndLimit = () => {
+        let ingredientsAmount = $(`.ingredient-amount`).map(function() {
+            return $(this).val()
+        }).get()
+        let ingredientsPrice = $(`.ingredient-price`).map(function() {
+            return $(this).val()
+        }).get()
+
+        // Update total price
+        let totalPrice = 0
+        for (let i = 0; i < ingredientsAmount.length; i++) {
+            totalPrice += (ingredientsAmount[i] * ingredientsPrice[i])
+        }
+        $(`#pengeluaran-ingredient`).text(totalPrice)
+
+        // Update limit
+        let limit = $(`#package-limit-hidden`).val()
+        let quantity = 0
+        ingredientsAmount.forEach(amount => {
+            quantity += parseInt(amount)
+        })
+        let remaining = limit - quantity
+        if (remaining < 0) remaining = 0
+
+        $(`#package-limit`).text(remaining)
+    }
+
+    // Beli bahan baku
+    const buyIngredients = () => {
+        if (!confirm("Are you sure?")) return
+
+        let ingredientId = $(`.ingredient-id`).map(function() {
+            return $(this).val()
+        }).get()
+        let ingredientAmount = $(`.ingredient-amount`).map(function() {
+            return $(this).val()
+        }).get()
+        
+        //alert(ingredientId + "; " + ingredientAmount)
+        
+        $.ajax({
+            type: 'POST',
+            url: '{{ route("buy-ingredient") }}',
+            data: {
+                '_token':'<?php echo csrf_token() ?>',
+                'ingredient_id': ingredientId,
+                'ingredient_amount': ingredientAmount
+            },
+            success: function(data) {
+                alert(data.message)
             }
-            $(`#pengeluaran-ingredient`).text(totalPrice)
+        })
+    }
 
-            // Update limit
-            let limit = $(`#package-limit-hidden`).val()
-            let quantity = 0
-            ingredientsAmount.forEach(amount => {
-                quantity += parseInt(amount)
-            })
-            let remaining = limit - quantity
-            if (remaining < 0) remaining = 0
+    // Update total machine price
+    const updateMachinePrice = () => {
+        let machinesAmount = $('.machine-amount').map(function() {
+            return $(this).val()
+        }).get()
+        let machinesPrice = $('.machine-price').map(function() {
+            return $(this).val()
+        }).get()
 
-            $(`#package-limit`).text(remaining)
+        let totalPrice = 0
+        for (let i = 0; i < machinesAmount.length; i++) {
+            totalPrice += (machinesAmount[i] * machinesPrice[i])
         }
 
-        const buyIngredients = () => {
-            let ingredientId = $(`.ingredient-id`).map(function(){return $(this).val()}).get()
-            let ingredientAmount = $(`.ingredient-amount`).map(function(){return $(this).val()}).get()
+        $('#pengeluaran-machine').text(totalPrice + " TC")
+    }
 
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("buy-ingredient") }}',
-                data: {
-                    '_token':'<?php echo csrf_token() ?>',
-                    'ingredient_id': ingredientId,
-                    'ingredient_amount': ingredientAmount
-                },
-                success: function(data) {
-                    alert(data.message)
-                }
-            })
-        }
+    // Method buy machine
+    const buyMachines = () => {
+        let machineId = $(`.machine-id`).map(function() {
+            return $(this).val()
+        }).get()
 
-        // Update total machine price
-        const updateMachinePrice = () => {
-            let machinesAmount = $('.machine-amount').map(function(){return $(this).val()}).get()
-            let machinesPrice = $('.machine-price').map(function(){return $(this).val()}).get()
-
-            let totalPrice = 0
-            for (let i = 0; i < machinesAmount.length; i++){
-                totalPrice += (machinesAmount[i] * machinesPrice[i])
+        $.ajax({
+            type: 'POST',
+            url: '{{ route("buy-machine") }}',
+            data: {
+                '_token': '<?php echo csrf_token() ?>',
+                'machine_id': machineId,
+                'machine_amount': machineAmount
+            },
+            success: function(data) {
+                alert(data.message)
             }
+        })
+    }
 
-            $('#pengeluaran-machine').text(totalPrice + " TC")
+    // Update total transportation price
+    const updateTransportationPrice = () => {
+        let transportationsAmount = $('.transportation-amount').map(function() {
+            return $(this).val()
+        }).get()
+        let transportationsPrice = $('.transportation-price').map(function() {
+            return $(this).val()
+        }).get()
+
+        let totalPrice = 0
+        for (let i = 0; i < transportationsAmount.length; i++) {
+            totalPrice += (transportationsAmount[i] * transportationsPrice[i])
         }
 
-        // Method buy machine
-        const buyMachines = () => {
-            let machineId = $(`.machine-id`).map(function(){return $(this).val()}).get()
-            let machineAmount = $(`.machine-amount`).map(function(){return $(this).val()}).get()
+        $('#pengeluaran-transportation').text(totalPrice + " TC")
+    }
 
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("buy-machine") }}',
-                data: {
-                    '_token':'<?php echo csrf_token() ?>',
-                    'machine_id': machineId,
-                    'machine_amount': machineAmount
-                },
-                success: function(data) {
-                    alert(data.message)
-                }
-            })
-        }
+    // Method buy transportation
+    const buyTransportations = () => {
+        if (!confirm("Are you sure?")) return
 
-        // Update total transportation price
-        const updateTransportationPrice = () => {
-            let transportationsAmount = $('.transportation-amount').map(function(){return $(this).val()}).get()
-            let transportationsPrice = $('.transportation-price').map(function(){return $(this).val()}).get()
+        let transportationId = $(`.transportation-id`).map(function() {
+            return $(this).val()
+        }).get()
 
-            let totalPrice = 0
-            for (let i = 0; i < transportationsAmount.length; i++){
-                totalPrice += (transportationsAmount[i] * transportationsPrice[i])
+        $.ajax({
+            type: 'POST',
+            url: '{{ route("buy-transportation") }}',
+            data: {
+                '_token': '<?php echo csrf_token() ?>',
+                'transportation_id': transportationId,
+                'transportation_amount': transportationAmount
+            },
+            success: function(data) {
+                alert(data.message)
             }
+        })
+    }
 
-            $('#pengeluaran-transportation').text(totalPrice + " TC")
-        }
+    // showTransportSell
+    const showTransportSell = (id) => {
 
-        // Method buy transportation
-        const buyTransportations = () => {
-            let transportationId = $(`.transportation-id`).map(function(){return $(this).val()}).get()
-            let transportationAmount = $(`.transportation-amount`).map(function(){return $(this).val()}).get()
+        $.ajax({
+            type: 'POST',
+            url: '{{ route("transportation.getbyid") }}',
+            data: {
+                '_token': '<?php echo csrf_token() ?>',
+                'id': id
+            },
+            success: function(data) {
+                $(`#sell-transport-name`).text(data.nama)
+                $(`#sell-transport-lifetime`).text(data.lifetime + " Batch")
+                $(`#sell-transport-price`).text(data.price + " TC")
+                $(`#sell-transport-id`).val(data.id)
+            },
+            error: function(error) {
+                console.log(error)
+            }
+        })
+    }
 
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("buy-transportation") }}',
-                data: {
-                    '_token':'<?php echo csrf_token() ?>',
-                    'transportation_id': transportationId,
-                    'transportation_amount': transportationAmount
-                },
-                success: function(data) {
-                    alert(data.message)
-                }
-            })
-        }
+    const sellTransportations = () => {
+        let id = $(`#sell-transport-id`).val()
+
+        $.ajax({
+            type: 'POST',
+            url: '{{ route("transportation.sell") }}',
+            data: {
+                '_token': '<?php echo csrf_token() ?>',
+                'id': id
+            },
+            success: function(data) {
+                alert(data.message)
+            },
+            error: function(error) {
+                console.log(error)
+            }
+        })
+    }
     </script>
 </body>
 
