@@ -18,6 +18,8 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/', 'ToPostController@dashboard')->name('peserta');
     Route::get('/test', 'UpgradePostController@dashboard')->name('panitia');
     Route::post('/buy-ingredient', 'IngredientController@buyIngredient')->name('buy-ingredient');
+    Route::post('/buy-machine', 'MachineController@buyMachine')->name('buy-machine');
+    Route::post('/buy-transportation', 'TransportationController@buyTransportation')->name('buy-transportation');
     
     // sementara halaman panitianya di arahkan ke controller UpgradePostController
     // nanti halaman panitia punya dashboardnya masing" sesuai role

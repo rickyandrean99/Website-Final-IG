@@ -316,7 +316,7 @@
                                         data-bs-toggle="modal">Bahan Baku</button>
                                     <button class="btn btn-primary" data-bs-target="#modalMachine"
                                         data-bs-toggle="modal">Machine</button>
-                                    <button class="btn btn-primary" data-bs-target="#modalTransport"
+                                    <button class="btn btn-primary" data-bs-target="#modalMarketTransport"
                                         data-bs-toggle="modal">Transport</button>
                                 </div>
                             </div>
@@ -461,7 +461,7 @@
 
                                         <!-- Buy Button -->
                                         <div class="row mt-5 pt-2 position-fixed" style="width:160px;">
-                                            <button class="col-12 btn btn-success fw-bold p-3 text-white" style="font-size: 20px; font-weight: bold">Buy</button>
+                                            <button class="col-12 btn btn-success fw-bold p-3 text-white"  onclick="buyMachines()" style="font-size: 20px; font-weight: bold">Buy</button>
                                         </div>
                                     </div>
                                 </div>
@@ -473,44 +473,64 @@
                 {{-- MODAL MARKET TRANSPORT --}}
                 <div class="modal fade p-5" id="modalMarketTransport" aria-hidden="true" aria-labelledby="modalMarketTransportLabel"
                     tabindex="-1">
-                    <div class="modal-dialog modal-fullscreen w-100">
+                    <div class="modal-dialog modal-fullscreen" style="margin: auto; width: 60%">
                         <div class="modal-content rounded">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalToggleLabel2">Transport</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
+                            <div class="modal-header d-flex align-items-center justify-content-center position-relative">
+                                <div>
+                                    <h5 class="modal-title text-center fw-bolder">Transportation</h5>
+                                </div>
+
+                                <button type="button" class="btn-close position-absolute" data-bs-dismiss="modal"
+                                aria-label="Close" style="right: 20px"></button>
                             </div>
-                            <div class="modal-body">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">No</th>
-                                            <th scope="col">Jenis</th>
-                                            <th scope="col">Kapaistas</th>
-                                            <th scope="col">Durasi</th>
-                                            <th scope="col">Masa Pakai</th>
-                                            <th scope="col">Jual</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {{-- @php
-                                            $i = 1
-                                        @endphp
-                                        @foreach ($team->transportations as $transportation)
-                                        <tr>
-                                            <td>{{ $i++ }}</td>
-                                            <td>{{ $transportation->name }}</td>
-                                            <td>{{ $transportation->capacity }}</td>
-                                            <td>{{ $transportation->duration }}</td>
-                                            <td>{{ $batch -$transportation->pivot->batch  +1}}</td>
-                                        </tr>
-                                        @endforeach --}}
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div class="modal-footer">
-                                <button class="btn btn-primary" data-bs-target="#modalMarketMenu"
-                                    data-bs-toggle="modal">Kembali</button>
+                            <div class="modal-body px-5 py-4">
+                                <div class="row">
+                                    <div class="col-8">
+                                        <div class="table-responsive">
+                                            <table class="table table-centered table-wrap">
+                                                <thead>
+                                                    <tr>
+                                                        <th class="border-0 rouded-start text-center">No</th>
+                                                        <th class="border-0 text-center">Kendaraan</th>
+                                                        <th class="border-0 rounded-end text-center">Jumlah</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach($transportations as $transportation)
+                                                    <tr>
+                                                        <td class="border-0 text-center">{{ $transportation->id }}</td>
+                                                        <td class="border-0 text-center">{{ $transportation->name }}</td>
+                                                        <td class="border-0 text-center text-danger">
+                                                            <input type="number" style="margin: auto"
+                                                                class="form-control transportation-amount w-50 text-center"
+                                                                id="transportation-amount-{{ $transportation->id }}" value="0" min="0" onchange="updateTransportationPrice()">
+                                                        </td>
+                                                        <td></td>
+                                                            <input type="hidden"  class="transportation-price" id="transportation-price-{{ $transportation->id }}" value="{{ $transportation->price }}">
+                                                        </td>
+                                                    </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="col-4 px-4 py-4">
+                                        <!-- Total Pengeluaran -->
+                                        <div class="row position-fixed">
+                                            <div class="col-12 bg-primary rounded-top text-white text-center fw-bold ">
+                                                Pengeluaran
+                                            </div>
+                                            <div class="col-12 bg-info rounded-bottom text-white text-center fw-bold ", id="pengeluaran-transportation">
+                                                0
+                                            </div>
+                                        </div>
+
+                                        <!-- Buy Button -->
+                                        <div class="row mt-5 pt-2 position-fixed" style="width:160px;">
+                                            <button class="col-12 btn btn-success fw-bold p-3 text-white"  onclick="buyTransportations()" style="font-size: 20px; font-weight: bold">Buy</button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -690,6 +710,57 @@
             }
 
             $('#pengeluaran-machine').text(totalPrice)
+        }
+
+        // Method buy machine
+        const buyMachines = () => {
+            let machineId = $(`.machine-id`).map(function(){return $(this).val()}).get()
+            let machineAmount = $(`.machine-amount`).map(function(){return $(this).val()}).get()
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("buy-machine") }}',
+                data: {
+                    '_token':'<?php echo csrf_token() ?>',
+                    'machine_id': machineId,
+                    'machine_amount': machineAmount
+                },
+                success: function(data) {
+                    alert(data.message)
+                }
+            })
+        }
+
+        // Update total transportation price
+        const updateTransportationPrice = () => {
+            let transportationsAmount = $('.transportation-amount').map(function(){return $(this).val()}).get()
+            let transportationsPrice = $('.transportation-price').map(function(){return $(this).val()}).get()
+
+            let totalPrice = 0
+            for (let i = 0; i < transportationsAmount.length; i++){
+                totalPrice += (transportationsAmount[i] * transportationsPrice[i])
+            }
+
+            $('#pengeluaran-transportation').text(totalPrice)
+        }
+
+        // Method buy transportation
+        const buyTransportations = () => {
+            let transportationId = $(`.transportation-id`).map(function(){return $(this).val()}).get()
+            let transportationAmount = $(`.transportation-amount`).map(function(){return $(this).val()}).get()
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("buy-transportation") }}',
+                data: {
+                    '_token':'<?php echo csrf_token() ?>',
+                    'transportation_id': transportationId,
+                    'transportation_amount': transportationAmount
+                },
+                success: function(data) {
+                    alert(data.message)
+                }
+            })
         }
     </script>
 </body>

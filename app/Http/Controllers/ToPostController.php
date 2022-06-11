@@ -6,6 +6,7 @@ use App\Batch;
 use App\Team;
 use App\Ingredient;
 use App\MachineType;
+use App\Transportation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,7 +19,8 @@ class ToPostController extends Controller
         $team = Team::find(Auth::user()->team);
         $ingredient = Ingredient::where('id', '<=', '12')->get();
         $machines = MachineType::all();
+        $transportations = Transportation::all();
 
-        return view('index', compact('batch', 'team', 'ingredient', 'machines'));
+        return view('index', compact('batch', 'team', 'ingredient', 'machines', 'transportations'));
     }
 }
