@@ -25,6 +25,7 @@ Route::middleware(['auth'])->group(function() {
     Route::post('/machine', 'MachineController@getMachineById')->name('machine.getbyid');
     Route::post('/sell-machine', 'MachineController@sellMachine')->name('machine.sell');
     Route::post('/add-production', 'ProductionController@addProduction')->name('add-production');
+    Route::post('/change-production', 'ProductionController@changeProduction')->name('change-production');
 });
 
 Auth::routes();

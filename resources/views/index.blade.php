@@ -202,7 +202,7 @@
                             <div class="modal-footer">
                                 <div class="row w-100">
                                     <div class="col">
-                                        <button class='btn btn-secondary' id='btnAdd' onclick="addProduction()">+ Tambah Produk</button>
+                                        <button class='btn btn-secondary' id='btnAdd' onclick="addProduction()">+ Tambah Produksi</button>
                                     </div>
                                     <div class="col text-end">
                                         <button class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
@@ -904,9 +904,9 @@
                     $(`#tbody-produksi`).append(`
                         <tr>
                             <td class="produksi-number text-center p-0">${counter+1}</td>
-                            <td><select class="form-select produksi-select-produk" id="produksi-${counter+1}-select-produk">${products}</select></td>
-                            <td>${ingredients}</td>
-                            <td>${machines}</td>
+                            <td><select class="form-select produksi-select-produk" id="produksi-${counter+1}-select-produk" row="${counter+1}">${products}</select></td>
+                            <td id="td-produksi-${counter+1}-ingredient">${ingredients}</td>
+                            <td id="td-produksi-${counter+1}-machine">${machines}</td>
                         </tr>
                     `)
                     
@@ -916,7 +916,40 @@
         }
 
         $(document).on('change', '.produksi-select-produk', function(){
-            alert($(this).val())
+            const row = $(this).attr('row')
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("change-production") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                    'id': $(this).val()
+                },
+                success: function(data) {
+                    let ingredients = ""
+                    let machines = ""
+
+                    data.ingredients.forEach(ingredient => {
+                        ingredients += `<div class="text-center my-3">${ingredient.pivot.amount} ${ingredient.unit} ${ingredient.name}</div>`
+                    })
+
+                    data.machines.forEach((machine, index) => {
+                        machines += `<select class="form-select my-3 produksi-${row}-select-machine" id="produksi-${row}-select-machine-${index+1}">`
+                        machines += `<option value="0" disabled selected>-- Pilih ${machine.name} --</option>`
+                        
+                        data.team_machine.forEach(tm => {
+                            if (machine.id == tm.machines_id) {
+                                machines += `<option value="${tm.id}">${tm.name_type} ${tm.pivot.id}</option>`
+                            }
+                        })
+
+                        machines += `</select>`
+                    })
+
+                    $(`#td-produksi-${row}-ingredient`).html(ingredients)
+                    $(`#td-produksi-${row}-machine`).html(machines)
+                }
+            })
         })
 
         // Update total bahan baku dan limit
