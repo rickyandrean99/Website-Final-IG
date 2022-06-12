@@ -875,8 +875,7 @@
                     '_token': '<?php echo csrf_token() ?>'
                 },
                 success: function(data) {
-                    console.log(data)
-                    let counter = $(`#production-amount`).val()
+                    let counter = parseInt($(`#production-amount`).val())
                     let products = ""
                     let ingredients = ""
                     let machines = ""
@@ -889,39 +888,36 @@
                         ingredients += `<div class="text-center my-3">${ingredient.pivot.amount} ${ingredient.unit} ${ingredient.name}</div>`
                     })
 
-                    data.machines.forEach(machine => {
-                        machines += `<select class="form-select my-3 produksi-1-select" id="produksi-1-select-machine-1">`
-                        machines += `<option value="">-- Pilih Mesin --</option>`
+                    data.machines.forEach((machine, index) => {
+                        machines += `<select class="form-select my-3 produksi-${counter+1}-select-machine" id="produksi-${counter+1}-select-machine-${index+1}">`
+                        machines += `<option value="0" disabled selected>-- Pilih ${machine.name} --</option>`
                         
                         data.team_machine.forEach(tm => {
                             if (machine.id == tm.machines_id) {
-                                machines += `<option value="${tm.id}">${tm.name_type}</option>`
+                                machines += `<option value="${tm.id}">${tm.name_type} ${tm.pivot.id}</option>`
                             }
                         })
 
                         machines += `</select>`
                     })
 
-                    $(`#tbody-produksi`).html(`
+                    $(`#tbody-produksi`).append(`
                         <tr>
-                            <td class="produksi-number text-center p-0">${++counter}</td>
-                            <td>
-                                <select class="form-select" id="produksi-select-produk-1">
-                                    ${products}
-                                </select>
-                            </td>
-                            <td>
-                                ${ingredients}
-                            </td>
-                            <td>
-                                ${machines}
-                            </td>
+                            <td class="produksi-number text-center p-0">${counter+1}</td>
+                            <td><select class="form-select produksi-select-produk" id="produksi-${counter+1}-select-produk">${products}</select></td>
+                            <td>${ingredients}</td>
+                            <td>${machines}</td>
                         </tr>
                     `)
                     
+                    $(`#production-amount`).val(counter+1)
                 }
             })
         }
+
+        $(document).on('change', '.produksi-select-produk', function(){
+            alert($(this).val())
+        })
 
         // Update total bahan baku dan limit
         const updateIngredientPriceAndLimit = () => {
