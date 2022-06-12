@@ -296,7 +296,7 @@
                                     </div>
 
                                     {{-- MESIN --}}
-                                    <div class="col-4">
+                                    <div class="col-5">
                                         <div class="bg-info rounded">
                                             <h3 class="text-center text-gray-100">MESIN</h3>
                                         </div>
@@ -309,11 +309,10 @@
                                                 </tr>
                                             </thead>
                                             <tbody>
-                                                <tr>
-                                                    @php
-                                                    $i = 1
-                                                    @endphp
-                                                    @foreach ($team->machineTypes as $machine)
+                                                @php
+                                                $i = 1
+                                                @endphp
+                                                @foreach ($team->machineTypes as $machine)
                                                 <tr>
                                                     <td class="border-0 text-center align-middle">{{ $i++ }}</td>
                                                     <td class="border-0 text-center align-middle">
@@ -323,11 +322,10 @@
                                                     <td class="border-0 text-center align-middle">
                                                         <button type="button" class="btn btn-danger"
                                                             data-bs-target="#modalJualMesin" data-bs-toggle="modal"
-                                                            )>Jual</button>
+                                                            onclick="showMachineSell({{ $machine->pivot->id }})">Jual</button>
                                                     </td>
                                                 </tr>
                                                 @endforeach
-                                                </tr>
                                             </tbody>
                                         </table>
                                     </div>
@@ -382,8 +380,10 @@
                                     data-bs-target="#modalInventory" aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <p>Nama Mesin : <span id="">Pickup<span></p>
-                                <p>Harga Jual : 2.500 TC</p>
+                                <p><input type="hidden" id="sell-machine-id" value=""></p>
+                                <p>Nama Mesin : <span id="sell-machine-name"></span></p>
+                                <p>Masa Pakai : <span id="sell-machine-lifetime"></span></p>
+                                <p>Harga Jual : <span id="sell-machine-price"></span></p>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal"
@@ -1030,7 +1030,6 @@
 
     // showTransportSell
     const showTransportSell = (id) => {
-
         $.ajax({
             type: 'POST',
             url: '{{ route("transportation.getbyid") }}',
@@ -1062,6 +1061,28 @@
             },
             success: function(data) {
                 alert(data.message)
+            },
+            error: function(error) {
+                console.log(error)
+            }
+        })
+    }
+    
+    // showTransportSell
+    const showMachineSell = (id) => {
+        alert(id)
+        $.ajax({
+            type: 'POST',
+            url: '{{ route("machine.getbyid") }}',
+            data: {
+                '_token': '<?php echo csrf_token() ?>',
+                'id': id
+            },
+            success: function(data) {
+                $(`#sell-machine-name`).text(data.nama)
+                $(`#sell-machine-lifetime`).text(data.lifetime + " Batch")
+                $(`#sell-machine-price`).text(data.price + " TC")
+                $(`#sell-machine-id`).val(data.id)
             },
             error: function(error) {
                 console.log(error)

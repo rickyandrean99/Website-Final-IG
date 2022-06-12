@@ -22,6 +22,7 @@ Route::middleware(['auth'])->group(function() {
     Route::post('/buy-transportation', 'TransportationController@buyTransportation')->name('buy-transportation');
     Route::post('/transportation', 'TransportationController@getTransportById')->name('transportation.getbyid');
     Route::post('/sell-transportation', 'TransportationController@sellTransport')->name('transportation.sell');
+    Route::post('/machine', 'MachineController@getMachineById')->name('machine.getbyid');
 });
 
 Auth::routes();

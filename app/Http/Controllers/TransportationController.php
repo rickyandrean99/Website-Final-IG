@@ -7,7 +7,7 @@ use App\Batch;
 use App\Transportation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class TransportationController extends Controller
 {
