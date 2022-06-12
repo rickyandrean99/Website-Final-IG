@@ -42,6 +42,27 @@
     <link type="text/css" href="{{ asset('') }}vendor/notyf/notyf.min.css" rel="stylesheet">
     <link type="text/css" href="{{ asset('') }}css/volt.css" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.3/font/bootstrap-icons.css">
+
+    <style>
+        body{
+            background: linear-gradient(-45deg, #ea435e, #e087b7, #6669af);
+	        background-size: 400% 400%;
+	        animation: gradient 15s ease infinite;        
+        }
+
+        @keyframes gradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -149,7 +170,8 @@
             <div class="p-1 align-items-center">
                 <!-- Button Modal Produksi -->
                 <button type="button" class="btn btn-block btn-gray-800 m-2" data-bs-toggle="modal"
-                    data-bs-target="#modalProduksi">Produksi</button>
+                    data-bs-target="#modalProduksi"><i class="bi-gear"></i> Produksi</button>
+
                 <!-- Modal Content Produksi -->
                 <div class="modal fade p-5" id="modalProduksi" tabindex="-1" role="dialog"
                     aria-labelledby="modal-default" aria-hidden="true">
@@ -161,84 +183,32 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <table class="table">
-                                    <thead>
+                                <table class="table table-centered table-nowrap" style="vertical-align:middle">
+                                    <thead class="thead-dark">
                                         <tr>
-                                            <th scope="col">No.</th>
-                                            <th scope="col">Produk</th>
-                                            <th scope="col">Bahan</th>
-                                            <th scope="col">Mesin</th>
+                                            <th class="border-0 rounded-start text-center">No</th>
+                                            <th class="border-0 text-center">Produk</th>
+                                            <th class="border-0 text-center">Bahan</th>
+                                            <th class="border-0 rounded-end text-center">Mesin</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr>
-                                            <th scope='row'>1</th>
-                                            <th>
-                                                <select name='produk' id='produk'>
-                                                    <option value='Keripik Apel'>Keripik Apel</option>
-                                                    <option value='Dodol'>Dodol</option>
-                                                    <option value='Sari Buah Apel'>Sari Buah Apel </option>
-                                                </select>
-                                            </th>
-                                            <th>- 2 unit buah apel <br>
-                                                - 2 unit air <br>
-                                                - 1 unit minyak nabati
-                                            </th>
-                                            <th>
-                                                <select name='fruitWasher' id='fruitWasher'>
-                                                    <option value='' disabled selected hidden> --Pilih Fruit Washer--
-                                                    </option>
-                                                    <option value='Fruit Washer X'>Fruit Washer & Seed Remover X
-                                                    </option>
-                                                    <option value='Fruit Washer Y'>Fruit Washer & Seed Remover Y
-                                                    </option>
-                                                    <option value='Fruit Washer Z'>Fruit Washer & Seed Remover Z
-                                                    </option>
-                                                </select> <br>
-                                                <select name='pealer' id='pealer'>
-                                                    <option value='' disabled selected hidden> --Pilih Pealer--
-                                                    </option>
-                                                    <option value='Pealer X'>Pealer X</option>
-                                                    <option value='Pealer Y'>Pealer Y</option>
-                                                    <option value='Pealer Z'>Pealer Z</option>
-                                                </select> <br>
-                                                <select name='cuttingMachine' id='cuttingMachine'>
-                                                    <option value='' disabled selected hidden> --Pilih Cutting Machine--
-                                                    </option>
-                                                    <option value='Cutting Machine X'>Cutting Machine X</option>
-                                                    <option value='Cutting Machine Y'>Cutting Machine Y</option>
-                                                    <option value='Cutting Machine Z'>Cutting Machine Z</option>
-                                                </select> <br>
-                                                <select name='deepFryer' id='deepFryer'>
-                                                    <option value='' disabled selected hidden> --Pilih Deep Fryer--
-                                                    </option>
-                                                    <option value='Deep Fryer X'>Deep Fryer X</option>
-                                                    <option value='Deep Fryer Y'>Deep Fryer Y</option>
-                                                    <option value='Deep Fryer Z'>Deep Fryer Z</option>
-                                                </select> <br>
-                                                <select name='sealer' id='sealer'>
-                                                    <option value='' disabled selected hidden> --Pilih Sealer--
-                                                    </option>
-                                                    <option value='Sealer X'>Sealer X</option>
-                                                    <option value='Sealer Y'>Sealer Y</option>
-                                                    <option value='Sealer Z'>Sealer Z</option>
-                                                </select> <br>
-                                            </th>
-                                        </tr>
+                                    <input type="hidden" value="0" id="production-amount"/>
+                                    <tbody class="border-0" id="tbody-produksi">
+                                        
                                     </tbody>
                                 </table>
-                                <button id='btnAdd' class='btn btn-primary' style="float: left;">Tambah Produk</button>
-                                <button id='btnProduksi' class='btn btn-success' style="float: right;">Mulai
-                                    Produksi</button>
-
-                                <!-- <script>
-                                            $("#btnAdd").click(function(){
-                                                $("tbody").append();
-                                            });
-                                    </script> -->
                             </div>
+                            
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                <div class="row w-100">
+                                    <div class="col">
+                                        <button class='btn btn-secondary' id='btnAdd' onclick="addProduction()">+ Tambah Produk</button>
+                                    </div>
+                                    <div class="col text-end">
+                                        <button class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
+                                        <button class='btn btn-success' id='btnProduksi'>Mulai Produksi</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -250,18 +220,19 @@
             <div class="p-1 align-items-center">
                 <!-- Button Modal -->
                 <button type="button" class="btn btn-block btn-gray-800 m-2" data-bs-toggle="modal"
-                    data-bs-target="#modalInventory">Inventory</button>
+                    data-bs-target="#modalInventory"><i class="bi-bag"></i> Inventory</button>
                 <!-- Modal Content -->
 
                 {{-- MODAL INVENTORY --}}
-                <div class="modal fade p-5" id="modalInventory" aria-hidden="true" aria-labelledby="modalInventoryLabel"
+                <div class="modal fade p-3" id="modalInventory" aria-hidden="true" aria-labelledby="modalInventoryLabel"
                     tabindex="-1">
                     <div class="modal-dialog modal-fullscreen w-100">
                         <div class="modal-content rounded">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="exampleModalToggleLabel2">Inventory</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
+                                    aria-label="Close">
+                                </button>
                             </div>
                             <div class="modal-body">
                                 <div class="row">
@@ -296,7 +267,7 @@
                                     </div>
 
                                     {{-- MESIN --}}
-                                    <div class="col-5">
+                                    <div class="col-4">
                                         <div class="bg-info rounded">
                                             <h3 class="text-center text-gray-100">MESIN</h3>
                                         </div>
@@ -305,26 +276,28 @@
                                                 <tr>
                                                     <th scope="col" class="border-0 text-center">No.</th>
                                                     <th scope="col" class="border-0 text-center">Nama Mesin</th>
-                                                    <th scope="col" class="border-0 text-center">Defect</th>
+                                                    <th scope="col" class="border-0 text-center">Level</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
                                                 @php
-                                                $i = 1
+                                                    $i = 1
                                                 @endphp
                                                 @foreach ($team->machineTypes as $machine)
-                                                <tr>
-                                                    <td class="border-0 text-center align-middle">{{ $i++ }}</td>
-                                                    <td class="border-0 text-center align-middle">
-                                                        {{ $machine->name_type }}</td>
-                                                    <td class="border-0 text-center align-middle">
-                                                        {{ $machine->pivot->defact*100}}%</td>
-                                                    <td class="border-0 text-center align-middle">
-                                                        <button type="button" class="btn btn-danger"
-                                                            data-bs-target="#modalJualMesin" data-bs-toggle="modal"
-                                                            onclick="showMachineSell({{ $machine->pivot->id }})">Jual</button>
-                                                    </td>
-                                                </tr>
+                                                @if($machine->pivot->exist)
+                                                    <tr>
+                                                        <td class="border-0 text-center align-middle">{{ $i++ }}</td>
+                                                        <td class="border-0 text-center align-middle">
+                                                            {{ $machine->name_type }}</td>
+                                                        <td class="border-0 text-center align-middle">
+                                                            {{ $machine->pivot->level}}</td>
+                                                        <td class="border-0 text-center align-middle">
+                                                            <button type="button" class="btn btn-danger"
+                                                                data-bs-target="#modalJualMesin" data-bs-toggle="modal"
+                                                                onclick="showMachineSell({{ $machine->pivot->id }})">Jual</button>
+                                                        </td>
+                                                    </tr>
+                                                @endif
                                                 @endforeach
                                             </tbody>
                                         </table>
@@ -387,7 +360,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#modalInventory">Jual Mesin</button>
+                                    data-bs-target="#modalInventory" onclick="sellMachine()">Jual Mesin</button>
                             </div>
                         </div>
                     </div>
@@ -399,7 +372,7 @@
             <div class="p-1 align-items-center">
                 <!-- Button Modal -->
                 <button type="button" class="btn btn-block btn-gray-800 m-2" data-bs-toggle="modal"
-                    data-bs-target="#modalMarketMenu">Market</button>
+                    data-bs-target="#modalMarketMenu"><i class="bi-shop"></i> Market</button>
                 <!-- Modal Content -->
 
                 {{-- MODAL MARKET --}}
@@ -560,7 +533,7 @@
                             </div>
                             <div class="modal-body px-5 py-4">
                                 <div class="row">
-                                    <div class="col-8">
+                                    <div class="col-9">
                                         <div class="table-responsive">
                                             <table class="table table-centered table-wrap">
                                                 <thead>
@@ -574,6 +547,8 @@
                                                     @foreach($machines as $machine)
                                                     <tr>
                                                         <td class="border-0 text-center align-middle">{{ $machine->id }}
+                                                            <input type="hidden" class="machine-id"
+                                                                value="{{ $machine->id }}">
                                                         </td>
                                                         <td class="border-0 text-center align-middle">
                                                             {{ $machine->name_type }}</td>
@@ -592,7 +567,7 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <div class="col-4 px-4 py-4">
+                                    <div class="col-3 px-4 py-4">
                                         <!-- Total Pengeluaran -->
                                         <div class="row position-fixed" style="width:160px;">
                                             <div class="col-12 bg-info rounded-top text-white text-center fw-bold ">
@@ -608,7 +583,7 @@
                                         <div class="row mt-5 pt-3 position-fixed" style="width:160px;">
                                             <button class="btn btn-success fw-bold p-3 text-white"
                                                 style="font-size: 20px; font-weight: bold"
-                                                onclick="buyMachines()">Buy</button>
+                                                onclick="buyMachine()">Buy</button>
                                             <!-- <button class="col-12 btn btn-success fw-bold p-3 text-white" data-bs-toggle="modal"
                                                 data-bs-target="#modalBeliMachine" style="font-size: 20px; font-weight: bold">Buy</button> -->
                                         </div>
@@ -750,7 +725,7 @@
             <div class="p-1 align-items-center">
                 <!-- Button Modal -->
                 <button type="button" class="btn btn-block btn-primary m-2" data-bs-toggle="modal"
-                    data-bs-target="#modalTransport">Transportation</button>
+                    data-bs-target="#modalTransport"><i class="bi-truck"></i> Transportation</button>
                 <!-- Modal Content -->
 
                 <!-- MODAL TRANSPORTATION -->
@@ -841,7 +816,7 @@
             <div class="p-1  align-items-center">
                 <!-- Button Modal -->
                 <button type="button" class="btn btn-block btn-primary m-2" data-bs-toggle="modal"
-                    data-bs-target="#modalTambahTC">Tambah TC</button>
+                    data-bs-target="#modalTambahTC"><i class="bi-coin"></i> Tambah TC</button>
                 <!-- Modal Content -->
                 <div class="modal fade" id="modalTambahTC" aria-hidden="true" aria-labelledby="modalTambahTCLabel"
                     tabindex="-1">
@@ -892,203 +867,286 @@
     <script src="{{ asset('assets/js/update') }}assets/js/volt.js"></script>
 
     <script type="text/javascript">
-    // Update total bahan baku dan limit
-    const updateIngredientPriceAndLimit = () => {
-        let ingredientsAmount = $(`.ingredient-amount`).map(function() {
-            return $(this).val()
-        }).get()
-        let ingredientsPrice = $(`.ingredient-price`).map(function() {
-            return $(this).val()
-        }).get()
+        const addProduction = () => {
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("add-production") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>'
+                },
+                success: function(data) {
+                    console.log(data)
+                    let counter = $(`#production-amount`).val()
+                    let products = ""
+                    let ingredients = ""
+                    let machines = ""
 
-        // Update total price
-        let totalPrice = 0
-        for (let i = 0; i < ingredientsAmount.length; i++) {
-            totalPrice += (ingredientsAmount[i] * ingredientsPrice[i])
-        }
-        $(`#pengeluaran-ingredient`).text(`${totalPrice} TC`)
+                    data.products.forEach(product => {
+                        products += `<option value='${product.id}'>${product.name}</option>`
+                    })
+                    
+                    data.ingredients.forEach(ingredient => {
+                        ingredients += `<div class="text-center my-3">${ingredient.pivot.amount} ${ingredient.unit} ${ingredient.name}</div>`
+                    })
 
-        // Update limit
-        let limit = $(`#package-limit-hidden`).val()
-        let quantity = 0
-        ingredientsAmount.forEach(amount => {
-            quantity += parseInt(amount)
-        })
-        let remaining = limit - quantity
-        if (remaining < 0) remaining = 0
+                    data.machines.forEach(machine => {
+                        machines += `<select class="form-select my-3 produksi-1-select" id="produksi-1-select-machine-1">`
+                        machines += `<option value="">-- Pilih Mesin --</option>`
+                        
+                        data.team_machine.forEach(tm => {
+                            if (machine.id == tm.machines_id) {
+                                machines += `<option value="${tm.id}">${tm.name_type}</option>`
+                            }
+                        })
 
-        $(`#package-limit`).text(remaining)
-    }
+                        machines += `</select>`
+                    })
 
-    // Beli bahan baku
-    const buyIngredients = () => {
-        if (!confirm("Are you sure?")) return
-
-        let ingredientId = $(`.ingredient-id`).map(function() {
-            return $(this).val()
-        }).get()
-        let ingredientAmount = $(`.ingredient-amount`).map(function() {
-            return $(this).val()
-        }).get()
-
-        $.ajax({
-            type: 'POST',
-            url: '{{ route("buy-ingredient") }}',
-            data: {
-                '_token': '<?php echo csrf_token() ?>',
-                'ingredient_id': ingredientId,
-                'ingredient_amount': ingredientAmount
-            },
-            success: function(data) {
-                if (data.status == "success") {
-                    $(`.ingredient-amount`).val(0)
-                    $(`#pengeluaran-ingredient`).text("0 TC")
-                    $(`#package-limit-hidden`).val(data.limit)
-                    $(`#package-limit`).text(data.limit)
+                    $(`#tbody-produksi`).html(`
+                        <tr>
+                            <td class="produksi-number text-center p-0">${++counter}</td>
+                            <td>
+                                <select class="form-select" id="produksi-select-produk-1">
+                                    ${products}
+                                </select>
+                            </td>
+                            <td>
+                                ${ingredients}
+                            </td>
+                            <td>
+                                ${machines}
+                            </td>
+                        </tr>
+                    `)
+                    
                 }
-
-                alert(data.message)
-            }
-        })
-    }
-
-    // Update total machine price
-    const updateMachinePrice = () => {
-        let machinesAmount = $('.machine-amount').map(function() {
-            return $(this).val()
-        }).get()
-        let machinesPrice = $('.machine-price').map(function() {
-            return $(this).val()
-        }).get()
-
-        let totalPrice = 0
-        for (let i = 0; i < machinesAmount.length; i++) {
-            totalPrice += (machinesAmount[i] * machinesPrice[i])
+            })
         }
 
-        $('#pengeluaran-machine').text(totalPrice + " TC")
-    }
+        // Update total bahan baku dan limit
+        const updateIngredientPriceAndLimit = () => {
+            let ingredientsAmount = $(`.ingredient-amount`).map(function() {
+                return $(this).val()
+            }).get()
+            let ingredientsPrice = $(`.ingredient-price`).map(function() {
+                return $(this).val()
+            }).get()
 
-    // Method buy machine
-    const buyMachines = () => {
-        let machineId = $(`.machine-id`).map(function() {
-            return $(this).val()
-        }).get()
-
-        $.ajax({
-            type: 'POST',
-            url: '{{ route("buy-machine") }}',
-            data: {
-                '_token': '<?php echo csrf_token() ?>',
-                'machine_id': machineId,
-                'machine_amount': machineAmount
-            },
-            success: function(data) {
-                alert(data.message)
+            // Update total price
+            let totalPrice = 0
+            for (let i = 0; i < ingredientsAmount.length; i++) {
+                totalPrice += (ingredientsAmount[i] * ingredientsPrice[i])
             }
-        })
-    }
+            $(`#pengeluaran-ingredient`).text(`${totalPrice} TC`)
 
-    // Update total transportation price
-    const updateTransportationPrice = () => {
-        let transportationsAmount = $('.transportation-amount').map(function() {
-            return $(this).val()
-        }).get()
-        let transportationsPrice = $('.transportation-price').map(function() {
-            return $(this).val()
-        }).get()
+            // Update limit
+            let limit = $(`#package-limit-hidden`).val()
+            let quantity = 0
+            ingredientsAmount.forEach(amount => {
+                quantity += parseInt(amount)
+            })
+            let remaining = limit - quantity
+            if (remaining < 0) remaining = 0
 
-        let totalPrice = 0
-        for (let i = 0; i < transportationsAmount.length; i++) {
-            totalPrice += (transportationsAmount[i] * transportationsPrice[i])
+            $(`#package-limit`).text(remaining)
         }
 
-        $('#pengeluaran-transportation').text(totalPrice + " TC")
-    }
+        // Beli bahan baku
+        const buyIngredients = () => {
+            if (!confirm("Are you sure?")) return
 
-    // Method buy transportation
-    const buyTransportations = () => {
-        if (!confirm("Are you sure?")) return
+            let ingredientId = $(`.ingredient-id`).map(function() {
+                return $(this).val()
+            }).get()
+            let ingredientAmount = $(`.ingredient-amount`).map(function() {
+                return $(this).val()
+            }).get()
 
-        let transportationId = $(`.transportation-id`).map(function() {
-            return $(this).val()
-        }).get()
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("buy-ingredient") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                    'ingredient_id': ingredientId,
+                    'ingredient_amount': ingredientAmount
+                },
+                success: function(data) {
+                    if (data.status == "success") {
+                        $(`.ingredient-amount`).val(0)
+                        $(`#pengeluaran-ingredient`).text("0 TC")
+                        $(`#package-limit-hidden`).val(data.limit)
+                        $(`#package-limit`).text(data.limit)
+                    }
+                    alert(data.message)
+                }
+            })
+        }
 
-        $.ajax({
-            type: 'POST',
-            url: '{{ route("buy-transportation") }}',
-            data: {
-                '_token': '<?php echo csrf_token() ?>',
-                'transportation_id': transportationId,
-                'transportation_amount': transportationAmount
-            },
-            success: function(data) {
-                alert(data.message)
+        // Beli mesin
+        const buyMachine = () => {
+            if (!confirm("Are you sure?")) return
+
+            let machineId = $(`.machine-id`).map(function() {
+                return $(this).val()
+            }).get()
+            let machineAmount = $(`.machine-amount`).map(function() {
+                return $(this).val()
+            }).get()
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("buy-machine") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                    'machine_id': machineId,
+                    'machine_amount': machineAmount
+                },
+                success: function(data) {
+                    if (data.status == "success") {
+                        $(`.machine-amount`).val(0)
+                        $(`#pengeluaran-machine`).text("0 TC")
+                    }
+                    alert(data.message)
+                }
+            })
+        }
+
+        // Update total machine price
+        const updateMachinePrice = () => {
+            let machinesAmount = $('.machine-amount').map(function() {
+                return $(this).val()
+            }).get()
+            let machinesPrice = $('.machine-price').map(function() {
+                return $(this).val()
+            }).get()
+
+            let totalPrice = 0
+            for (let i = 0; i < machinesAmount.length; i++) {
+                totalPrice += (machinesAmount[i] * machinesPrice[i])
             }
-        })
-    }
 
-    // showTransportSell
-    const showTransportSell = (id) => {
-        $.ajax({
-            type: 'POST',
-            url: '{{ route("transportation.getbyid") }}',
-            data: {
-                '_token': '<?php echo csrf_token() ?>',
-                'id': id
-            },
-            success: function(data) {
-                $(`#sell-transport-name`).text(data.nama)
-                $(`#sell-transport-lifetime`).text(data.lifetime + " Batch")
-                $(`#sell-transport-price`).text(data.price + " TC")
-                $(`#sell-transport-id`).val(data.id)
-            },
-            error: function(error) {
-                console.log(error)
-            }
-        })
-    }
+            $('#pengeluaran-machine').text(totalPrice + " TC")
+        }
 
-    const sellTransportations = () => {
-        let id = $(`#sell-transport-id`).val()
+        // Update total transportation price
+        const updateTransportationPrice = () => {
+            let transportationsAmount = $('.transportation-amount').map(function() {
+                return $(this).val()
+            }).get()
+            let transportationsPrice = $('.transportation-price').map(function() {
+                return $(this).val()
+            }).get()
 
-        $.ajax({
-            type: 'POST',
-            url: '{{ route("transportation.sell") }}',
-            data: {
-                '_token': '<?php echo csrf_token() ?>',
-                'id': id
-            },
-            success: function(data) {
-                alert(data.message)
-            },
-            error: function(error) {
-                console.log(error)
+            let totalPrice = 0
+            for (let i = 0; i < transportationsAmount.length; i++) {
+                totalPrice += (transportationsAmount[i] * transportationsPrice[i])
             }
-        })
-    }
-    
-    // showTransportSell
-    const showMachineSell = (id) => {
-        alert(id)
-        $.ajax({
-            type: 'POST',
-            url: '{{ route("machine.getbyid") }}',
-            data: {
-                '_token': '<?php echo csrf_token() ?>',
-                'id': id
-            },
-            success: function(data) {
-                $(`#sell-machine-name`).text(data.nama)
-                $(`#sell-machine-lifetime`).text(data.lifetime + " Batch")
-                $(`#sell-machine-price`).text(data.price + " TC")
-                $(`#sell-machine-id`).val(data.id)
-            },
-            error: function(error) {
-                console.log(error)
-            }
-        })
-    }
+
+            $('#pengeluaran-transportation').text(totalPrice + " TC")
+        }
+
+        // Method buy transportation
+        const buyTransportations = () => {
+            if (!confirm("Are you sure?")) return
+
+            let transportationId = $(`.transportation-id`).map(function() {
+                return $(this).val()
+            }).get()
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("buy-transportation") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                    'transportation_id': transportationId,
+                    'transportation_amount': transportationAmount
+                },
+                success: function(data) {
+                    alert(data.message)
+                }
+            })
+        }
+
+        // showTransportSell
+        const showTransportSell = (id) => {
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("transportation.getbyid") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                    'id': id
+                },
+                success: function(data) {
+                    $(`#sell-transport-name`).text(data.nama)
+                    $(`#sell-transport-lifetime`).text(data.lifetime + " Batch")
+                    $(`#sell-transport-price`).text(data.price + " TC")
+                    $(`#sell-transport-id`).val(data.id)
+                },
+                error: function(error) {
+                    console.log(error)
+                }
+            })
+        }
+
+        const sellTransportations = () => {
+            let id = $(`#sell-transport-id`).val()
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("transportation.sell") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                    'id': id
+                },
+                success: function(data) {
+                    alert(data.message)
+                },
+                error: function(error) {
+                    console.log(error)
+                }
+            })
+        }
+        
+        // show machine sell
+        const showMachineSell = (id) => {
+            alert(id)
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("machine.getbyid") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                    'id': id
+                },
+                success: function(data) {
+                    $(`#sell-machine-name`).text(data.nama)
+                    $(`#sell-machine-lifetime`).text(data.lifetime + " Batch")
+                    $(`#sell-machine-price`).text(data.price + " TC")
+                    $(`#sell-machine-id`).val(data.id)
+                },
+                error: function(error) {
+                    console.log(error)
+                }
+            })
+        }
+
+        const sellMachine = () => {
+            let id = $(`#sell-machine-id`).val()
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("machine.sell") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                    'id': id
+                },
+                success: function(data) {
+                    alert(data.message)
+                },
+                error: function(error) {
+                    console.log(error)
+                }
+            })
+        }
     </script>
 </body>
 

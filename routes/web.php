@@ -23,7 +23,10 @@ Route::middleware(['auth'])->group(function() {
     Route::post('/transportation', 'TransportationController@getTransportById')->name('transportation.getbyid');
     Route::post('/sell-transportation', 'TransportationController@sellTransport')->name('transportation.sell');
     Route::post('/machine', 'MachineController@getMachineById')->name('machine.getbyid');
+    Route::post('/sell-machine', 'MachineController@sellMachine')->name('machine.sell');
+    Route::post('/add-production', 'ProductionController@addProduction')->name('add-production');
 });
 
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/market', function() { return view('market'); })->name('market');

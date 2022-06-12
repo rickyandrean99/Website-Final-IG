@@ -13,6 +13,6 @@ class MachineType extends Model
     }
 
     public function teams() {
-        return $this->belongsToMany("App\Team", "team_machine", "machines_types_id", "teams_id")->withPivot("bacth", "defact", "level");
+        return $this->belongsToMany("App\Team", "team_machine", "machine_types_id", "teams_id")->withPivot("id", "batch", "defact", "level", "exist");
     }
 }
