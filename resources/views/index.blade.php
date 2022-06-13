@@ -189,7 +189,8 @@
                                             <th class="border-0 rounded-start text-center">No</th>
                                             <th class="border-0 text-center">Produk</th>
                                             <th class="border-0 text-center">Bahan</th>
-                                            <th class="border-0 rounded-end text-center">Mesin</th>
+                                            <th class="border-0 text-center">Mesin</th>
+                                            <th class="border-0 rounded-end text-center">Jumlah Produksi</th>
                                         </tr>
                                     </thead>
                                     <input type="hidden" value="0" id="production-amount"/>
@@ -206,7 +207,7 @@
                                     </div>
                                     <div class="col text-end">
                                         <button class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
-                                        <button class='btn btn-success' id='btnProduksi'>Mulai Produksi</button>
+                                        <button class='btn btn-success' id='btnProduksi' onclick="startProduction()">Mulai Produksi</button>
                                     </div>
                                 </div>
                             </div>
@@ -839,7 +840,7 @@
                                     <div class="d-flex flex-row">
                                         <input type="number" class="form-control w-50" id="jumlah-tc">
                                         <button type="button" class="btn btn-success w-25 ms-2"
-                                            id="btnTambahTC">Tambah</button>
+                                            id="btnTambahTC" onclick = "addCoin()">Tambah</button>
                                     </div>
                                 </div>
                             </div>
@@ -870,6 +871,7 @@
     <script src="{{ asset('assets/js/update') }}assets/js/volt.js"></script>
 
     <script type="text/javascript">
+        // Menambah produksi
         const addProduction = () => {
             $.ajax({
                 type: 'POST',
@@ -892,8 +894,8 @@
                     })
 
                     data.machines.forEach((machine, index) => {
-                        machines += `<select class="form-select my-3 produksi-${counter+1}-select-machine" id="produksi-${counter+1}-select-machine-${index+1}">`
-                        machines += `<option value="0" disabled selected>-- Pilih ${machine.name} --</option>`
+                        machines += `<select style="margin: auto" class="w-75 form-select my-3 produksi-${counter+1}-select-machine" id="produksi-${counter+1}-select-machine-${index+1}">`
+                        machines += `<option value="0" selected>-- Pilih ${machine.name} --</option>`
                         
                         data.team_machine.forEach(tm => {
                             if (machine.id == tm.machines_id) {
@@ -907,9 +909,10 @@
                     $(`#tbody-produksi`).append(`
                         <tr>
                             <td class="produksi-number text-center p-0">${counter+1}</td>
-                            <td><select class="form-select produksi-select-produk" id="produksi-${counter+1}-select-produk" row="${counter+1}">${products}</select></td>
+                            <td><select style="margin: auto" class="w-75 form-select produksi-select-produk" id="produksi-${counter+1}-select-produk" row="${counter+1}">${products}</select></td>
                             <td id="td-produksi-${counter+1}-ingredient">${ingredients}</td>
                             <td id="td-produksi-${counter+1}-machine">${machines}</td>
+                            <td><input type="number" style="margin: auto" class="form-control w-50 produksi-input-jumlah" id="produksi-${counter+1}-input-jumlah" min="0" value="0"/></td>
                         </tr>
                     `)
                     
@@ -918,6 +921,7 @@
             })
         }
 
+        // Mengubah produksi
         $(document).on('change', '.produksi-select-produk', function(){
             const row = $(this).attr('row')
 
@@ -937,8 +941,8 @@
                     })
 
                     data.machines.forEach((machine, index) => {
-                        machines += `<select class="form-select my-3 produksi-${row}-select-machine" id="produksi-${row}-select-machine-${index+1}">`
-                        machines += `<option value="0" disabled selected>-- Pilih ${machine.name} --</option>`
+                        machines += `<select style="margin: auto" class="w-75 form-select my-3 produksi-${row}-select-machine" id="produksi-${row}-select-machine-${index+1}">`
+                        machines += `<option value="0" selected>-- Pilih ${machine.name} --</option>`
                         
                         data.team_machine.forEach(tm => {
                             if (machine.id == tm.machines_id) {
@@ -951,9 +955,52 @@
 
                     $(`#td-produksi-${row}-ingredient`).html(ingredients)
                     $(`#td-produksi-${row}-machine`).html(machines)
+                    $(`#produksi-${row}-input-jumlah`).val(0)
                 }
             })
         })
+
+        const startProduction = () => {
+            let productionsId = $(`.produksi-select-produk`).map(function() { return $(this).val() }).get()
+            let productionsAmount = $(`.produksi-input-jumlah`).map(function() { return $(this).val() }).get()
+            let productionsMachines = []
+            let machineUnique = true
+
+            // Mendapatkan Id Machine
+            productionsId.forEach((product, index) => {
+                let machines = $(`.produksi-${index+1}-select-machine`).map(function() { return $(this).val() }).get()
+                productionsMachines.push(machines)
+            })
+
+            // Check apakah machine sudah terpilih, jika machineStatus true maka ada yang belum terpilih
+            let machineStatus = productionsMachines.some(machines => {
+                return machines.some(machine => machine == 0)
+            })
+
+            if (!machineStatus) {
+                // kalau ada yang kedouble dipilih machinenya, gagalkan produksi
+                let machineList = []
+                productionsMachines.forEach(machines => machines.forEach(machine => machineList.push(machine)))
+
+                machineList.forEach((machine1, index1) => {
+                    machineList.forEach((machine2, index2) => {
+                        if (index1 != index2) {
+                            if (machine1 == machine2) {
+                                machineUnique = false
+                            }
+                        }
+                    })
+                })
+
+                if (machineUnique) {
+                    alert("Boleh Produksi")
+                } else {
+                    alert("Tidak boleh menggunakan mesin yang sama di lini produksi yang berbeda!")
+                }
+            } else {
+                alert("Harap pilih mesin terlebih dahulu!")
+            }
+        }
 
         // Update total bahan baku dan limit
         const updateIngredientPriceAndLimit = () => {
@@ -1177,6 +1224,25 @@
                 data: {
                     '_token': '<?php echo csrf_token() ?>',
                     'id': id
+                },
+                success: function(data) {
+                    alert(data.message)
+                },
+                error: function(error) {
+                    console.log(error)
+                }
+            })
+        }
+
+        const addCoin = () =>{
+            let coin = $('#jumlah-tc').val()
+           
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("add-coin") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                    'coin': coin
                 },
                 success: function(data) {
                     alert(data.message)

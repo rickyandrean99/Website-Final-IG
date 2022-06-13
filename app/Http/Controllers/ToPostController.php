@@ -26,4 +26,22 @@ class ToPostController extends Controller
 
         return view('index', compact('batch', 'team', 'ingredient', 'machines', 'transportations', 'limit', 'products'));
     }
+
+    public function addCoin(Request $request){
+        $this->authorize("peserta");
+
+        $coin = $request->get('coin');
+        $team = Team::find(Auth::user()->team);
+
+        $update_balance = $team->increment('balance', $coin);
+        $team->save();
+
+        $status = "success";
+        $message = "Berhasil menambah koin";
+
+        return response()->json(array(
+            'status' => $status,
+            'message' => $message,
+        ), 200);
+    }   
 }
