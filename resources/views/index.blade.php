@@ -648,7 +648,10 @@
                                                 <tbody>
                                                     @foreach($transportations as $transportation)
                                                     <tr>
-                                                        <td class="border-0 text-center">{{ $transportation->id }}</td>
+                                                        <td class="border-0 text-center">{{ $transportation->id }}
+                                                            <input type="hidden" class="transportation-id"
+                                                                value="{{ $transportation->id }}">
+                                                        </td>
                                                         <td class="border-0 text-center">{{ $transportation->name }}
                                                         </td>
                                                         <td class="border-0 text-center text-danger">
@@ -1082,6 +1085,10 @@
                 return $(this).val()
             }).get()
 
+            let transportationAmount = $(`.transportation-amount`).map(function() {
+                return $(this).val()
+            }).get()
+
             $.ajax({
                 type: 'POST',
                 url: '{{ route("buy-transportation") }}',
@@ -1091,6 +1098,10 @@
                     'transportation_amount': transportationAmount
                 },
                 success: function(data) {
+                    if (data.status == "success") {
+                        $(`.transportaion-amount`).val(0)
+                        $(`#pengeluaran-transportaion`).text("0 TC")
+                    }
                     alert(data.message)
                 }
             })
