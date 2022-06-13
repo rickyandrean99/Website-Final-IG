@@ -16,61 +16,116 @@
         <h3 class="text-center text-white fw-bolder">PASAR</h3>
     </div>
 
-    <div class="align-center">
-        <select name="selectBatch" id="selectBatch" class="form-select fw-bold" style="color: #EA435E;">
-            @for ($i = 1; $i < 7; $i++)
-                <option value="batch{{$i}}">Batch {{$i}}</option>
-            @endfor
-        </select>
-
-        <table class="table table-hover bg-white rounded my-1">
-            <thead>
-                <tr class = "text-center align-middle">
-                    <th scope="col">Nama Tim</th>
-                    <th scope="col">Keripik Apel</th>
-                    <th scope="col">Dodol Apel</th>
-                    <th scope="col">Sari Buah Apel</th>
-                    <th scope="col">Total</th>
-                    <th scope="col">Hasil Penjualan</th>
-                    <th scope="col"><i class="bi-x-square-fill text-danger fw-bold"></i></th>
-                </tr>
-            </thead>
-            <tbody>
-                @for ($i = 0; $i < 10; $i++)
-                    <tr class = "text-center align-middle">
-                        <td>Perusahaan {{ $i + 1 }}</td>
-                        <td>
-                            <input type="number" style="margin: auto"
-                            class="form-control w-25 text-center"
-                            id="numKeripikApel" value="0" min="0"
-                            onchange="">
-                        </td>
-                        <td>
-                            <input type="number" style="margin: auto"
-                            class="form-control w-25 text-center"
-                            id="numDodolApel" value="0" min="0"
-                            onchange="">
-                        </td>
-                        <td>
-                            <input type="number" style="margin: auto"
-                            class="form-control w-25 text-center"
-                            id="numSariBuahApel" value="0" min="0"
-                            onchange="">
-                        </td>
-                        <td>
-                            <p>0</p>
-                        </td>
-                        <td>
-                            <p>0</p>
-                        </td>
-                        <td>
-                            <button type="button" class="btn btn-block btn-danger m-2">Sell</button>
-                        </td>
-                    </tr>
+    <div class="d-flex justify-content-between align-center">
+            
+            <!-- SELECT BATCH -->
+            <select name="selectBatch" id="selectBatch" class="form-select fw-bold w-75" style="color: #EA435E;">
+                @for ($i = 1; $i < 7; $i++)
+                    <option value="batch{{$i}}">Batch {{$i}}</option>
                 @endfor
-            </tbody>
-        </table>
+            </select>
+
+            <!-- BUTTON SELL -->
+            <button type="button" class="btn btn-danger w-25 fw-semibold" data-bs-toggle="modal"
+            data-bs-target="#modalSell">JUAL</button>
+
+            <!-- MODAL SELL -->
+           <!-- Modal Content -->
+           <div class="modal fade" id="modalSell" aria-hidden="true" aria-labelledby="modalSellLabel"
+                    tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header text-center">
+                                <h5 class="modal-title w-100"">Jual Produk</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label for="selectTim" class="col-form-label fw-bold">Nama Tim</label>
+                                    <select name="selectTim" id="selectTim" class="form-select w-50 mb-3">
+                                        @for ($i = 1; $i < 11; $i++)
+                                            <option value="batch{{$i}}">Perusahaan {{$i}}</option>
+                                        @endfor
+                                    </select>
+                                    <table class="table table-hover bg-white rounded">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col" class="w-50">Nama Produk</th>
+                                                <th scope="col" class="w-50">Jumlah</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for ($i = 1; $i < 6; $i++)
+                                                <tr>
+                                                    <td>
+                                                        Produk {{ $i }}
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" class="form-control w-50" id="numUpDownProduct{{$i}}" placeholder=0 min=0>
+                                                    </td>
+                                                </tr>
+                                            @endfor
+                                        </tbody>
+                                    </table>
+
+                                    <div class="d-flex justify-content-center mt-2">    
+                                        <button type="button" class="btn btn-danger w-25"
+                                            id="btnTambahTC" onclick = "">Jual</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
     </div>
+
+    <!-- TABLE -->
+    <table class="table table-hover bg-white rounded my-1">
+        <thead>
+            <tr class = "text-center align-middle">
+                <th scope="col">Nama Tim</th>
+                <th scope="col">Keripik Apel</th>
+                <th scope="col">Dodol Apel</th>
+                <th scope="col">Sari Buah Apel</th>
+                <th scope="col">Selai Kulit Apel</th>
+                <th scope="col">Cuka Apel</th>
+                <th scope="col">Total</th>
+                <th scope="col">Hasil Penjualan</th>
+            </tr>
+        </thead>
+        <tbody>
+            @for ($i = 0; $i < 10; $i++)
+                <tr class = "text-center align-middle">
+                    <td>Perusahaan {{ $i + 1 }}</td>
+                    <td>
+                        <p>0</p>
+                    </td>
+                    <td>
+                        <p>0</p>
+                    </td>
+                    <td>
+                        <p>0</p>
+                    </td>
+                    <td>
+                        <p>0</p>
+                    </td>
+                    <td>
+                        <p>0</p>
+                    </td>
+                    <td>
+                        <p>0</p>
+                    </td>
+                    <td>
+                        <p>0</p>
+                    </td>
+                </tr>
+            @endfor
+        </tbody>
+    </table>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
 </body>

@@ -899,7 +899,7 @@
                         
                         data.team_machine.forEach(tm => {
                             if (machine.id == tm.machines_id) {
-                                machines += `<option value="${tm.id}" teammachineid="${tm.pivot.id}">${tm.name_type} ${tm.pivot.id}</option>`
+                                machines += `<option value="${tm.id}" teammachineid="${tm.pivot.id}">${tm.name_type} ${tm.pivot.id} (Level ${tm.pivot.level})</option>`
                             }
                         })
 
@@ -946,7 +946,7 @@
                         
                         data.team_machine.forEach(tm => {
                             if (machine.id == tm.machines_id) {
-                                machines += `<option value="${tm.id}" teammachineid="${tm.pivot.id}">${tm.name_type} ${tm.pivot.id}</option>`
+                                machines += `<option value="${tm.id}" teammachineid="${tm.pivot.id}">${tm.name_type} ${tm.pivot.id} (Level ${tm.pivot.level})</option>`
                             }
                         })
 
@@ -955,7 +955,7 @@
 
                     $(`#td-produksi-${row}-ingredient`).html(ingredients)
                     $(`#td-produksi-${row}-machine`).html(machines)
-                    $(`#produksi-${row}-input-jumlah`).val(0)
+                    $(`#produksi-${row}-input-jumlah`).val(1)
                 }
             })
         })
@@ -999,6 +999,21 @@
 
                 if (machineUnique) {
                     alert("Boleh Produksi")
+                    
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{ route("start-production") }}',
+                        data: {
+                            '_token': '<?php echo csrf_token() ?>',
+                            'production_id': productionsId,
+                            'production_amount': productionsAmount,
+                            'production_machine': productionsMachines,
+                            'production_team_machine': productionsTeamMachines 
+                        },
+                        success: function(data) {
+                            alert(`${data.status}: ${data.message}`)
+                        }
+                    })
                 } else {
                     alert("Tidak boleh menggunakan mesin yang sama di lini produksi yang berbeda!")
                 }

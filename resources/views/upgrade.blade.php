@@ -26,64 +26,70 @@
             </tr>
         </thead>
         <tbody>
-            @for ($i = 1; $i <= 10; $i++)
+            @foreach ($teams as $team)
                 <tr class = "text-center align-middle">
-                    <td class="w-25">Perusahaan {{ $i }}
-                        <input type="hidden" class="team-id" value="{{ $i }}">
+                    <td class="w-25">Perusahaan {{ $team->id }}
                     </td>
                     <td class="w-25">
-                        <select name="selectMachine" id="selectMachine" class="form-select fw-bold">
-                            @for ($j = 0; $j < 7; $j++)
-                                <option value="test">test</option>
-                            @endfor
+                        <select name="selectMachine" id="select-machine-{{$team->id}}" class="form-select fw-bold"
+                        onchange="updateLevel({{ $team->id }})">
+                            <option value="test">Pilih Mesin</option>
+                            @foreach ($team->machineTypes as $machine) 
+                                <option value="{{ $machine->pivot->id }}" machinetypeid="{{ $machine->id }}">{{ $machine->name_type }} {{ $machine->pivot->id}}</option>
+                            @endforeach
                         </select>
                     </td>
                     <td class="w-25">
-                        <p> 1 <p> 
+                        <div id="level-mesin-{{$team->id}}"> 0 </div>
                     </td>
                     <td>
                         <button type="button" class="btn btn-block btn-success m-2">Upgrade</button>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-block btn-primary m-2" onclick="buyFridge()">Buy Fridge</button>
+                        <button type="button" class="btn btn-block btn-primary m-2" onclick="buyFridge({{  $team->id }})">Buy Fridge</button>
                     </td>
                 </tr>
-            @endfor
+            @endforeach
         </tbody>
     </table>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
 
     <script type="text/javascript">
         //beli kulkas
-        const buyFridge = () => {
-            id = $('#team-id').val()
+        const buyFridge = (id) => {
+            if (!confirm("Are you sure?")) return
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("buy-fridge") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                    'id': id
+                },
+                success: function(data) {
+                    alert(data.message)
+                }
+            })
+        }
+
+        //update level
+        const updateLevel = (id) => {
+            let machine_id = $(`#select-machine-${id}`).val()
+            alert(machine_id)
             alert(id)
 
-            // if (!confirm("Are you sure?")) return
-
-            // let machineId = $(`.machine-id`).map(function() {
-            //     return $(this).val()
-            // }).get()
-            // let machineAmount = $(`.machine-amount`).map(function() {
-            //     return $(this).val()
-            // }).get()
-
-            // $.ajax({
-            //     type: 'POST',
-            //     url: '{{ route("buy-machine") }}',
-            //     data: {
-            //         '_token': '<?php echo csrf_token() ?>',
-            //         'machine_id': machineId,
-            //         'machine_amount': machineAmount
-            //     },
-            //     success: function(data) {
-            //         if (data.status == "success") {
-            //             $(`.machine-amount`).val(0)
-            //             $(`#pengeluaran-machine`).text("0 TC")
-            //         }
-            //         alert(data.message)
-            //     }
-            // })
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("update-level") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                    'machine_id': machine_id,
+                    'id': id
+                },
+                success: function(data) {
+                    alert(data.message)
+                }
+            })
         }
     </script>
 </body>

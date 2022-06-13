@@ -32,7 +32,7 @@ class ProductionController extends Controller
             array_push($machine_types_id, $value->id);
         }
 
-        $team_machines = $team->machineTypes()->wherePivotIn('machine_types_id', $machine_types_id)->get();
+        $team_machines = $team->machineTypes()->wherePivotIn('machine_types_id', $machine_types_id)->wherePivot('exist', '1')->get();
 
         return response()->json(array(
             'status'=> "success",
@@ -65,13 +65,57 @@ class ProductionController extends Controller
             array_push($machine_types_id, $value->id);
         }
 
-        $team_machines = $team->machineTypes()->wherePivotIn('machine_types_id', $machine_types_id)->get();
+        $team_machines = $team->machineTypes()->wherePivotIn('machine_types_id', $machine_types_id)->wherePivot('exist', '1')->get();
 
         return response()->json(array(
             'status'=> "success",
             'ingredients' => $ingredient_requirement,
             'machines' => $machine_requirement,
             'team_machine' => $team_machines
+        ), 200);
+    }
+
+    public function startProduction(Request $request) {
+        $team_id = Auth::user()->team;
+        $team = Team::find($team_id);
+
+        $productions_id = $request->get('production_id');
+        $productions_amount = $request->get('production_amount');
+        $productions_machine = $request->get('production_machine');
+        $productions_team_machine = $request->get('production_team_machine');
+
+        // var_dump($productions_id);
+        // var_dump($productions_amount);
+        // var_dump($productions_machine);
+        // var_dump($productions_team_machine);
+
+        // Cek apakah inventory produk dapat menyimpan produk yang bisa dibuat ini
+        $inventory_amount = $team->products->sum('pivot.amount');
+        if ((array_sum($productions_amount) + $inventory_amount) <= $team->product_inventory) {
+            // Cek apakah bahan baku cukup untuk melakukan proses produksi
+            
+            foreach($productions_id as $index => $id) {
+                $product = Product::find($id);
+                $amount = $productions_amount[$index];
+
+                $ingredient_requirement = $product->ingredients();
+
+                var_dump($ingredient_requirement);
+
+                break;
+            }
+            
+
+            $status = "";
+            $message = "";
+        } else {
+            $status = "failed";
+            $message = "Sudah melebihi";
+        }
+        
+        return response()->json(array(
+            'status' => $status,
+            'message' => $message
         ), 200);
     }
 }
