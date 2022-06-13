@@ -37,11 +37,30 @@
                 @for ($i = 0; $i < 10; $i++)
                     <tr class = "text-center align-middle">
                         <td>Perusahaan {{ $i + 1 }}</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
+                        <td>
+                            <input type="number" style="margin: auto"
+                            class="form-control w-25 text-center"
+                            id="numKeripikApel" value="0" min="0"
+                            onchange="">
+                        </td>
+                        <td>
+                            <input type="number" style="margin: auto"
+                            class="form-control w-25 text-center"
+                            id="numDodolApel" value="0" min="0"
+                            onchange="">
+                        </td>
+                        <td>
+                            <input type="number" style="margin: auto"
+                            class="form-control w-25 text-center"
+                            id="numSariBuahApel" value="0" min="0"
+                            onchange="">
+                        </td>
+                        <td>
+                            <p>0</p>
+                        </td>
+                        <td>
+                            <p>0</p>
+                        </td>
                     </tr>
                 @endfor
             </tbody>
