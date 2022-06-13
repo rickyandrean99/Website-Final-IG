@@ -899,7 +899,7 @@
                         
                         data.team_machine.forEach(tm => {
                             if (machine.id == tm.machines_id) {
-                                machines += `<option value="${tm.id}">${tm.name_type} ${tm.pivot.id}</option>`
+                                machines += `<option value="${tm.id}" teammachineid="${tm.pivot.id}">${tm.name_type} ${tm.pivot.id}</option>`
                             }
                         })
 
@@ -912,7 +912,7 @@
                             <td><select style="margin: auto" class="w-75 form-select produksi-select-produk" id="produksi-${counter+1}-select-produk" row="${counter+1}">${products}</select></td>
                             <td id="td-produksi-${counter+1}-ingredient">${ingredients}</td>
                             <td id="td-produksi-${counter+1}-machine">${machines}</td>
-                            <td><input type="number" style="margin: auto" class="form-control w-50 produksi-input-jumlah" id="produksi-${counter+1}-input-jumlah" min="0" value="0"/></td>
+                            <td><input type="number" style="margin: auto" class="form-control w-50 produksi-input-jumlah" id="produksi-${counter+1}-input-jumlah" min="1" value="1"/></td>
                         </tr>
                     `)
                     
@@ -946,7 +946,7 @@
                         
                         data.team_machine.forEach(tm => {
                             if (machine.id == tm.machines_id) {
-                                machines += `<option value="${tm.id}">${tm.name_type} ${tm.pivot.id}</option>`
+                                machines += `<option value="${tm.id}" teammachineid="${tm.pivot.id}">${tm.name_type} ${tm.pivot.id}</option>`
                             }
                         })
 
@@ -964,12 +964,15 @@
             let productionsId = $(`.produksi-select-produk`).map(function() { return $(this).val() }).get()
             let productionsAmount = $(`.produksi-input-jumlah`).map(function() { return $(this).val() }).get()
             let productionsMachines = []
+            let productionsTeamMachines = []
             let machineUnique = true
 
-            // Mendapatkan Id Machine
+            // Mendapatkan Id MachineType dan juga id pivot dari team_machine
             productionsId.forEach((product, index) => {
                 let machines = $(`.produksi-${index+1}-select-machine`).map(function() { return $(this).val() }).get()
+                let teamMachines = $(`.produksi-${index+1}-select-machine`).map(function() { return $(this).find(":selected").attr("teammachineid") }).get()
                 productionsMachines.push(machines)
+                productionsTeamMachines.push(teamMachines)
             })
 
             // Check apakah machine sudah terpilih, jika machineStatus true maka ada yang belum terpilih
@@ -978,14 +981,16 @@
             })
 
             if (!machineStatus) {
-                // kalau ada yang kedouble dipilih machinenya, gagalkan produksi
+                // kalau ada yang kedouble dipilih machineType dengan idPivotnya, gagalkan produksi
                 let machineList = []
+                let teamMachineList = []
                 productionsMachines.forEach(machines => machines.forEach(machine => machineList.push(machine)))
+                productionsTeamMachines.forEach(machines => machines.forEach(machine => teamMachineList.push(machine)))
 
                 machineList.forEach((machine1, index1) => {
                     machineList.forEach((machine2, index2) => {
                         if (index1 != index2) {
-                            if (machine1 == machine2) {
+                            if (machine1 == machine2 && teamMachineList[index1] == teamMachineList[index2]) {
                                 machineUnique = false
                             }
                         }
