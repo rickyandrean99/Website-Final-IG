@@ -44,16 +44,18 @@ class MachineController extends Controller
                 // cari id machine berdasarkan machine types
                 // cari defact
                 if($machine_amount[$index] > 0){
-                    $nama = DB::table('machine_types')->where('id', $id)->get();
-                    $nama_machine = DB::table('machines')->where('id', $nama[0]->machines_id)->get();
-                    $defact = $nama_machine[0]->defact;
-
-                    $team->machineTypes()->attach($id, [
-                        'id' => $new_id++,
-                        'batch' => $batch, 
-                        'defact' => $defact, 
-                        'level' => 0
-                    ]);
+                    for ($i = 1; $i <=$machine_amount[$index]; $i++){
+                        $nama = DB::table('machine_types')->where('id', $id)->get();
+                        $nama_machine = DB::table('machines')->where('id', $nama[0]->machines_id)->get();
+                        $defact = $nama_machine[0]->defact;
+    
+                        $team->machineTypes()->attach($id, [
+                            'id' => $new_id++,
+                            'batch' => $batch, 
+                            'defact' => $defact, 
+                            'level' => 0
+                        ]);
+                    }
                 }
             }
 

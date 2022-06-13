@@ -1138,7 +1138,6 @@
         
         // show machine sell
         const showMachineSell = (id) => {
-            alert(id)
             $.ajax({
                 type: 'POST',
                 url: '{{ route("machine.getbyid") }}',
