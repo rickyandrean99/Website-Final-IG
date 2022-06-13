@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 class ToPostController extends Controller
 {
     public function dashboard() {
-        $this->authorize('peserta');
+        $this->authorize('peserta'); //jangan lupa diganti
 
         $batch = Batch::find(1)->batch;
         $team = Team::find(Auth::user()->team);

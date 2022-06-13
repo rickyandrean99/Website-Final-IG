@@ -21,6 +21,7 @@
                 <th scope="col">Nama Tim</th>
                 <th scope="col">Nama Mesin</th>
                 <th scope="col">Level</th>
+                <th scope="col">Limit</th>
                 <th scope="col"><i class="bi-arrow-up-right-square-fill text-success fw-bold"></th>
                 <th scope="col"><i class="bi-snow text-primary fw-bold"></i></th>
             </tr>
@@ -39,11 +40,15 @@
                             @endforeach
                         </select>
                     </td>
-                    <td class="w-25">
-                        <div id="level-mesin-{{$team->id}}"> 0 </div>
+                    <td class="w-20">
+                        <div >
+                            <span id="level-mesin-{{$team->id}}">0</span> 
+                        </div>
+                    </td>
+                    <td class="w-20">{{ $team->upgrade_machine_limit }}
                     </td>
                     <td>
-                        <button type="button" class="btn btn-block btn-success m-2">Upgrade</button>
+                        <button type="button" class="btn btn-block btn-success m-2" onclick=" upgradeMachine({{  $team->id }})">Upgrade</button>
                     </td>
                     <td>
                         <button type="button" class="btn btn-block btn-primary m-2" onclick="buyFridge({{  $team->id }})">Buy Fridge</button>
@@ -75,8 +80,7 @@
         //update level
         const updateLevel = (id) => {
             let machine_id = $(`#select-machine-${id}`).val()
-            alert(machine_id)
-            alert(id)
+            let machine_types_id = $(`#select-machine-${id}`).find(":selected").attr("machinetypeid")
 
             $.ajax({
                 type: 'POST',
@@ -84,10 +88,37 @@
                 data: {
                     '_token': '<?php echo csrf_token() ?>',
                     'machine_id': machine_id,
+                    ' machine_types_id' :  machine_types_id,
                     'id': id
                 },
                 success: function(data) {
+                    
+                    $(`#level-mesin-${id}`).text(data.level)
+                }
+            })
+        }
+        
+
+        //upgrade-machine
+        const upgradeMachine = (id) =>{
+            let machine_id = $(`#select-machine-${id}`).val()
+            let machine_types_id = $(`#select-machine-${id}`).find(":selected").attr("machinetypeid")
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("upgrade-machine") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                    'machine_id': machine_id,
+                    ' machine_types_id' :  machine_types_id,
+                    'id': id
+                },
+                success: function(data) {
+                    if (data.status == "success") {
+                        $(`#level-mesin-${id}`).text(data.level)
+                    }
                     alert(data.message)
+
                 }
             })
         }

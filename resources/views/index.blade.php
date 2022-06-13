@@ -46,12 +46,16 @@
 
     <style>
         body{
-            background: linear-gradient(-45deg, #ea435e, #e087b7, #6669af);
+            /* background: linear-gradient(-45deg, #ea435e, #e087b7, #6669af);
 	        background-size: 400% 400%;
-	        animation: gradient 15s ease infinite;        
+	        animation: gradient 15s ease infinite;         */
+            background-image: url('{{ asset('')}}assets/img/background.jpg');
+            background-repeat: no-repeat;
+            background-attachment: fixed;  
+            background-size: cover;
         }
 
-        @keyframes gradient {
+        /* @keyframes gradient {
             0% {
                 background-position: 0% 50%;
             }
@@ -61,7 +65,7 @@
             100% {
                 background-position: 0% 50%;
             }
-        }
+        } */
     </style>
 </head>
 
@@ -70,106 +74,179 @@
         <nav class="navbar navbar-top navbar-expand navbar-dashboard navbar-dark ps-0 pe-2 pb-0">
             <div class="container-fluid px-0">
                 <div class="d-flex flex-row justify-content-between w-100" id="navbarSupportedContent">
-                    {{-- SALDO --}}
-                    <div class="navbar-nav align-items-center">
-                        <div class="bg-white rounded shadow p-3 d-flex flex-row align-items-center">
-                            <img src="{{ asset('') }}assets/icons/coin.png" height="20" alt="Coin">
-                            <div class="ms-2">{{ $team->balance }} TC</div>
-                        </div>
+                    <!-- SALDO -->
+                    <div class="bg-white rounded shadow p-3 d-flex flex-row align-items-center">
+                        <img src="{{ asset('') }}assets/icons/coin.png" height="20" alt="Coin">
+                        <div class="ms-2">{{ $team->balance }} TC</div>
                     </div>
 
-                    {{-- NAMA PERUSAHAAN --}}
-                    <div class="bg-white rounded shadow p-3 ms-5 align-items-center">
-                        <div class="fs-2 fw-bolder"> {{ $team->name }}</div>
+                    <!-- BATCH  -->
+                    <div class="text-white rounded shadow p-3 border border-white">
+                        BATCH-{{ $batch }}
                     </div>
-                    <!-- Navbar links -->
-                    <ul class="navbar-nav align-items-center">
-                        <!-- BATCH  -->
-                        <div class="bg-white rounded shadow p-3">
-                            BATCH-{{ $batch }}
-                        </div>
 
-                        <!-- LOGOUT -->
-                        <div class="bg-white rounded shadow p-3 ms-4">
-                            <span class="h5 text-capitalize fw-bold" style="border-radius: 20px"><a
-                                    href="{{ route('logout') }}"
-                                    onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
-                                    class="text-light"> {{ __('Logout') }}</a></span>
-                            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf
-                            </form>
-                        </div>
-                    </ul>
-
+                    <!-- LOGOUT -->
+                    <div class="bg-danger rounded shadow p-3 ms-4">
+                        <span class="h5 text-capitalize fw-bold"><a
+                                href="{{ route('logout') }}"
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();"
+                                class="text-white"> {{ __('Logout') }}</a></span>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf
+                        </form>
+                    </div>
                 </div>
             </div>
         </nav>
 
-        <div class="d-flex flex-row justify-content-center">
-            <!-- PROFIT -->
-            <div class="p-5 w-25">
-                <div class="card border-0 shadow ">
-                    <div class="card-body ">
-                        <div class="row d-block d-xl-flex align-items-center">
-                            <div class="col-12">
-                                <div class="d-flex d-sm-block">
-                                    <h2 class="mb-0">Profit</h2>
-                                    <h4 class="fw-extrabold text-success mb-2">+3,450 TC</h4>
-                                </div>
-                                <div class="d-flex mt-1">
-                                    <div>Persentase <svg class="icon icon-xs text-success" fill="currentColor"
-                                            viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                            <path fill-rule="evenodd"
-                                                d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
-                                                clip-rule="evenodd"></path>
-                                        </svg><span class="text-success fw-bolder">22%</span></div>
-                                </div>
+        <!-- MODEL 1 TEST -->
+        <!-- <div class="row gx-5">
+            <div class="col-xxl-3 col-md-6 mb-5">
+                <div class="card card-raised bg-primary text-white">
+                    <div class="card-body px-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="me-2">
+                                <div class="display-5 text-white">101.1K</div>
+                                <div class="card-text">Downloads</div>
                             </div>
+                            <div class="icon-circle bg-white-50 text-primary"><i class="material-icons">download</i></div>
+                        </div>
+                        <div class="card-text">
+                            <div class="d-inline-flex align-items-center">
+                                <i class="bi-icons icon-xs">arrow_upward</i>
+                                <div class="caption fw-500 me-2">3%</div>
+                                <div class="caption">from last month</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xxl-3 col-md-6 mb-5">
+                <div class="card card-raised bg-warning text-white">
+                    <div class="card-body px-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="me-2">
+                                <div class="display-5 text-white">12.2K</div>
+                                <div class="card-text">Purchases</div>
+                            </div>
+                            <div class="icon-circle bg-white-50 text-warning"><i class="material-icons">storefront</i></div>
+                        </div>
+                        <div class="card-text">
+                            <div class="d-inline-flex align-items-center">
+                                <i class="material-icons icon-xs">arrow_upward</i>
+                                <div class="caption fw-500 me-2">3%</div>
+                                <div class="caption">from last month</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xxl-3 col-md-6 mb-5">
+                <div class="card card-raised bg-secondary text-white">
+                    <div class="card-body px-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="me-2">
+                                <div class="display-5 text-white">5.3K</div>
+                                <div class="card-text">Customers</div>
+                            </div>
+                            <div class="icon-circle bg-white-50 text-secondary"><i class="material-icons">people</i></div>
+                        </div>
+                        <div class="card-text">
+                            <div class="d-inline-flex align-items-center">
+                                <i class="material-icons icon-xs">arrow_upward</i>
+                                <div class="caption fw-500 me-2">3%</div>
+                                <div class="caption">from last month</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xxl-3 col-md-6 mb-5">
+                <div class="card card-raised bg-info text-white">
+                    <div class="card-body px-4">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="me-2">
+                                <div class="display-5 text-white">7</div>
+                                <div class="card-text">Channels</div>
+                            </div>
+                            <div class="icon-circle bg-white-50 text-info"><i class="material-icons">devices</i></div>
+                        </div>
+                        <div class="card-text">
+                            <div class="d-inline-flex align-items-center">
+                                <i class="material-icons icon-xs">arrow_upward</i>
+                                <div class="caption fw-500 me-2">3%</div>
+                                <div class="caption">from last month</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
+        <div class="d-flex justify-content-center pt-4">
+            {{-- NAMA PERUSAHAAN --}}
+            <div class="bg-white rounded p-2 shadow align-items-center">
+                <div class=" fw-bolder fs-1 text-center"> {{ $team->name }}</div>
+            </div>
+        </div>
+                
+        <div class="d-flex justify-content-around  p-5">
+            <!-- PROFIT -->
+            <div class="card shadow mb-3" style="max-width: 18rem;">
+                <img src="{{ asset('')}}assets/img/profit.jpg" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <div class="col-12">
+                        <div class="d-flex d-sm-block">
+                            <h2 class="mb-0">Profit</h2>
+                            <h4 class="fw-extrabold text-success mb-2">+3,450 TC</h4>
+                        </div>
+                        <div class="d-flex mt-1">
+                            <div>Persentase <svg class="icon icon-xs text-success" fill="currentColor"
+                                    viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd"
+                                        d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
+                                        clip-rule="evenodd"></path>
+                                </svg><span class="text-success fw-bolder">22%</span></div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- PANGSA -->
-            <div class="p-5" style="width: 30%">
-                <div class="card border-0 shadow">
-                    <div class="card-body">
-                        <div class="row d-block d-xl-flex align-items-center">
-                            <div class="col-12 ">
-                                <div class="d-flex d-sm-block">
-                                    <h2 class="mb-0">Pangsa Pasar</h2>
-                                    <h1 class="fw-extrabold text-success mb-2">+38%</h1>
-                                </div>
+            <div class="card shadow mb-3" style="max-width: 18rem;">
+                <img src="{{ asset('')}}assets/img/pangsa.jpg" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <div class="col-12 ">
+                        <div class="d-flex d-sm-block">
+                            <h2 class="mb-0">Pangsa Pasar</h2>
+                            <h1 class="fw-extrabold text-success mb-2">+38%</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+            <!-- SIGMA -->
+            <div class="card shadow mb-3" style="max-width: 18rem;">
+                <img src="{{ asset('')}}assets/img/sigma.jpg" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <div class="col-12">
+                        <div class="d-flex d-sm-block">
+                            <h2 class="mb-0">Sigma</h2>
+                            <div class="d-flex">
+                                <h1 class="fw-extrabold fs-1 mb-2">Σ</h1>
+                                <h3 class="fs-1 mb-2">4.34</h3>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- SIGMA -->
-            <div class="p-5 w-25">
-                <div class="card border-0 shadow">
-                    <div class="card-body">
-                        <div class="row d-block d-xl-flex align-items-center">
-                            <div class="col-12 col-xl-7">
-                                <div class="d-flex d-sm-block">
-                                    <h2 class="mb-0">Sigma</h2>
-                                    <div class="d-flex">
-                                        <h1 class="fw-extrabold fs-1 mb-2">Σ</h1>
-                                        <h3 class="fs-1 mb-2">4.34</h3>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
 
         <div class="d-flex flex-row justify-content-center">
             <!-- PRODUKSI -->
             <div class="p-1 align-items-center">
                 <!-- Button Modal Produksi -->
-                <button type="button" class="btn btn-block btn-gray-800 m-2" data-bs-toggle="modal"
+                <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal"
                     data-bs-target="#modalProduksi"><i class="bi-gear"></i> Produksi</button>
 
                 <!-- Modal Content Produksi -->
@@ -220,7 +297,7 @@
             <!-- INVENTORY -->
             <div class="p-1 align-items-center">
                 <!-- Button Modal -->
-                <button type="button" class="btn btn-block btn-gray-800 m-2" data-bs-toggle="modal"
+                <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal"
                     data-bs-target="#modalInventory"><i class="bi-bag"></i> Inventory</button>
                 <!-- Modal Content -->
 
@@ -372,7 +449,7 @@
             <!-- MARKET -->
             <div class="p-1 align-items-center">
                 <!-- Button Modal -->
-                <button type="button" class="btn btn-block btn-gray-800 m-2" data-bs-toggle="modal"
+                <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal"
                     data-bs-target="#modalMarketMenu"><i class="bi-shop"></i> Market</button>
                 <!-- Modal Content -->
 
@@ -728,7 +805,7 @@
             <!-- TRANSPORTATION -->
             <div class="p-1 align-items-center">
                 <!-- Button Modal -->
-                <button type="button" class="btn btn-block btn-primary m-2" data-bs-toggle="modal"
+                <button type="button" class="btn btn-block btn-outline-primary shadow  m-2" data-bs-toggle="modal"
                     data-bs-target="#modalTransport"><i class="bi-truck"></i> Transportation</button>
                 <!-- Modal Content -->
 
@@ -782,7 +859,7 @@
                                 </table>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
                             </div>
                         </div>
                     </div>
@@ -819,7 +896,7 @@
             <!-- INPUT TC -->
             <div class="p-1  align-items-center">
                 <!-- Button Modal -->
-                <button type="button" class="btn btn-block btn-primary m-2" data-bs-toggle="modal"
+                <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal"
                     data-bs-target="#modalTambahTC"><i class="bi-coin"></i> Tambah TC</button>
                 <!-- Modal Content -->
                 <div class="modal fade" id="modalTambahTC" aria-hidden="true" aria-labelledby="modalTambahTCLabel"
@@ -833,9 +910,6 @@
                             </div>
                             <div class="modal-body">
                                 <div class="mb-3">
-                                    <label for="batch" class="col-form-label">Batch</label>
-                                    <input type="number" class="form-control w-25 mb-2" id="batch">
-
                                     <label for="jumlah-tc" class="col-form-label">Jumlah TC</label>
                                     <div class="d-flex flex-row">
                                         <input type="number" class="form-control w-50" id="jumlah-tc">
@@ -845,7 +919,37 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- INFO HUTANG -->
+            <div class="p-1  align-items-center">
+                <!-- Button Modal -->
+                <button type="button" class="btn btn-block btn-outline-primary m-2 shadow" data-bs-toggle="modal"
+                    data-bs-target="#modalInfoHutang"><i class="bi-coin"></i> Info Hutang</button>
+                <!-- Modal Content -->
+                <div class="modal fade" id="modalInfoHutang" aria-hidden="true" aria-labelledby="modalInfoHutangLabel"
+                    tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalToggleLabel2">Info Hutang</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <h4 class="col-form-label">Total Hutang:</h4>
+                                    <h2 id="jumlahHutang">10,000 TC</h2>    
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
+                                <button type="button" class="btn btn-success"id="btnBayarHutang">Bayar</button>
                             </div>
                         </div>
                     </div>

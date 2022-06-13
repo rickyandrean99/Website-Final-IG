@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Team;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class UpgradePostController extends Controller
 {
@@ -34,8 +35,75 @@ class UpgradePostController extends Controller
 
     public function updateLevel(Request $request){
         $machine_id = $request->get('machine_id');
+        $machine_types_id = $request->get('machine_types_id');
+        $id = $request->get('id');
         $team = Team::find($id);
 
-        var_dump($machine_id);
+        $mesin = DB::table('team_machine')
+            ->where('id', $machine_id)
+            ->where('machine_types_id', $machine_types_id)
+            ->where('teams_id', $id)
+            ->get();
+
+        return response()->json(array(
+            'status'=> "success",
+            'level' => $mesin[0]->level
+        ), 200);
+    }
+
+    public function upgradeMachine(Request $request){
+        $machine_id = $request->get('machine_id');
+        $machine_types_id = $request->get('machine_types_id');
+        $id = $request->get('id');
+        $team = Team::find($id);
+        $price = DB::table('machine_types')->where('id', $machine_types_id)->get();
+        $price = $price[0]->upgrade_price;
+
+        $mesin = DB::table('team_machine')
+            ->where('id', $machine_id)
+            ->where('machine_types_id', $machine_types_id)
+            ->where('teams_id', $id)
+            ->get();
+
+        if ($team->upgrade_machine_limit > 0){
+            if($team->balance >= $price){
+                $team->decrement('balance', $price);
+                $team->decrement('upgrade_machine_limit', 1);
+
+                DB::table('team_machine')
+                ->where('id', $machine_id)
+                ->where('machine_types_id', $machine_types_id)
+                ->where('teams_id', $id)
+                ->increment('level', 1);
+
+                $type = DB::table('machine_types')->where('id', $machine_types_id)->get();
+
+                $new_defact = DB::table('machine_level')
+                    ->where('machines_id', $type[0]->machines_id)
+                    ->where('levels_id', $mesin[0]->level + 1)->get();
+
+                DB::table('team_machine')
+                ->where('id', $machine_id)
+                ->where('machine_types_id', $machine_types_id)
+                ->where('teams_id', $id)
+                ->update(['defact' => $new_defact[0]->defact]);
+
+                $status = "success";
+                $message = "Berhasil upgrade machine";
+            }else{
+                $status = "failed";
+                $message = "Koin tidak mencukupi";
+            }
+
+        }else{
+            $status = "failed";
+            $message = "Kesempatan upgrade untuk batch ini sudah habis";
+        }
+
+        return response()->json(array(
+            'status'=> $status,
+            'message' => $message,
+            'level' => $mesin[0]->level
+        ), 200);
     }
 }
