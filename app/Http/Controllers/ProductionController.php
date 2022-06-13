@@ -124,6 +124,7 @@ class ProductionController extends Controller
                 // Lakukan proses produksi
                 foreach($productions_id as $index => $id) {
                     $product = Product::find($id);
+                    $product_amount = $productions_amount[$index];
                     $product_machine = $productions_machine[$index];
                     $product_team_machine = $productions_team_machine[$index];
 
@@ -132,26 +133,41 @@ class ProductionController extends Controller
                         $team->ingredients()->wherePivot('ingredients_id', $id)->decrement('ingredient_inventory.amount', $amount);
                     }
 
-                    // Cari Jumlah Produk jadi dengan rumus defact dari mesin yang digunakan
+                    // Cari id machine yang sudah di order
                     $machines_id = [];
                     foreach($product->machines()->orderBy('order', 'ASC')->get() as $machine){
                         array_push($machines_id, $machine->pivot->machines_id);
                     }
 
+                    // Cari machine type berdasarkan id machine
                     $m_id = implode(',', $machines_id);
                     $machines_need = MachineType::whereIn('machines_id', $machines_id)->orderByRaw("FIELD(machines_id, $m_id)")->get();
-                    
+
+                    // Eliminasi machine type berdasarkan yang tim punya dan simpan defactnya berdasarkan machinetype dan id pivot keberapa
+                    $ordered_machines = [];
                     foreach($machines_need as $machine_need){
                         $machine_team_used = $machine_need->teams()->wherePivot('teams_id', $team_id)->get();
-                        var_dump($machine_team_used[0]->defact);
+
+                        if ($machine_team_used != null) {
+                            foreach($machine_team_used as $mtu){
+                                $ordered_machines[$mtu->pivot->machine_types_id][$mtu->pivot->id] = $mtu->pivot->defact;
+                            }
+                        }
                     }
+
+                    var_dump($ordered_machines);
+
+
+                    // $capacity = [];
+                    // $defact = [];
+                    // 
 
                     // Tambah Produk Jadi ke Inventori
                     //
                 }
 
                 $status = "success";
-                $message = "Belum melebihi";
+                $message = "Hey";
             } else {
                 $status = "failed";
                 $message = "Bahan baku tidak mencukupi";

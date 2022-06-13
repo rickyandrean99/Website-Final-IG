@@ -44,7 +44,7 @@
                             <div class="modal-body">
                                 <div class="mb-3">
                                     <label for="selectTim" class="col-form-label fw-bold">Nama Tim</label>
-                                    <select name="selectTim" id="selectTim" class="form-select w-50 mb-3">
+                                    <select name="selectTim" id="selectTim" class="form-select w-50 mb-3" onchange="updateMarket()">
                                         @for ($i = 1; $i < 11; $i++)
                                             <option value="{{$i}}">Perusahaan {{$i}}</option>
                                         @endfor
@@ -157,13 +157,17 @@
                     'product_id': productId,
                     'product_amount': productAmount
                 },
-                // success: function(data) {
-                //     alert(data.message)
-                // },
-                // error: function(error) {
-                //     console.log(error)
-                // }
+                success: function(data) {
+                    alert(data.message)
+                },
+                error: function(error) {
+                    console.log(error)
+                }
             })
+        }
+
+        const updateMarket = () =>{
+
         }
     </script>
 </body>

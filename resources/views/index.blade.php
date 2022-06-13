@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
@@ -184,8 +183,8 @@
 
         <div class="d-flex justify-content-center pt-4">
             {{-- NAMA PERUSAHAAN --}}
-            <div class="bg-white rounded p-2 shadow align-items-center">
-                <div class=" fw-bolder fs-1 text-center"> {{ $team->name }}</div>
+            <div class="rounded-pill p-2 w-50 shadow align-items-center" style="background-color:rgb(234,67,94,0.6);">
+                <div class=" fw-bolder fs-1 text-center text-white">{{ $team->name }}</div>
             </div>
         </div>
                 
@@ -206,7 +205,7 @@
                                         d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
                                         clip-rule="evenodd"></path>
                                 </svg><span class="text-success fw-bolder">22%</span></div>
-                        </div>
+                            </div>
                     </div>
                 </div>
             </div>
@@ -414,7 +413,49 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalUpgradeInventory">+ Upgrade Kapasitas</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- MODAL UPGRADE INVENTORY--}}
+                <div class="modal fade" id="modalUpgradeInventory" aria-hidden="true" aria-labelledby="modalUpgradeInventory"
+                    tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalToggleLabel2">Upgrade Inventory</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                            <table class="table table-hover bg-white rounded my-1 w-75">
+                                <thead>
+                                    <tr class = "text-center align-middle">
+                                        <th scope="col">Jumlah Inventory</th>
+                                        <th scope="col">Harga Upgrade</th>
+                                        <th scope="col">Biaya Simpan</th>
+                                        <th scope="col"><i class="bi-cart-check text-success fw-bold fs-2"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for ($i=0; $i < 4; $i++)
+                                        <tr class = "text-center align-middle">
+                                            <td>1,250 unit</td>
+                                            <td>750</td>
+                                            <td>1,000</td>
+                                            <td>
+                                                <button type="button" class="btn btn-success">Beli</button>
+                                            </td>
+                                        </tr>
+                                    @endfor
+                                </tbody>
+                            </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
                             </div>
                         </div>
                     </div>
@@ -930,7 +971,7 @@
             <div class="p-1  align-items-center">
                 <!-- Button Modal -->
                 <button type="button" class="btn btn-block btn-outline-primary m-2 shadow" data-bs-toggle="modal"
-                    data-bs-target="#modalInfoHutang"><i class="bi-coin"></i> Info Hutang</button>
+                    data-bs-target="#modalInfoHutang"><i class="bi-cash-coin"></i> Info Hutang</button>
                 <!-- Modal Content -->
                 <div class="modal fade" id="modalInfoHutang" aria-hidden="true" aria-labelledby="modalInfoHutangLabel"
                     tabindex="-1">
@@ -1115,7 +1156,7 @@
                             'production_team_machine': productionsTeamMachines 
                         },
                         success: function(data) {
-                            alert(`${data.status}: ${data.message}`)
+                            console.log(data.message)
                         }
                     })
                 } else {
