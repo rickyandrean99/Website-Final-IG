@@ -63,12 +63,21 @@ class ToPostController extends Controller
 
     public function infoHutang(){
         $team = Team::find(Auth::user()->team);
-        if ($team->debt_paid == 1){
+
+        if ($team->debt_paid != null){
             $status = "success";
             $info = "Hutang Lunas";
         } else{
             $status = "failed";
-            $info = "Hutang Belum Lunas";
+
+            // Munculkan Hutang
+            $batch = Batch::find(1)->batch;
+            $hutang = 25000;
+            for($i = 1; $i <= $batch; $i++) {
+                $hutang = $hutang + (0.05 * $hutang);
+            }
+
+            $info = "Jumlah Hutang: ".ceil($hutang)." TC";
         }
 
         return response()->json(array(
@@ -79,34 +88,78 @@ class ToPostController extends Controller
 
     public function bayarHutang(){
         $team = Team::find(Auth::user()->team);
-
-        $status = "success";
-        $info = "Hutang Lunas";
-
-        if ($team->debt_paid == 1){
+        $batch = Batch::find(1)->batch;
+        
+        if ($team->debt_paid != null){
             return response()->json(array(
                 'message' => "Hutang sudah lunas",
-                'status' => $status,
-                'info' => $info
+                'status' => "success",
+                'info' => "Hutang Lunas"
             ), 200);
         }
-
-        $team->debt_paid = 1;
+        
+        // Bayar Hutang
+        $batch = Batch::find(1)->batch;
+        $hutang = 25000;
+        for($i = 1; $i <= $batch; $i++) {
+            $hutang = $hutang + (0.05 * $hutang);
+        }
+        
+        $team->decrement('balance', ceil($hutang));
+        $team->debt_paid = $batch;
         $team->save();
-
-
+        
         return response()->json(array(
             'message' => "Berhasil bayar hutang",
-            'status' => $status,
-            'info' => $info
+            'status' => "success",
+            'info' => "Hutang Lunas"
         ), 200);
     }
 
     public function upgradeInventory(Request $request){
         $id = $request->get('id');
-        $up_capacity = $request->get('up_capacity');
+        $up_id = $request->get('up_id');
 
-        var_dump($id);
-        var_dump($up_capacity);
+        $pilih = DB::table('inventory_pricelists')->where('inventory_type_id', $id)
+        ->where('id', $up_id)->get();
+
+        $team = Team::find(Auth::user()->team);
+        if($id == 1){
+            if($team->upgrade_ingredient_limit == 1){
+                $team->inventory_ingredient_rent = $pilih[0]->rent_price;
+                $team->ingredient_inventory = $pilih[0]->upgrade_capacity;
+                $team->balance -= $pilih[0]->upgrade_price;
+                $team->upgrade_ingredient_limit = 0;
+                $team->save();
+
+                $status = "success";
+                $message = "Berhasil upgrade inventory bahan baku";
+            }
+            else{
+
+                $status = "failed";
+                $message = "Kesempatan upgrade inventory bahan baku sudah habis";
+            }
+        }
+        else{
+            if($team->upgrade_product_limit == 1){
+                $team->inventory_product_rent = $pilih[0]->rent_price;
+                $team->product_inventory = $pilih[0]->upgrade_capacity;
+                $team->balance -= $pilih[0]->upgrade_price;
+                $team->upgrade_product_limit = 0;
+                $team->save();
+
+                $status = "success";
+                $message = "Berhasil upgrade inventory produk";
+            }else{
+                $status = "failed";
+                $message = "Kesempatan upgrade inventory produk sudah habis";
+            }
+        }
+
+        return response()->json(array(
+            'status' => $status,
+            'message' => $message
+        ), 200);
     }
 }

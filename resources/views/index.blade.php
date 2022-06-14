@@ -45,26 +45,11 @@
 
     <style>
         body{
-            /* background: linear-gradient(-45deg, #ea435e, #e087b7, #6669af);
-	        background-size: 400% 400%;
-	        animation: gradient 15s ease infinite;         */
             background-image: url('{{ asset('')}}assets/img/background.jpg');
             background-repeat: no-repeat;
             background-attachment: fixed;  
             background-size: cover;
         }
-
-        /* @keyframes gradient {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
-        } */
     </style>
 </head>
 
@@ -97,92 +82,8 @@
             </div>
         </nav>
 
-        <!-- MODEL 1 TEST -->
-        <!-- <div class="row gx-5">
-            <div class="col-xxl-3 col-md-6 mb-5">
-                <div class="card card-raised bg-primary text-white">
-                    <div class="card-body px-4">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <div class="me-2">
-                                <div class="display-5 text-white">101.1K</div>
-                                <div class="card-text">Downloads</div>
-                            </div>
-                            <div class="icon-circle bg-white-50 text-primary"><i class="material-icons">download</i></div>
-                        </div>
-                        <div class="card-text">
-                            <div class="d-inline-flex align-items-center">
-                                <i class="bi-icons icon-xs">arrow_upward</i>
-                                <div class="caption fw-500 me-2">3%</div>
-                                <div class="caption">from last month</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xxl-3 col-md-6 mb-5">
-                <div class="card card-raised bg-warning text-white">
-                    <div class="card-body px-4">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <div class="me-2">
-                                <div class="display-5 text-white">12.2K</div>
-                                <div class="card-text">Purchases</div>
-                            </div>
-                            <div class="icon-circle bg-white-50 text-warning"><i class="material-icons">storefront</i></div>
-                        </div>
-                        <div class="card-text">
-                            <div class="d-inline-flex align-items-center">
-                                <i class="material-icons icon-xs">arrow_upward</i>
-                                <div class="caption fw-500 me-2">3%</div>
-                                <div class="caption">from last month</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xxl-3 col-md-6 mb-5">
-                <div class="card card-raised bg-secondary text-white">
-                    <div class="card-body px-4">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <div class="me-2">
-                                <div class="display-5 text-white">5.3K</div>
-                                <div class="card-text">Customers</div>
-                            </div>
-                            <div class="icon-circle bg-white-50 text-secondary"><i class="material-icons">people</i></div>
-                        </div>
-                        <div class="card-text">
-                            <div class="d-inline-flex align-items-center">
-                                <i class="material-icons icon-xs">arrow_upward</i>
-                                <div class="caption fw-500 me-2">3%</div>
-                                <div class="caption">from last month</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xxl-3 col-md-6 mb-5">
-                <div class="card card-raised bg-info text-white">
-                    <div class="card-body px-4">
-                        <div class="d-flex justify-content-between align-items-center mb-2">
-                            <div class="me-2">
-                                <div class="display-5 text-white">7</div>
-                                <div class="card-text">Channels</div>
-                            </div>
-                            <div class="icon-circle bg-white-50 text-info"><i class="material-icons">devices</i></div>
-                        </div>
-                        <div class="card-text">
-                            <div class="d-inline-flex align-items-center">
-                                <i class="material-icons icon-xs">arrow_upward</i>
-                                <div class="caption fw-500 me-2">3%</div>
-                                <div class="caption">from last month</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div> -->
-
         <div class="d-flex justify-content-center pt-4">
-            {{-- NAMA PERUSAHAAN --}}
+            <!-- NAMA PERUSAHAAN -->
             <div class="rounded-pill p-2 w-50 shadow align-items-center" style="background-color:rgb(234,67,94,0.6);">
                 <div class=" fw-bolder fs-1 text-center text-white">{{ $team->name }}</div>
             </div>
@@ -204,8 +105,9 @@
                                     <path fill-rule="evenodd"
                                         d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z"
                                         clip-rule="evenodd"></path>
-                                </svg><span class="text-success fw-bolder">22%</span></div>
+                                </svg><span class="text-success fw-bolder">22%</span>
                             </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -305,8 +207,8 @@
                     tabindex="-1">
                     <div class="modal-dialog modal-fullscreen w-100">
                         <div class="modal-content rounded">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalToggleLabel2">Inventory</h5>
+                            <div class="modal-header text-center">
+                                <h5 class="modal-title w-100" id="exampleModalToggleLabel2">INVENTORY</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close">
                                 </button>
@@ -319,7 +221,7 @@
                                             <h3 class="text-center text-gray-100">BAHAN BAKU</h3>
                                         </div>
                                         <table class="table">
-                                            <thead>
+                                            <thead >
                                                 <tr>
                                                     <th scope="col" class="border-0 text-center">No.</th>
                                                     <th scope="col" class="border-0 text-center">Nama Bahan</th>
@@ -365,7 +267,7 @@
                                                     <tr>
                                                         <td class="border-0 text-center align-middle">{{ $i++ }}</td>
                                                         <td class="border-0 text-center align-middle">
-                                                            {{ $machine->name_type }}</td>
+                                                            {{ $machine->name_type }} {{$machine->pivot->id}}</td>
                                                         <td class="border-0 text-center align-middle">
                                                             {{ $machine->pivot->level}}</td>
                                                         <td class="border-0 text-center align-middle">
@@ -444,15 +346,13 @@
                                 <tbody></tbody>
                                     @foreach($inventory1 as $inventory)
                                         <tr class = "text-center align-middle">
-                                            <td>
-                                                <span id= "up_capacity">
-                                                    {{ $inventory->upgrade_capacity }}
-                                                </span>
+                                            <td>{{ $inventory->upgrade_capacity }}
+                                                <input type="hidden" class="up_id" value="{{ $inventory->id }}">     
                                             </td>
                                             <td>{{ $inventory->upgrade_price }}</td>
                                             <td>{{ $inventory->rent_price }}</td>
                                             <td>
-                                                <button type="button" class="btn btn-success" onclick ="upgradeIngredient()" >Beli</button>
+                                                <button type="button" class="btn btn-success" onclick ="upgradeInventory(1,  {{$inventory->id}})" >Beli</button>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -489,11 +389,11 @@
                                 <tbody>
                                     @foreach($inventory2 as $inventory)
                                         <tr class = "text-center align-middle">
-                                            <td>{{ $inventory->upgrade_capacity }}</td>
+                                            <td>{{ $inventory->upgrade_capacity }}                                            </td>
                                             <td>{{ $inventory->upgrade_price }}</td>
                                             <td>{{ $inventory->rent_price }}</td>
                                             <td>
-                                                <button type="button" class="btn btn-success">Beli</button>
+                                                <button type="button" class="btn btn-success" onclick ="upgradeInventory(2, {{$inventory->id}})">Beli</button>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -546,7 +446,7 @@
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header text-center">
-                                <h5 class="modal-title w-100" id="marketPlaceLabel">Market</h5>
+                                <h5 class="modal-title w-100" id="marketPlaceLabel">MARKET</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
@@ -572,7 +472,7 @@
                             <div
                                 class="modal-header d-flex align-items-center justify-content-center position-relative">
                                 <div>
-                                    <h5 class="modal-title text-center fw-bolder">Bahan Baku</h5>
+                                    <h5 class="modal-title text-center fw-bolder">BAHAN BAKU</h5>
                                 </div>
 
                                 <button type="button" class="btn-close position-absolute" data-bs-dismiss="modal"
@@ -901,8 +801,8 @@
                     tabindex="-1">
                     <div class="modal-dialog modal-fullscreen w-100">
                         <div class="modal-content rounded">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalToggleLabel2">Transportation</h5>
+                            <div class="modal-header text-center">
+                                <h5 class="modal-title w-100">TRANSPORTATION</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
@@ -990,8 +890,8 @@
                     tabindex="-1">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalToggleLabel2">Tambah Tiggie Coin</h5>
+                            <div class="modal-header text-center">
+                                <h5 class="modal-title w-100">TAMBAH TIGGIE COIN</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
@@ -1023,8 +923,8 @@
                     tabindex="-1">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalToggleLabel2">Info Hutang</h5>
+                            <div class="modal-header text-center">
+                                <h5 class="modal-title w-100">INFO HUTANG</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
@@ -1497,31 +1397,29 @@
                         $(`#hutang`).text("")
                     }
                     $(`#jumlahHutang`).text(data.info)
-                },
+                }
                 
             })
         }
 
-        const upgradeIngredient = () =>{
+        const upgradeInventory = (id, up_id) =>{
             if (!confirm("Are you sure?")) return
-
-            let up_capacity = $(`#up_capacity`).val()
-            alert(up_capacity)
 
             $.ajax({
                 type: 'POST',
                 url: '{{ route("upgrade-inventory") }}',
                 data: {
                     '_token': '<?php echo csrf_token() ?>',
-                    'id': 1,
-                    'up_capacity': up_capacity 
+                    'id': id,
+                    'up_id': up_id 
                 },
-                // success: function(data) {
-                    
-                // },
-                
+                success: function(data) {
+                    alert(data.message)
+                }
             })
         }
+
+        
     </script>
 </body>
 

@@ -128,6 +128,17 @@
                     </td>
                 </tr>
             @endfor
+            <tr class = "text-center align-middle">
+                <td>Total</td>
+                <td id = "keripiks">0</td>
+                <td id = "dodols">0</td>
+                <td id = "saris">0</td>
+                <td id = "selais">0</td>
+                <td id = "cukas">0</td>
+                <td id = "jumlahs">0</td>
+                <td id = "subtotals">0</td>
+                
+            </tr>
         </tbody>
     </table>
 
@@ -170,6 +181,13 @@
 
         const updateMarket = () =>{
             let batch = $(`#selectBatch`).val();
+            let keripiks = 0;
+            let dodols = 0;
+            let saris = 0;
+            let selais = 0;
+            let cukas = 0;
+            let jumlahs = 0;
+            let subtotals = 0;
 
             $.ajax({
                 type: 'POST',
@@ -181,29 +199,41 @@
                 success: function(data) {
                     data.keripik.forEach((value, index)=>{
                         $(`#keripik-${index+1}`).text(value)
+                        keripiks += value
                     })
                     data.dodol.forEach((value, index)=>{
                         $(`#dodol-${index+1}`).text(value)
+                        dodols += value
                     })
                     data.sari.forEach((value, index)=>{
                         $(`#sari-${index+1}`).text(value)
-                    })
-                    data.keripik.forEach((value, index)=>{
-                        $(`#keripik-${index+1}`).text(value)
+                        saris += value
                     })
                     data.selai.forEach((value, index)=>{
                         $(`#selai-${index+1}`).text(value)
+                        selais += value
                     })
                     data.cuka.forEach((value, index)=>{
                         $(`#cuka-${index+1}`).text(value)
+                        cukas += value
                     })
                     data.jumlah.forEach((value, index)=>{
                         $(`#jumlah-${index+1}`).text(value)
+                        jumlahs += value
                     })
                     data.subtotal.forEach((value, index)=>{
                         $(`#subtotal-${index+1}`).text(value)
+                        subtotals += value
                     })
-                },
+
+                    $(`#keripiks`).text(keripiks)
+                    $(`#dodols`).text(dodols)
+                    $(`#saris`).text(saris)
+                    $(`#selais`).text(selais)
+                    $(`#cukas`).text(cukas)
+                    $(`#jumlahs`).text(jumlahs)
+                    $(`#subtotals`).text(subtotals)
+                }
             })
         }
     </script>

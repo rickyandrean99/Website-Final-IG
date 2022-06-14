@@ -85,6 +85,7 @@ class ProductionController extends Controller
         $productions_amount = $request->get('production_amount');
         $productions_machine = $request->get('production_machine');
         $productions_team_machine = $request->get('production_team_machine');
+        $apple_need = [1=>0,2=>0,3=>0];
 
         try {
             // Cek jumlah bahan baku keseluruhan yang diperlukan
@@ -99,6 +100,10 @@ class ProductionController extends Controller
                 $product = Product::find($id);
                 foreach($product->ingredients as $ingredient) {
                     $ingredients_need[$ingredient->id] = $ingredient->pivot->amount * $productions_amount[$index];
+                    
+                    if ($ingredient->id == 2 && in_array($id, [1,2,3])) {
+                        $apple_need[$id] = $ingredient->pivot->amount * $productions_amount[$index];
+                    }
                 }
             }
 
@@ -207,6 +212,21 @@ class ProductionController extends Controller
                     foreach($ingredients_need as $id => $amount){
                         $team->ingredients()->wherePivot('ingredients_id', $id)->decrement('ingredient_inventory.amount', $amount);
                     }
+
+                    // Tambahkan special occassion
+                    $apple_need = $apple_need;
+                    foreach($apple_need as $product_id => $apple_amount) {
+                        $result = floor($apple_amount/10);
+                        $id_ingredient = 13;
+                        if ($product_id == 3) $id_ingredient = 14;
+
+                        if ($team->ingredients->contains($id_ingredient)) {
+                            $team->ingredients()->wherePivot('ingredients_id', $id_ingredient)->increment('ingredient_inventory.amount', $result);
+                        } else {
+                            $team->ingredients()->attach($id_ingredient, ['amount' => $result]);
+                        }
+                    }
+
 
                     $status = "success";
                     $message = "Berhasil memproduksi dengan hasil: \n";

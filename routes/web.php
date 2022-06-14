@@ -42,3 +42,7 @@ Route::middleware(['auth'])->group(function() {
 
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
+
+Route::get('/update-batch', function() {
+    return view('update-batch');
+})->name('update-batch');

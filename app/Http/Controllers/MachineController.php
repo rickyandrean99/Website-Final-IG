@@ -28,21 +28,19 @@ class MachineController extends Controller
 
         if ($team->balance >= array_sum($prices)) {
             // kurangi balance
-            $team->decrement('balance', array_sum($prices));
-
-            // ambil id terbaru
-            $new_id = DB::table('team_machine')->select('id')->orderBy('id', 'desc')->get();
-
-            if (count($new_id) > 0) {
-                $new_id = $new_id[0]->id + 1;
-            } else {
-                $new_id = 1;
-            }
+            $team->decrement('balance', array_sum($prices));            
 
             foreach ($machine_id as $index => $id) {
-                // ambil machine type
-                // cari id machine berdasarkan machine types
-                // cari defact
+                // ambil id terbaru
+                $new_id = DB::table('team_machine')->select('id')
+                ->where('machine_types_id', $id)->orderBy('id', 'desc')->get();
+
+                if (count($new_id) > 0) {
+                    $new_id = $new_id[0]->id + 1;
+                } else {
+                    $new_id = 1;
+                }
+
                 if($machine_amount[$index] > 0){
                     for ($i = 1; $i <=$machine_amount[$index]; $i++){
                         $nama = DB::table('machine_types')->where('id', $id)->get();

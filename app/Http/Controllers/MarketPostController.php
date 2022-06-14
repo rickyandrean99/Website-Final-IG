@@ -46,7 +46,10 @@ class MarketPostController extends Controller
                 // var_dump($current_amount);
 
                 $current_demand = DB::table('product_demand')->where('demands_id', $batch)->get();
-                $current_product = DB::table('products')->where('id', $product)->get();
+
+                $current_price = DB::table('product_batchs')
+                    ->where('products_id', $product)->where('id', $batch)->get();
+
                 $product_teams = DB::table('product_inventory')
                 ->where('teams_id', $id)
                 ->where('products_id', $product)->get();
@@ -63,7 +66,7 @@ class MarketPostController extends Controller
                         DB::table('transactions')->insert([
                             'teams_id' => $id,
                             'batch' => $batch,
-                            'subtotal' => $current_product[0]->price *  $product_amount[$index]
+                            'subtotal' => $current_price[0]->price *  $product_amount[$index]
                         ]);
                         
                         // kurangi produk inventory
@@ -91,7 +94,7 @@ class MarketPostController extends Controller
                             }
                         }
 
-                        $subtotal += $current_product[0]->price *  $product_amount[$index];
+                        $subtotal += $current_price[0]->price *  $product_amount[$index];
     
                         $get_id = DB::table('transactions')->select('id')->orderBy('id', 'desc')->get();
                         $get_id = $get_id[0]->id;
@@ -136,6 +139,7 @@ class MarketPostController extends Controller
         for($i = 1; $i <= 10; $i++){
             //tambah subtotal
             $sub_team = DB::table('transactions')->where('teams_id', $i)->where('batch', $batch)->sum('subtotal');
+            $sub_team = (int)$sub_team;
             array_push($subtotal, $sub_team);
             
             $transactions = DB::table('transactions')->where('teams_id', $i)->where('batch', $batch)->get();
