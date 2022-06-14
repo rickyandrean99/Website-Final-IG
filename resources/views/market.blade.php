@@ -12,7 +12,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body style="background-color: #FAF0DC">
-
+    <button type="button" class="btn btn-block btn-outline-danger m-2" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="text-danger">Logout</button>
+    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
     <div style="background-color: #EA435E;">
         <h3 class="text-center text-white fw-bolder">PASAR</h3>
     </div>

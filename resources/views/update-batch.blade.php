@@ -23,13 +23,15 @@
 <body>
     <div class="d-flex justify-content-center p-5">
         <div class="card " style="width: 20rem;">
-        <img src="https://c.tenor.com/MgVKRHA7lUcAAAAd/tentara-itu-harus-hitam-meme-tentara.gif" class="card-img-top" alt="updet">
+            <img src="https://c.tenor.com/MgVKRHA7lUcAAAAd/tentara-itu-harus-hitam-meme-tentara.gif" class="card-img-top" alt="updet">
             <div class="card-body shadow">
                 <h5 class="card-title text-center">UPDATE BATCH</h5>
                 <p class="card-text text-center">Tombol dibawah kalo dipencet nanti bakal ganti batch oke, cek dulu kesesuaian batchnya sebelum tekan tombol ! >:D</p>
                 <div class="d-flex justify-content-center">
-                    <button type="button" class="btn btn-block btn-outline-success m-2"  onclick="updateBatch()">Update</button>
-                    <button type="button" class="btn btn-block btn-outline-warning m-2" onclick="updatePreperation()">Preperation</button>
+                    <button type="button" class="btn btn-block btn-outline-success m-2" onclick="updateBatch()">Update</button>
+                    <button type="button" class="btn btn-block btn-outline-warning m-2" onclick="updatePreperation()">Preparation</button>
+                    <button type="button" class="btn btn-block btn-outline-danger m-2" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="text-danger">Logout</button>
+                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
                 </div>
             </div>
         </div>

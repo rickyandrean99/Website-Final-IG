@@ -27,13 +27,13 @@ class LoginController extends Controller
         if (Auth::user()->role == "peserta") {
             return route('peserta');
         } else if (Auth::user()->role == "upgrade") {
-            return route('panitia');
+            return route('upgrade');
         } else if (Auth::user()->role == "pasar") {
-            return route('panitia');
+            return route('market');
         } else if (Auth::user()->role == "acara") {
-            return route('panitia');
+            return route('batch');
         } else if (Auth::user()->role == "administrator") {
-            return route('panitia');
+            return route('batch');
         }
     }
  
