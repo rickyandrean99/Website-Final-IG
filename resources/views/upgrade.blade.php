@@ -45,7 +45,7 @@
                             <span id="level-mesin-{{$team->id}}">0</span> 
                         </div>
                     </td>
-                    <td class="w-20">{{ $team->upgrade_machine_limit }}
+                    <td class="w-20" id="limit-{{$team->id}}">{{ $team->upgrade_machine_limit }}
                     </td>
                     <td>
                         <button type="button" class="btn btn-block btn-success m-2" onclick=" upgradeMachine({{  $team->id }})">Upgrade</button>
@@ -92,7 +92,6 @@
                     'id': id
                 },
                 success: function(data) {
-                    
                     $(`#level-mesin-${id}`).text(data.level)
                 }
             })
@@ -101,6 +100,7 @@
 
         //upgrade-machine
         const upgradeMachine = (id) =>{
+            if (!confirm("Are you sure?")) return
             let machine_id = $(`#select-machine-${id}`).val()
             let machine_types_id = $(`#select-machine-${id}`).find(":selected").attr("machinetypeid")
 
@@ -114,11 +114,11 @@
                     'id': id
                 },
                 success: function(data) {
+                    alert(data.message)
                     if (data.status == "success") {
                         $(`#level-mesin-${id}`).text(data.level)
+                        $(`#limit-${id}`).text(data.limit)
                     }
-                    alert(data.message)
-
                 }
             })
         }

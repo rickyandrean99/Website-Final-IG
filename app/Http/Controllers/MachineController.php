@@ -74,8 +74,9 @@ class MachineController extends Controller
     public function getMachineById(Request $request){
         $batch = Batch::find(1)->batch;
         $id = $request->get("id");
+        $type_id = $request->get("type_id");
         
-        $machine = DB::table("team_machine")->where('id', $id)->get();
+        $machine = DB::table("team_machine")->where('id', $id)->where('machine_types_id', $type_id)->get();
         $nama = DB::table('machine_types')->where('id', $machine[0]->machine_types_id)->get();
         
         $lifetime = $batch - $machine[0]->batch + 1;
@@ -85,7 +86,7 @@ class MachineController extends Controller
         return response()->json(array(
             'status'=>'ok',
             'id'=>$id,
-            'nama'=>$nama,
+            'nama'=> "$nama $id",
             'lifetime'=>$lifetime,
             'price' => $price
         ));

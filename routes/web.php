@@ -38,11 +38,11 @@ Route::middleware(['auth'])->group(function() {
     Route::post('/add-production', 'ProductionController@addProduction')->name('add-production');
     Route::post('/change-production', 'ProductionController@changeProduction')->name('change-production');
     Route::post('/start-production', 'ProductionController@startProduction')->name('start-production');
+
+    Route::get('/batch', "BatchController@index")->name('batch');
+    Route::post('/update-batch', "BatchController@updateBatch")->name('update-batch');
+    Route::post('/update-preparation', "BatchController@updatePreparation")->name('update-preparation');
 });
 
 Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
-
-Route::get('/update-batch', function() {
-    return view('update-batch');
-})->name('update-batch');

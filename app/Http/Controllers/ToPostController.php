@@ -64,7 +64,7 @@ class ToPostController extends Controller
     public function infoHutang(){
         $team = Team::find(Auth::user()->team);
 
-        if ($team->debt_paid != null){
+        if ($team->debt_paid != 0){
             $status = "success";
             $info = "Hutang Lunas";
         } else{
@@ -90,7 +90,7 @@ class ToPostController extends Controller
         $team = Team::find(Auth::user()->team);
         $batch = Batch::find(1)->batch;
         
-        if ($team->debt_paid != null){
+        if ($team->debt_paid != 0){
             return response()->json(array(
                 'message' => "Hutang sudah lunas",
                 'status' => "success",

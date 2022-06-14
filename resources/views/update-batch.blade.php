@@ -28,13 +28,45 @@
                 <h5 class="card-title text-center">UPDATE BATCH</h5>
                 <p class="card-text text-center">Tombol dibawah kalo dipencet nanti bakal ganti batch oke, cek dulu kesesuaian batchnya sebelum tekan tombol ! >:D</p>
                 <div class="d-flex justify-content-center">
-                    <button type="button" class="btn btn-block btn-outline-success m-2">Update</button>
-                    <button type="button" class="btn btn-block btn-outline-warning m-2">Preperation</button>
+                    <button type="button" class="btn btn-block btn-outline-success m-2"  onclick="updateBatch()">Update</button>
+                    <button type="button" class="btn btn-block btn-outline-warning m-2" onclick="updatePreperation()">Preperation</button>
                 </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        //update preperation
+        const updatePreperation = () => {
+            if (!confirm("Are you sure?")) return
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("update-preparation") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                },
+                success: function(data) {
+                    alert(data.message)
+                }
+            })
+        }
+
+        const updateBatch = () => {
+            if (!confirm("Are you sure?")) return
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("update-batch") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                },
+                success: function(data) {
+                    alert(data.message)
+                }
+            })
+        }
+    </script>
 </body>
 </html>

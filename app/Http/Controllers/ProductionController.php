@@ -189,7 +189,10 @@ class ProductionController extends Controller
                             $product_amount = $machine["capacity"];
                         }
 
-                        $product_amount = $product_amount - ($product_amount * $machine["defact"]);
+                        // Jika special occasion product, maka tidak ada defact
+                        if (!in_array($id, [4,5])){
+                            $product_amount = $product_amount - ($product_amount * $machine["defact"]);
+                        }
                     }
 
                     // Simpan di array 
@@ -226,7 +229,6 @@ class ProductionController extends Controller
                             $team->ingredients()->attach($id_ingredient, ['amount' => $result]);
                         }
                     }
-
 
                     $status = "success";
                     $message = "Berhasil memproduksi dengan hasil: \n";

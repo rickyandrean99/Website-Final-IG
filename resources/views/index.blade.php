@@ -273,7 +273,7 @@
                                                         <td class="border-0 text-center align-middle">
                                                             <button type="button" class="btn btn-danger"
                                                                 data-bs-target="#modalJualMesin" data-bs-toggle="modal"
-                                                                onclick="showMachineSell({{ $machine->pivot->id }})">Jual</button>
+                                                                onclick="showMachineSell({{ $machine->pivot->id }}, {{ $machine->pivot->machine_types_id }})">Jual</button>
                                                         </td>
                                                     </tr>
                                                 @endif
@@ -1089,8 +1089,6 @@
                 })
 
                 if (machineUnique) {
-                    alert("Boleh Produksi")
-                    
                     $.ajax({
                         type: 'POST',
                         url: '{{ route("start-production") }}',
@@ -1306,13 +1304,14 @@
         }
         
         // show machine sell
-        const showMachineSell = (id) => {
+        const showMachineSell = (id, type_id) => {
             $.ajax({
                 type: 'POST',
                 url: '{{ route("machine.getbyid") }}',
                 data: {
                     '_token': '<?php echo csrf_token() ?>',
-                    'id': id
+                    'id': id,
+                    'type_id': type_id
                 },
                 success: function(data) {
                     $(`#sell-machine-name`).text(data.nama)
@@ -1418,8 +1417,6 @@
                 }
             })
         }
-
-        
     </script>
 </body>
 
