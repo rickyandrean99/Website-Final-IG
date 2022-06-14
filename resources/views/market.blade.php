@@ -20,9 +20,9 @@
     <div class="d-flex justify-content-between align-center">
             
             <!-- SELECT BATCH -->
-            <select name="selectBatch" id="selectBatch" class="form-select fw-bold w-75" style="color: #EA435E;">
+            <select name="selectBatch" id="selectBatch" onchange="updateMarket()" class="form-select fw-bold w-75" style="color: #EA435E;">
                 @for ($i = 1; $i < 7; $i++)
-                    <option value="batch-{{$i}}">Batch {{$i}}</option>
+                    <option value="{{$i}}">Batch {{$i}}</option>
                 @endfor
             </select>
 
@@ -44,7 +44,7 @@
                             <div class="modal-body">
                                 <div class="mb-3">
                                     <label for="selectTim" class="col-form-label fw-bold">Nama Tim</label>
-                                    <select name="selectTim" id="selectTim" class="form-select w-50 mb-3" onchange="updateMarket()">
+                                    <select name="selectTim" id="selectTim" class="form-select w-50 mb-3">
                                         @for ($i = 1; $i < 11; $i++)
                                             <option value="{{$i}}">Perusahaan {{$i}}</option>
                                         @endfor
@@ -101,29 +101,29 @@
             </tr>
         </thead>
         <tbody>
-            @for ($i = 0; $i < 10; $i++)
+            @for ($i = 1; $i <= 10; $i++)
                 <tr class = "text-center align-middle">
-                    <td>Perusahaan {{ $i + 1 }}</td>
+                    <td>Perusahaan {{ $i }}</td>
                     <td>
-                        <p>0</p>
+                        <span id="keripik-{{ $i }}">0</span>
                     </td>
                     <td>
-                        <p>0</p>
+                        <span id="dodol-{{ $i }}">0</span>
                     </td>
                     <td>
-                        <p>0</p>
+                        <span id="sari-buah-{{ $i }}">0</span>
                     </td>
                     <td>
-                        <p>0</p>
+                        <span id="selai-kulit-{{ $i }}">0</span>
                     </td>
                     <td>
-                        <p>0</p>
+                        <span id="cuka-{{ $i }}">0</span>
                     </td>
                     <td>
-                        <p>0</p>
+                        <span id="jumlah-produk-{{ $i }}">0</span>
                     </td>
                     <td>
-                        <p>0</p>
+                        <span id="subtotal-{{ $i }}">0</span>
                     </td>
                 </tr>
             @endfor
@@ -146,7 +146,7 @@
                 return $(this).val()
             }).get()
 
-            let id = $(`#selectTim`).val();
+            let id = $(`#selectTim`).val()
 
             $.ajax({
                 type: 'POST',
@@ -167,7 +167,8 @@
         }
 
         const updateMarket = () =>{
-
+            let batch = $(`#selectBatch`).val();
+            alert(batch)
         }
     </script>
 </body>
