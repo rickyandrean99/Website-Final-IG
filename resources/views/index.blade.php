@@ -414,19 +414,61 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
-                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalUpgradeInventory">+ Upgrade Kapasitas</button>
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalUpgradeInventoryIngredient">+ Kapasitas Bahan Baku</button>
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalUpgradeInventoryProduct">+ Kapasitas Produk</button>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {{-- MODAL UPGRADE INVENTORY--}}
-                <div class="modal fade" id="modalUpgradeInventory" aria-hidden="true" aria-labelledby="modalUpgradeInventory"
+                {{-- MODAL UPGRADE INVENTORY  IGNREDIENT--}}
+                <div class="modal fade" id="modalUpgradeInventoryIngredient" aria-hidden="true" aria-labelledby="modalUpgradeInventoryIngredient"
                     tabindex="-1">
                     <div class="modal-dialog modal-dialog-centered">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalToggleLabel2">Upgrade Inventory</h5>
+                                <h5 class="modal-title" id="exampleModalToggleLabel2">Upgrade Kapasitas Bahan Baku</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                            <table class="table table-hover bg-white rounded my-1 w-75">
+                                <thead>
+                                    <tr class = "text-center align-middle">
+                                        <th scope="col">Jumlah Inventory</th>
+                                        <th scope="col">Harga Upgrade</th>
+                                        <th scope="col">Biaya Simpan</th>
+                                        <th scope="col"><i class="bi-cart-check text-success fw-bold fs-2"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @for ($i=0; $i < 4; $i++)
+                                        <tr class = "text-center align-middle">
+                                            <td>1,250 unit</td>
+                                            <td>750</td>
+                                            <td>1,000</td>
+                                            <td>
+                                                <button type="button" class="btn btn-success">Beli</button>
+                                            </td>
+                                        </tr>
+                                    @endfor
+                                </tbody>
+                            </table>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- MODAL UPGRADE INVENTORY  PRODUCT--}}
+                <div class="modal fade" id="modalUpgradeInventoryProduct" aria-hidden="true" aria-labelledby="modalUpgradeInventoryProduct"
+                    tabindex="-1">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalToggleLabel2">Upgrade Kapasitas Produk</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal"
                                     aria-label="Close"></button>
                             </div>
