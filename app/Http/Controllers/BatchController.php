@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 class BatchController extends Controller
 {
     public function index(){
+        $this->authorize('superadmin');
+
         return view('update-batch');
     }
 

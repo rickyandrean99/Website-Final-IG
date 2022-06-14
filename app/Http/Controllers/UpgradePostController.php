@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\DB;
 class UpgradePostController extends Controller
 {
     public function dashboard() {
-        $this->authorize('peserta');
+        $this->authorize('upgrade');
+
         $teams = Team::all();
         return view('upgrade', compact('teams'));
     }

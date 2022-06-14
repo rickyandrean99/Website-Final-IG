@@ -10,10 +10,9 @@ use Illuminate\Support\Facades\DB;
 class MarketPostController extends Controller
 {
     public function dashboard(){
-        $this->authorize('peserta'); //jangan lupa diganti
+        $this->authorize('pasar');
 
         $products = Product::all();
-        // dd($products);
         return view('market', compact('products'));
     }
 

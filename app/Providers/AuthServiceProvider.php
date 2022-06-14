@@ -45,9 +45,5 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('superadmin', function($user) {
             return ($user->role == 'administrator') ? Response::allow() : Response::deny('No Access');
         });
-
-        Gate::define('panitia', function($user) {
-            return ($user->role != 'peserta') ? Response::allow() : Response::deny('No Access');
-        });
     }
 }

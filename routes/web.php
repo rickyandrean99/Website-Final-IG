@@ -18,6 +18,7 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/', 'ToPostController@dashboard')->name('peserta');
     Route::get('/upgrade', 'UpgradePostController@dashboard')->name('upgrade');
     Route::get('/market', 'MarketPostController@dashboard')->name('market');
+    Route::get('/batch', "BatchController@index")->name('batch');
     Route::post('/add-coin', 'ToPostController@addCoin')->name('add-coin');
     Route::post('/info-hutang', 'ToPostController@infoHutang')->name('info-hutang');
     Route::post('/bayar-hutang', 'ToPostController@bayarHutang')->name('bayar-hutang');
@@ -30,7 +31,6 @@ Route::middleware(['auth'])->group(function() {
     Route::post('/upgrade-machine', 'UpgradePostController@upgradeMachine')->name('upgrade-machine');
     Route::post('/sell-produk', 'MarketPostController@sellProduct')->name('product.sell');
     Route::post('/update-market', 'MarketPostController@updateMarket')->name('update-market');
-    
     Route::post('/transportation', 'TransportationController@getTransportById')->name('transportation.getbyid');
     Route::post('/sell-transportation', 'TransportationController@sellTransport')->name('transportation.sell');
     Route::post('/machine', 'MachineController@getMachineById')->name('machine.getbyid');
@@ -38,8 +38,6 @@ Route::middleware(['auth'])->group(function() {
     Route::post('/add-production', 'ProductionController@addProduction')->name('add-production');
     Route::post('/change-production', 'ProductionController@changeProduction')->name('change-production');
     Route::post('/start-production', 'ProductionController@startProduction')->name('start-production');
-
-    Route::get('/batch', "BatchController@index")->name('batch');
     Route::post('/update-batch', "BatchController@updateBatch")->name('update-batch');
     Route::post('/update-preparation', "BatchController@updatePreparation")->name('update-preparation');
 });
