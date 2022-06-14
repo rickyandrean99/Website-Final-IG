@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Product;
 use App\Team;
+use App\Batch;
 use App\MachineType;
 use App\Ingredient;
 use Auth;
@@ -79,15 +80,13 @@ class ProductionController extends Controller
     public function startProduction(Request $request) {
         $team_id = Auth::user()->team;
         $team = Team::find($team_id);
+        $batch = Batch::find(1)->batch;
         $productions_id = $request->get('production_id');
         $productions_amount = $request->get('production_amount');
         $productions_machine = $request->get('production_machine');
         $productions_team_machine = $request->get('production_team_machine');
 
-        // Cek apakah inventory produk dapat menyimpan produk yang bisa dibuat ini
-        // [NOTE: Mending setelah diproduksi saja cek bisa ditampung apa gak, karena produksi kan bisa mengurangi jumlah jadinya]
-        $inventory_amount = $team->products->sum('pivot.amount');
-        if ((array_sum($productions_amount) + $inventory_amount) <= $team->product_inventory) {
+        try {
             // Cek jumlah bahan baku keseluruhan yang diperlukan
             $ingredients_need = [];
             $ingredient_list = Ingredient::all();
@@ -95,7 +94,7 @@ class ProductionController extends Controller
             foreach($ingredient_list as $ingredient) {
                 $ingredients_need[$ingredient->id] = 0.0;
             }
-            
+
             foreach($productions_id as $index => $id) {
                 $product = Product::find($id);
                 foreach($product->ingredients as $ingredient) {
@@ -120,17 +119,21 @@ class ProductionController extends Controller
                 }
             }
 
+            // Apakah bahan baku cukup?
             if ($sufficient_stock) {
+                $product_total_amount = [];
+
                 // Lakukan proses produksi
                 foreach($productions_id as $index => $id) {
                     $product = Product::find($id);
                     $product_amount = $productions_amount[$index];
                     $product_machine = $productions_machine[$index];
                     $product_team_machine = $productions_team_machine[$index];
+                    $machine_input = [];
 
-                    // Kurangi jumlah bahan baku
-                    foreach($ingredients_need as $id => $amount){
-                        $team->ingredients()->wherePivot('ingredients_id', $id)->decrement('ingredient_inventory.amount', $amount);
+                    // Make array with machineType id as index and team_machine pivot id as value
+                    foreach($product_machine as $index => $value) {
+                        $machine_input[$value] = $product_team_machine[$index];
                     }
 
                     // Cari id machine yang sudah di order
@@ -146,40 +149,91 @@ class ProductionController extends Controller
                     // Eliminasi machine type berdasarkan yang tim punya dan simpan defactnya berdasarkan machinetype dan id pivot keberapa
                     $ordered_machines = [];
                     foreach($machines_need as $machine_need){
-                        $machine_team_used = $machine_need->teams()->wherePivot('teams_id', $team_id)->get();
+                        $machine_team_used = $machine_need->teams()->wherePivot('teams_id', $team_id)->wherePivot('exist', '1')->get();
 
                         if ($machine_team_used != null) {
                             foreach($machine_team_used as $mtu){
-                                $ordered_machines[$mtu->pivot->machine_types_id][$mtu->pivot->id] = $mtu->pivot->defact;
+                                $ordered_machines[$mtu->pivot->machine_types_id][$mtu->pivot->id]["defact"] = $mtu->pivot->defact;
+                                $ordered_machines[$mtu->pivot->machine_types_id][$mtu->pivot->id]["capacity"] = MachineType::find($mtu->pivot->machine_types_id)->capacity;
                             }
                         }
                     }
 
-                    var_dump($ordered_machines);
+                    // Mengurutkan machine, kemudian simpan capacity dan defactnya
+                    $machine_process = [];
+                    foreach($ordered_machines as $id_machine_type => $machine_type_team){
+                        foreach($machine_type_team as $mtt_id => $value){
+                            foreach($machine_input as $machine_type_selected => $machine_type_team_selected){
+                                if ($id_machine_type == $machine_type_selected & $mtt_id == $machine_type_team_selected) {
+                                    $machine = [];
+                                    $machine["machinetype"] = $id_machine_type;
+                                    $machine["id"] = $mtt_id;
+                                    $machine["capacity"] = $value["capacity"];
+                                    $machine["defact"] = $value["defact"];
 
+                                    array_push($machine_process, $machine);
+                                    break 2;
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Lakukan proses produksi berdasarkan spesifikasi mesin
+                    foreach($machine_process as $index => $machine) {
+                        if ($product_amount > $machine["capacity"]) {
+                            $product_amount = $machine["capacity"];
+                        }
 
-                    // $capacity = [];
-                    // $defact = [];
-                    // 
+                        $product_amount = $product_amount - ($product_amount * $machine["defact"]);
+                    }
 
-                    // Tambah Produk Jadi ke Inventori
-                    //
+                    // Simpan di array 
+                    $product_total_amount[$id] = floor($product_amount);
                 }
 
-                $status = "success";
-                $message = "Hey";
+                // Cek apakah inventory produk dapat menyimpan produk yang bisa dibuat ini
+                $inventory_amount = $team->products->sum('pivot.amount');
+                if ((array_sum($product_total_amount)+$inventory_amount) <= $team->product_inventory) {
+                    // Tambah Produk Jadi ke Inventori
+                    foreach ($product_total_amount as $product_id => $product_amount) {
+                        if (count($team->products()->wherePivot('products_id', $product_id)->wherePivot('batch', $batch)->get()) > 0) {
+                            $team->products()->wherePivot('products_id', $product_id)->wherePivot('batch', $batch)->increment('product_inventory.amount', $product_amount);
+                        } else {
+                            $team->products()->attach($product_id, ['batch' => $batch, 'amount' => $product_amount]);
+                        }
+                    }
+
+                    // Kurangi jumlah bahan baku
+                    foreach($ingredients_need as $id => $amount){
+                        $team->ingredients()->wherePivot('ingredients_id', $id)->decrement('ingredient_inventory.amount', $amount);
+                    }
+
+                    $status = "success";
+                    $message = "Berhasil memproduksi dengan hasil: \n";
+
+                    $i = 0;
+                    foreach($product_total_amount as $id => $amount) {
+                        $message .= "- ".$amount." ".Product::find($id)->name." (".($productions_amount[$i]-$amount)." gagal)\n";
+                        $i++;
+                    }
+                } else {
+                    $status = "failed";
+                    $message = "Produk inventori tidak mencukupi";
+                }
             } else {
                 $status = "failed";
                 $message = "Bahan baku tidak mencukupi";
             }
-        } else {
-            $status = "failed";
-            $message = "Produk inventori tidak mencukupi";
+
+            return response()->json(array(
+                'status' => $status,
+                'message' => $message
+            ), 200);
+        } catch(Exception $e) {
+            return response()->json(array(
+                'status' => 'failed',
+                'message' => "Terjadi kegagalan dalam proses produksi"
+            ), 200);
         }
-        
-        return response()->json(array(
-            'status' => $status,
-            'message' => $message
-        ), 200);
     }
 }

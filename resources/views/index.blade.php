@@ -397,13 +397,13 @@
                                                 @php
                                                 $i = 1
                                                 @endphp
-                                                @foreach ($team->products as $product)
+                                                @foreach ($product_name as $index=> $product)
                                                 <tr>
                                                     <td class="border-0 text-center align-middle">{{ $i++ }}</td>
-                                                    <td class="border-0 text-center align-middle">{{ $product->name }}
+                                                    <td class="border-0 text-center align-middle">{{ $product }}
                                                     </td>
                                                     <td class="border-0 text-center align-middle">
-                                                        {{ $product->pivot->amount}}</td>
+                                                        {{ $product_amount[$index]}}</td>
                                                 </tr>
                                                 @endforeach
                                             </tbody>
@@ -435,23 +435,27 @@
                             <table class="table table-hover bg-white rounded my-1 w-75">
                                 <thead>
                                     <tr class = "text-center align-middle">
-                                        <th scope="col">Jumlah Inventory</th>
+                                        <th scope="col">Kapasitas Upgrade</th>
                                         <th scope="col">Harga Upgrade</th>
                                         <th scope="col">Biaya Simpan</th>
                                         <th scope="col"><i class="bi-cart-check text-success fw-bold fs-2"></th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    @for ($i=0; $i < 4; $i++)
+                                <tbody></tbody>
+                                    @foreach($inventory1 as $inventory)
                                         <tr class = "text-center align-middle">
-                                            <td>1,250 unit</td>
-                                            <td>750</td>
-                                            <td>1,000</td>
                                             <td>
-                                                <button type="button" class="btn btn-success">Beli</button>
+                                                <span id= "up_capacity">
+                                                    {{ $inventory->upgrade_capacity }}
+                                                </span>
+                                            </td>
+                                            <td>{{ $inventory->upgrade_price }}</td>
+                                            <td>{{ $inventory->rent_price }}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-success" onclick ="upgradeIngredient()" >Beli</button>
                                             </td>
                                         </tr>
-                                    @endfor
+                                    @endforeach
                                 </tbody>
                             </table>
                             </div>
@@ -476,23 +480,23 @@
                             <table class="table table-hover bg-white rounded my-1 w-75">
                                 <thead>
                                     <tr class = "text-center align-middle">
-                                        <th scope="col">Jumlah Inventory</th>
+                                        <th scope="col">Kapasitas Upgrade</th>
                                         <th scope="col">Harga Upgrade</th>
                                         <th scope="col">Biaya Simpan</th>
                                         <th scope="col"><i class="bi-cart-check text-success fw-bold fs-2"></th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @for ($i=0; $i < 4; $i++)
+                                    @foreach($inventory2 as $inventory)
                                         <tr class = "text-center align-middle">
-                                            <td>1,250 unit</td>
-                                            <td>750</td>
-                                            <td>1,000</td>
+                                            <td>{{ $inventory->upgrade_capacity }}</td>
+                                            <td>{{ $inventory->upgrade_price }}</td>
+                                            <td>{{ $inventory->rent_price }}</td>
                                             <td>
                                                 <button type="button" class="btn btn-success">Beli</button>
                                             </td>
                                         </tr>
-                                    @endfor
+                                    @endforeach
                                 </tbody>
                             </table>
                             </div>
@@ -1013,7 +1017,7 @@
             <div class="p-1  align-items-center">
                 <!-- Button Modal -->
                 <button type="button" class="btn btn-block btn-outline-primary m-2 shadow" data-bs-toggle="modal"
-                    data-bs-target="#modalInfoHutang"><i class="bi-cash-coin"></i> Info Hutang</button>
+                    data-bs-target="#modalInfoHutang" onclick="infoHutang()"><i class="bi-cash-coin"></i> Info Hutang</button>
                 <!-- Modal Content -->
                 <div class="modal fade" id="modalInfoHutang" aria-hidden="true" aria-labelledby="modalInfoHutangLabel"
                     tabindex="-1">
@@ -1026,13 +1030,13 @@
                             </div>
                             <div class="modal-body">
                                 <div class="mb-3">
-                                    <h4 class="col-form-label">Total Hutang:</h4>
-                                    <h2 id="jumlahHutang">10,000 TC</h2>    
+                                    <h4 class="col-form-label" id="hutang">Total Hutang:</h4>
+                                    <h2 id="jumlahHutang"></h2>    
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
-                                <button type="button" class="btn btn-success"id="btnBayarHutang">Bayar</button>
+                                <button type="button" class="btn btn-success"id="btnBayarHutang" onclick = "bayarHutang()">Bayar</button>
                             </div>
                         </div>
                     </div>
@@ -1198,7 +1202,7 @@
                             'production_team_machine': productionsTeamMachines 
                         },
                         success: function(data) {
-                            console.log(data.message)
+                            alert(data.message)
                         }
                     })
                 } else {
@@ -1457,6 +1461,65 @@
                 error: function(error) {
                     console.log(error)
                 }
+            })
+        }
+
+        const infoHutang = () =>{
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("info-hutang") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                },
+                success: function(data) {
+                    if(data.status == "success"){
+                        $(`#hutang`).text("")
+                    }
+                    $(`#jumlahHutang`).text(data.info)
+                },
+                
+            })
+        }
+
+        const bayarHutang = () =>{
+            if (!confirm("Are you sure?")) return
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("bayar-hutang") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                },
+                success: function(data) {
+                    alert(data.message)
+
+                    if(data.status == "success"){
+                        $(`#hutang`).text("")
+                    }
+                    $(`#jumlahHutang`).text(data.info)
+                },
+                
+            })
+        }
+
+        const upgradeIngredient = () =>{
+            if (!confirm("Are you sure?")) return
+
+            let up_capacity = $(`#up_capacity`).val()
+            alert(up_capacity)
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("upgrade-inventory") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                    'id': 1,
+                    'up_capacity': up_capacity 
+                },
+                // success: function(data) {
+                    
+                // },
+                
             })
         }
     </script>

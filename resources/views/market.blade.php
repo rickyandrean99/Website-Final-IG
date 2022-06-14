@@ -21,6 +21,7 @@
             
             <!-- SELECT BATCH -->
             <select name="selectBatch" id="selectBatch" onchange="updateMarket()" class="form-select fw-bold w-75" style="color: #EA435E;">
+                <option value="test">Pilih Batch</option>    
                 @for ($i = 1; $i < 7; $i++)
                     <option value="{{$i}}">Batch {{$i}}</option>
                 @endfor
@@ -111,16 +112,16 @@
                         <span id="dodol-{{ $i }}">0</span>
                     </td>
                     <td>
-                        <span id="sari-buah-{{ $i }}">0</span>
+                        <span id="sari-{{ $i }}">0</span>
                     </td>
                     <td>
-                        <span id="selai-kulit-{{ $i }}">0</span>
+                        <span id="selai{{ $i }}">0</span>
                     </td>
                     <td>
                         <span id="cuka-{{ $i }}">0</span>
                     </td>
                     <td>
-                        <span id="jumlah-produk-{{ $i }}">0</span>
+                        <span id="jumlah-{{ $i }}">0</span>
                     </td>
                     <td>
                         <span id="subtotal-{{ $i }}">0</span>
@@ -159,6 +160,7 @@
                 },
                 success: function(data) {
                     alert(data.message)
+                    updateMarket()
                 },
                 error: function(error) {
                     console.log(error)
@@ -168,7 +170,41 @@
 
         const updateMarket = () =>{
             let batch = $(`#selectBatch`).val();
-            alert(batch)
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("update-market") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                    'batch' : batch
+                },
+                success: function(data) {
+                    data.keripik.forEach((value, index)=>{
+                        $(`#keripik-${index+1}`).text(value)
+                    })
+                    data.dodol.forEach((value, index)=>{
+                        $(`#dodol-${index+1}`).text(value)
+                    })
+                    data.sari.forEach((value, index)=>{
+                        $(`#sari-${index+1}`).text(value)
+                    })
+                    data.keripik.forEach((value, index)=>{
+                        $(`#keripik-${index+1}`).text(value)
+                    })
+                    data.selai.forEach((value, index)=>{
+                        $(`#selai-${index+1}`).text(value)
+                    })
+                    data.cuka.forEach((value, index)=>{
+                        $(`#cuka-${index+1}`).text(value)
+                    })
+                    data.jumlah.forEach((value, index)=>{
+                        $(`#jumlah-${index+1}`).text(value)
+                    })
+                    data.subtotal.forEach((value, index)=>{
+                        $(`#subtotal-${index+1}`).text(value)
+                    })
+                },
+            })
         }
     </script>
 </body>

@@ -19,6 +19,9 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/upgrade', 'UpgradePostController@dashboard')->name('upgrade');
     Route::get('/market', 'MarketPostController@dashboard')->name('market');
     Route::post('/add-coin', 'ToPostController@addCoin')->name('add-coin');
+    Route::post('/info-hutang', 'ToPostController@infoHutang')->name('info-hutang');
+    Route::post('/bayar-hutang', 'ToPostController@bayarHutang')->name('bayar-hutang');
+    Route::post('/upgrade-inventory', 'ToPostController@upgradeInventory')->name('upgrade-inventory');
     Route::post('/buy-ingredient', 'IngredientController@buyIngredient')->name('buy-ingredient');
     Route::post('/buy-machine', 'MachineController@buyMachine')->name('buy-machine');
     Route::post('/buy-transportation', 'TransportationController@buyTransportation')->name('buy-transportation');
@@ -26,6 +29,7 @@ Route::middleware(['auth'])->group(function() {
     Route::post('/update-level', 'UpgradePostController@updateLevel')->name('update-level');
     Route::post('/upgrade-machine', 'UpgradePostController@upgradeMachine')->name('upgrade-machine');
     Route::post('/sell-produk', 'MarketPostController@sellProduct')->name('product.sell');
+    Route::post('/update-market', 'MarketPostController@updateMarket')->name('update-market');
     
     Route::post('/transportation', 'TransportationController@getTransportById')->name('transportation.getbyid');
     Route::post('/sell-transportation', 'TransportationController@sellTransport')->name('transportation.sell');
