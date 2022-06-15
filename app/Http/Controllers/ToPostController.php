@@ -23,14 +23,12 @@ class ToPostController extends Controller
         $machines = MachineType::all();
         $transportations = Transportation::all();
         $products = Product::all();
-        $limit = ($team->packages()->wherePivot('packages_id', $batch)->get()[0])->pivot->remaining;
+        $limit = $team->packages()->wherePivot('packages_id', $batch)->first()->pivot->remaining;
         $product_name = ['Keripik Apel', 'Dodol Apel', 'Sari Buah Apel', 'Selai Kulit Apel', 'Cuka Apel'];
         $product_amount = [];
 
         for ($i = 1; $i<=5; $i++){
-            $team_product = DB::table('product_inventory')
-                ->where('teams_id', $team->id)->where('products_id', $i)->sum('amount');
-
+            $team_product = DB::table('product_inventory')->where('teams_id', $team->id)->where('products_id', $i)->sum('amount');
             array_push($product_amount, $team_product);
         }
 
@@ -48,35 +46,28 @@ class ToPostController extends Controller
 
         $coin = $request->get('coin');
         $team = Team::find(Auth::user()->team);
-
-        $update_balance = $team->increment('balance', $coin);
-        $team->save();
-
-        $status = "success";
-        $message = "Berhasil menambah koin";
+        $team->increment('balance', $coin);
 
         return response()->json(array(
-            'status' => $status,
-            'message' => $message,
+            'status' => "success",
+            'message' => "Berhasil menambah koin",
         ), 200);
     }   
 
     public function infoHutang(){
         $team = Team::find(Auth::user()->team);
 
-        if ($team->debt_paid != 0){
+        if ($team->debt_paid != 0) {
             $status = "success";
             $info = "Hutang Lunas";
-        } else{
-            $status = "failed";
-
-            // Munculkan Hutang
+        } else {
             $batch = Batch::find(1)->batch;
             $hutang = 25000;
-            for($i = 1; $i <= $batch; $i++) {
-                $hutang = $hutang + (0.05 * $hutang);
+            for($i = 1; $i < $batch; $i++) {
+                $hutang += (0.05 * $hutang);
             }
 
+            $status = "failed";
             $info = "Jumlah Hutang: ".ceil($hutang)." TC";
         }
 
@@ -88,7 +79,6 @@ class ToPostController extends Controller
 
     public function bayarHutang(){
         $team = Team::find(Auth::user()->team);
-        $batch = Batch::find(1)->batch;
         
         if ($team->debt_paid != 0){
             return response()->json(array(
@@ -98,21 +88,30 @@ class ToPostController extends Controller
             ), 200);
         }
         
-        // Bayar Hutang
         $batch = Batch::find(1)->batch;
         $hutang = 25000;
-        for($i = 1; $i <= $batch; $i++) {
-            $hutang = $hutang + (0.05 * $hutang);
+        for ($i = 1; $i < $batch; $i++) {
+            $hutang += (0.05 * $hutang);
         }
-        
-        $team->decrement('balance', ceil($hutang));
-        $team->debt_paid = $batch;
-        $team->save();
-        
+
+        if ($team->balance >= ceil($hutang)) {
+            $team->decrement('balance', ceil($hutang));
+            $team->debt_paid = $batch;
+            $team->save();
+
+            $status = "success";
+            $message = "Berhasil bayar hutang";
+            $info = "Hutang Lunas";
+        } else {
+            $status = "failed";
+            $message = "Saldo tidak mencukupi";
+            $info = "Hutang belum lunas";
+        }
+
         return response()->json(array(
-            'message' => "Berhasil bayar hutang",
-            'status' => "success",
-            'info' => "Hutang Lunas"
+            'status' => $status,
+            'message' => $message,
+            'info' => $info
         ), 200);
     }
 }

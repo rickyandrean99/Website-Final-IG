@@ -1358,7 +1358,7 @@
                     alert(data.message)
                 },
                 error: function(error) {
-                    console.log(error)
+                    alert(error)
                 }
             })
         }
@@ -1394,8 +1394,8 @@
 
                     if(data.status == "success"){
                         $(`#hutang`).text("")
+                        $(`#jumlahHutang`).text(data.info)
                     }
-                    $(`#jumlahHutang`).text(data.info)
                 }
                 
             })
