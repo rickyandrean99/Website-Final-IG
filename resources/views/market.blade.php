@@ -111,7 +111,7 @@
                         <span id="sari-{{ $i }}">0</span>
                     </td>
                     <td>
-                        <span id="selai{{ $i }}">0</span>
+                        <span id="selai-{{ $i }}">0</span>
                     </td>
                     <td>
                         <span id="cuka-{{ $i }}">0</span>
@@ -177,8 +177,6 @@
             let keripiks = 0;
             let dodols = 0;
             let saris = 0;
-            let selais = 0;
-            let cukas = 0;
             let jumlahs = 0;
             let subtotals = 0;
 
@@ -206,11 +204,9 @@
                     })
                     data.selai.forEach((value, index)=>{
                         $(`#selai-${index+1}`).text(value)
-                        selais += value
                     })
                     data.cuka.forEach((value, index)=>{
                         $(`#cuka-${index+1}`).text(value)
-                        cukas += value
                     })
                     data.jumlah.forEach((value, index)=>{
                         $(`#jumlah-${index+1}`).text(value)

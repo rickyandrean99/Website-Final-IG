@@ -253,7 +253,8 @@
                                     {{-- MESIN --}}
                                     <div class="col-4">
                                         <div class="bg-info rounded">
-                                            <h4 class="text-center text-gray-100 py-4">MESIN</h4>
+                                            <h3 class="text-center text-gray-100">MESIN</h3>
+                                            
                                         </div>
                                         <table class="table">
                                             <thead>

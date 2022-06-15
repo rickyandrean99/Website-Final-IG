@@ -88,13 +88,14 @@ class MarketPostController extends Controller
 
         $transaction_id = DB::table('transactions')->select('id')->orderBy('id', 'desc')->get();
         $transaction_id = $transaction_id[0]->id;
-
-        $product_teams = DB::table('product_inventory')
-        ->where('teams_id', $id)
-        ->where('products_id', $product)->get();
-
+        
         //masukkan ke transaksi produk (row sesuai dengan jumlah jenis produk)
         foreach ($product_id as $index => $product) {
+
+            $product_teams = DB::table('product_inventory')
+            ->where('teams_id', $id)
+            ->where('products_id', $product)->get();
+
             if($product_amount[$index] > 0){
                 // kurangi produk inventory
                 $amount = $product_amount[$index];
@@ -166,8 +167,8 @@ class MarketPostController extends Controller
                 //tambah jumlah team
                 foreach($transactions as $transaction){
                     $amount = DB::table('product_transaction')
-                        ->where('transactions_id', $transaction->id)->get();
-                    $jumlah_team += $amount[0]->amount;
+                        ->where('transactions_id', $transaction->id)->sum('amount');
+                    $jumlah_team += $amount;
                 }
 
                 //tambah keripik team
