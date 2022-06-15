@@ -230,9 +230,9 @@
                     $(`#keripiks`).text(keripiks)
                     $(`#dodols`).text(dodols)
                     $(`#saris`).text(saris)
-                    $(`#selais`).text(selais)
-                    $(`#cukas`).text(cukas)
-                    $(`#jumlahs`).text(jumlahs)
+                    $(`#selais`).text("-")
+                    $(`#cukas`).text("-")
+                    $(`#jumlahs`).text(jumlahs-selais-cukas)
                     $(`#subtotals`).text(subtotals)
                 }
             })
