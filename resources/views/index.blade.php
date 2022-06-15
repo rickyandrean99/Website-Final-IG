@@ -254,6 +254,9 @@
                                     <div class="col-4">
                                         <div class="bg-info rounded">
                                             <h3 class="text-center text-gray-100">MESIN</h3>
+                                                <div class="d-flex justify-content-center text-gray-100" >
+                                                    <h5>-------</h5>
+                                                </div>
                                             
                                         </div>
                                         <table class="table">
