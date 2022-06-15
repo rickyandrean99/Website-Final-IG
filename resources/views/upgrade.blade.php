@@ -14,12 +14,14 @@
 <body>
     <button type="button" class="btn btn-block btn-outline-danger m-2" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="text-danger">Logout</button>
     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
+    
     <div style="background-color: #EA435E;">
         <h3 class="text-center text-white fw-bolder">UPGRADE</h3>
     </div>
+    
     <table class="table table-hover bg-white rounded my-1">
         <thead>
-            <tr class = "text-center align-middle">
+            <tr class="text-center align-middle">
                 <th scope="col">Nama Tim</th>
                 <th scope="col">Nama Mesin</th>
                 <th scope="col">Level</th>
@@ -29,41 +31,37 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($teams as $team)
-                <tr class = "text-center align-middle">
-                    <td class="w-25">Perusahaan {{ $team->id }}
-                    </td>
+            @foreach($teams as $team)
+                <tr class="text-center align-middle">
+                    <td class="w-25">Perusahaan {{ $team->id }}</td>
                     <td class="w-25">
-                        <select name="selectMachine" id="select-machine-{{$team->id}}" class="form-select fw-bold"
-                        onchange="updateLevel({{ $team->id }})">
-                            <option value="test">Pilih Mesin</option>
-                            @foreach ($team->machineTypes as $machine) 
-                                <option value="{{ $machine->pivot->id }}" machinetypeid="{{ $machine->id }}">{{ $machine->name_type }} {{ $machine->pivot->id}}</option>
+                        <select name="selectMachine" id="select-machine-{{$team->id}}" class="form-select fw-bold" onchange="updateLevel({{ $team->id }})">
+                            <option value="" disabled selected>Pilih Mesin</option>
+                            @foreach($team->machineTypes as $machine)
+                                @if($machine->pivot->exist) 
+                                    <option value="{{ $machine->pivot->id }}" machinetypeid="{{ $machine->id }}">{{ $machine->name_type }} {{ $machine->pivot->id}}</option>
+                                @endif
                             @endforeach
                         </select>
                     </td>
                     <td class="w-20">
-                        <div >
-                            <span id="level-mesin-{{$team->id}}">0</span> 
-                        </div>
+                        <div><span id="level-mesin-{{$team->id}}">0</span></div>
                     </td>
-                    <td class="w-20" id="limit-{{$team->id}}">{{ $team->upgrade_machine_limit }}
+                    <td class="w-20" id="limit-{{$team->id}}">{{ $team->upgrade_machine_limit }}</td>
+                    <td>
+                        <button type="button" class="btn btn-block btn-success m-2" onclick="upgradeMachine({{ $team->id }})">Upgrade</button>
                     </td>
                     <td>
-                        <button type="button" class="btn btn-block btn-success m-2" onclick=" upgradeMachine({{  $team->id }})">Upgrade</button>
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-block btn-primary m-2" onclick="buyFridge({{  $team->id }})">Buy Fridge</button>
+                        <button type="button" class="btn btn-block btn-primary m-2" onclick="buyFridge({{ $team->id }})">Buy Fridge</button>
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
-    
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
     <script type="text/javascript">
-        //beli kulkas
+        // beli kulkas
         const buyFridge = (id) => {
             if (!confirm("Are you sure?")) return
 
@@ -80,7 +78,7 @@
             })
         }
 
-        //update level
+        // update level
         const updateLevel = (id) => {
             let machine_id = $(`#select-machine-${id}`).val()
             let machine_types_id = $(`#select-machine-${id}`).find(":selected").attr("machinetypeid")
@@ -91,7 +89,7 @@
                 data: {
                     '_token': '<?php echo csrf_token() ?>',
                     'machine_id': machine_id,
-                    ' machine_types_id' :  machine_types_id,
+                    'machine_types_id': machine_types_id,
                     'id': id
                 },
                 success: function(data) {
@@ -99,13 +97,18 @@
                 }
             })
         }
-        
 
-        //upgrade-machine
+        // upgrade machine
         const upgradeMachine = (id) =>{
             if (!confirm("Are you sure?")) return
+
             let machine_id = $(`#select-machine-${id}`).val()
             let machine_types_id = $(`#select-machine-${id}`).find(":selected").attr("machinetypeid")
+
+            if (machine_id == null) {
+                alert("Pilih mesin terlebih dahulu!")
+                return
+            }
 
             $.ajax({
                 type: 'POST',
@@ -113,7 +116,7 @@
                 data: {
                     '_token': '<?php echo csrf_token() ?>',
                     'machine_id': machine_id,
-                    ' machine_types_id' :  machine_types_id,
+                    'machine_types_id': machine_types_id,
                     'id': id
                 },
                 success: function(data) {
