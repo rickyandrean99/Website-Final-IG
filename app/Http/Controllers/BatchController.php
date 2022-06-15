@@ -14,7 +14,6 @@ class BatchController extends Controller
 {
     public function index(){
         $this->authorize('superadmin');
-
         return view('update-batch');
     }
 
@@ -28,7 +27,7 @@ class BatchController extends Controller
         // Jika Batch 6, Potong saldonya yang belum bayar
         if ($batch->batch == 6) {
             $hutang = 25000;
-            for($i = 1; $i <= $batch->batch; $i++) $hutang += (0.05 * $hutang);
+            for($i = 1; $i < $batch->batch; $i++) $hutang += (0.05 * $hutang);
 
             $teams = Team::all();
             foreach($teams as $team) {
@@ -119,12 +118,21 @@ class BatchController extends Controller
                 ->update(["amount" => 0]);
             }
         }
+
+        return response()->json(array(
+            'status' => 'success',
+            'message' => "Batch berhasil di update!"
+        ), 200);
     }
 
     public function updatePreparation() {
-        // Update preparation jadi 1
         $batch = Batch::find(1);
         $batch->preparation = 1;
         $batch->save();
+
+        return response()->json(array(
+            'status' => 'success',
+            'message' => "Berhasil update preparation"
+        ), 200);
     }
 }
