@@ -42,9 +42,8 @@ class MarketPostController extends Controller
                         }
                     }
                 }
-                // var_dump($current_amount);
 
-                $current_demand = DB::table('product_demand')->where('demands_id', $batch)->get();
+                $current_demand = DB::table('product_demand')->where('products_id', $product)->where('demands_id', $batch)->get();
 
                 $current_price = DB::table('product_batchs')
                     ->where('products_id', $product)->where('id', $batch)->get();
@@ -106,22 +105,27 @@ class MarketPostController extends Controller
     
                     }else{
                         return response()->json(array(
-                            'status' => "failed",
+                            'status' =>  "failed",
                             'message' => "Demand produk sudah terpenuhi",
-                        ), 200); 
+                        ), 200);
                     }
                 }else{
                     return response()->json(array(
-                        'status' => "failed",
+                        'status' =>  "failed",
                         'message' => "Produk kurang",
                     ), 200);
                 }
             }
         }
 
+        
+
+        $status = "success";
+        $message = "Berhasil menjual produk, tim mendapatkan koin sejumlah $subtotal TC";
+
         return response()->json(array(
-            'status' => "success",
-            'message' => "Berhasil menjual produk, tim mendapatkan koin sejumlah $subtotal TC" ,
+            'status' => $status,
+            'message' => $message
         ), 200);
     }
 
@@ -207,6 +211,8 @@ class MarketPostController extends Controller
                     }
                 }
             }
+
+            $jumlah_team = $jumlah_team - $selai_team - $cuka_team;
 
             array_push($jumlah, $jumlah_team);
             array_push($keripik, $keripik_team);

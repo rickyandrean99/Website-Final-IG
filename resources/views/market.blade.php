@@ -226,7 +226,7 @@
                     $(`#saris`).text(saris)
                     $(`#selais`).text("-")
                     $(`#cukas`).text("-")
-                    $(`#jumlahs`).text(jumlahs-selais-cukas)
+                    $(`#jumlahs`).text(jumlahs)
                     $(`#subtotals`).text(subtotals)
                 },
                 error: function(error) {
