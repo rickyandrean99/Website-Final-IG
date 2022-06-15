@@ -24,8 +24,6 @@ class MachineController extends Controller
             array_push($prices, MachineType::find($id)->price * $machine_amount[$index]);
         }
 
-        // var_dump(array_sum($prices));
-
         if ($team->balance >= array_sum($prices)) {
             // kurangi balance
             $team->decrement('balance', array_sum($prices));            
