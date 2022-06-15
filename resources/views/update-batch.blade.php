@@ -51,6 +51,9 @@
                 },
                 success: function(data) {
                     alert(data.message)
+                },
+                error: function(error){
+                    alert(error)
                 }
             })
         }
@@ -66,6 +69,9 @@
                 },
                 success: function(data) {
                     alert(data.message)
+                },
+                error: function(error){
+                    alert(error)
                 }
             })
         }
