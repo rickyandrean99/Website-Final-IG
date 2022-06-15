@@ -199,7 +199,7 @@
             <div class="p-1 align-items-center">
                 <!-- Button Modal -->
                 <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal"
-                    data-bs-target="#modalInventory"><i class="bi-bag"></i> Inventory</button>
+                    data-bs-target="#modalInventory" onclick="updateUsedCapacity()"><i class="bi-bag"></i> Inventory</button>
                 <!-- Modal Content -->
 
                 {{-- MODAL INVENTORY --}}
@@ -219,6 +219,11 @@
                                     <div class="col-4">
                                         <div class="bg-info rounded">
                                             <h3 class="text-center text-gray-100">BAHAN BAKU</h3>
+                                                <div class="d-flex justify-content-center text-gray-100" >
+                                                   <h5 id="used-capacity-ingredient">{{ $team->ingredients->sum('pivot.amount') }}</h5>
+                                                   <h5>/</h5>
+                                                   <h5>{{ $team->ingredient_inventory }}</h5>
+                                                </div>
                                         </div>
                                         <table class="table">
                                             <thead >
@@ -248,7 +253,7 @@
                                     {{-- MESIN --}}
                                     <div class="col-4">
                                         <div class="bg-info rounded">
-                                            <h3 class="text-center text-gray-100">MESIN</h3>
+                                            <h4 class="text-center text-gray-100 py-4">MESIN</h4>
                                         </div>
                                         <table class="table">
                                             <thead>
@@ -286,6 +291,11 @@
                                     <div class="col-4">
                                         <div class="bg-info rounded">
                                             <h3 class="text-center text-gray-100">PRODUK</h3>
+                                            <div class="d-flex justify-content-center text-gray-100" >
+                                                <h5 id="used-capacity-product">{{ $team->products->sum('pivot.amount') }}</h5>
+                                                <h5>/</h5>
+                                                <h5>{{ $team->product_inventory }}</h5>
+                                             </div>
                                         </div>
                                         <table class="table">
                                             <thead>
@@ -419,6 +429,7 @@
                             </div>
                             <div class="modal-body">
                                 <p><input type="hidden" id="sell-machine-id" value=""></p>
+                                <p><input type="hidden" id="sell-machine-type-id" value=""></p>
                                 <p>Nama Mesin : <span id="sell-machine-name"></span></p>
                                 <p>Masa Pakai : <span id="sell-machine-lifetime"></span></p>
                                 <p>Harga Jual : <span id="sell-machine-price"></span></p>
@@ -617,7 +628,7 @@
                                                         </td>
                                                         <td class="border-0 text-center align-middle">
                                                             {{ $machine->name_type }}</td>
-                                                        <td class="border-0 text-center align-middle">
+                                                        <td class="border-0 text-center align-middle"></td>
                                                             <input type="number" style="margin: auto"
                                                                 class="form-control machine-amount w-50 text-center"
                                                                 id="machine-amount-{{ $machine->id }}" value="0" min="0"
@@ -1008,6 +1019,9 @@
                     `)
                     
                     $(`#production-amount`).val(counter+1)
+                },
+                error: function(error) {
+                    alert(error)
                 }
             })
         }
@@ -1047,11 +1061,17 @@
                     $(`#td-produksi-${row}-ingredient`).html(ingredients)
                     $(`#td-produksi-${row}-machine`).html(machines)
                     $(`#produksi-${row}-input-jumlah`).val(1)
+                },
+                error: function(error) {
+                    alert(error)
                 }
             })
         })
 
+        // Memulai produksi
         const startProduction = () => {
+            if (!confirm("Are you sure?")) return
+            
             let productionsId = $(`.produksi-select-produk`).map(function() { return $(this).val() }).get()
             let productionsAmount = $(`.produksi-input-jumlah`).map(function() { return $(this).val() }).get()
             let productionsMachines = []
@@ -1101,6 +1121,9 @@
                         },
                         success: function(data) {
                             alert(data.message)
+                        },
+                        error: function(error) {
+                            alert(error)
                         }
                     })
                 } else {
@@ -1110,6 +1133,7 @@
                 alert("Harap pilih mesin terlebih dahulu!")
             }
         }
+        
 
         // Update total bahan baku dan limit
         const updateIngredientPriceAndLimit = () => {
@@ -1139,6 +1163,7 @@
             $(`#package-limit`).text(remaining)
         }
 
+
         // Beli bahan baku
         const buyIngredients = () => {
             if (!confirm("Are you sure?")) return
@@ -1166,6 +1191,9 @@
                         $(`#package-limit`).text(data.limit)
                     }
                     alert(data.message)
+                },
+                error: function(error) {
+                    alert(error)
                 }
             })
         }
@@ -1195,6 +1223,9 @@
                         $(`#pengeluaran-machine`).text("0 TC")
                     }
                     alert(data.message)
+                },
+                error: function(error) {
+                    alert(error)
                 }
             })
         }
@@ -1259,6 +1290,9 @@
                         $(`#pengeluaran-transportaion`).text("0 TC")
                     }
                     alert(data.message)
+                },
+                error: function(error) {
+                    alert(error)
                 }
             })
         }
@@ -1279,7 +1313,7 @@
                     $(`#sell-transport-id`).val(data.id)
                 },
                 error: function(error) {
-                    console.log(error)
+                    alert(error)
                 }
             })
         }
@@ -1298,7 +1332,7 @@
                     alert(data.message)
                 },
                 error: function(error) {
-                    console.log(error)
+                    alert(error)
                 }
             })
         }
@@ -1318,28 +1352,31 @@
                     $(`#sell-machine-lifetime`).text(data.lifetime + " Batch")
                     $(`#sell-machine-price`).text(data.price + " TC")
                     $(`#sell-machine-id`).val(data.id)
+                    $(`#sell-machine-type-id`).val(type_id)
                 },
                 error: function(error) {
-                    console.log(error)
+                    alert(error)
                 }
             })
         }
 
         const sellMachine = () => {
             let id = $(`#sell-machine-id`).val()
+            let type_id = $(`#sell-machine-type-id`).val()
 
             $.ajax({
                 type: 'POST',
                 url: '{{ route("machine.sell") }}',
                 data: {
                     '_token': '<?php echo csrf_token() ?>',
-                    'id': id
+                    'id': id,
+                    'type_id': type_id
                 },
                 success: function(data) {
                     alert(data.message)
                 },
                 error: function(error) {
-                    console.log(error)
+                    alert(error)
                 }
             })
         }
@@ -1376,7 +1413,9 @@
                     }
                     $(`#jumlahHutang`).text(data.info)
                 },
-                
+                error: function(error) {
+                    alert(error)
+                }
             })
         }
 
@@ -1396,8 +1435,10 @@
                         $(`#hutang`).text("")
                         $(`#jumlahHutang`).text(data.info)
                     }
+                },
+                error: function(error) {
+                    alert(error)
                 }
-                
             })
         }
 
@@ -1414,6 +1455,9 @@
                 },
                 success: function(data) {
                     alert(data.message)
+                },
+                error: function(error) {
+                    alert(error)
                 }
             })
         }

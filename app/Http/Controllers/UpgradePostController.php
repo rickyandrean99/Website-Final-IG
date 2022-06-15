@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 use App\Team;
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class UpgradePostController extends Controller
 {
     public function dashboard() {
-        $this->authorize('upgrade');
+        if (Auth::user()->role == "peserta"){
+            return redirect()->route('peserta');
+        } else if (Auth::user()->role == "pasar") {
+            return redirect()->route('market');
+        }
 
         $teams = Team::all();
         return view('upgrade', compact('teams'));

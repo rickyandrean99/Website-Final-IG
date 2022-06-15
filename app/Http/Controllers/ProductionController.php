@@ -131,7 +131,7 @@ class ProductionController extends Controller
                 // Lakukan proses produksi
                 foreach($productions_id as $index => $id) {
                     $product = Product::find($id);
-                    $product_amount = $productions_amount[$index];
+                    $product_amount = $productions_amount[$index]*10;
                     $product_machine = $productions_machine[$index];
                     $product_team_machine = $productions_team_machine[$index];
                     $machine_input = [];
@@ -235,7 +235,7 @@ class ProductionController extends Controller
 
                     $i = 0;
                     foreach($product_total_amount as $id => $amount) {
-                        $message .= "- ".$amount." ".Product::find($id)->name." (".($productions_amount[$i]-$amount)." gagal)\n";
+                        $message .= "- ".$amount." ".Product::find($id)->name." (".($productions_amount[$i]*10-$amount)." gagal)\n";
                         $i++;
                     }
                 } else {

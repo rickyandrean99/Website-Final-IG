@@ -15,7 +15,13 @@ use Illuminate\Support\Facades\DB;
 class ToPostController extends Controller
 {
     public function dashboard() {
-        $this->authorize('peserta');
+        if (Auth::user()->role == "administrator"){
+            return redirect()->route('batch');
+        } else if (Auth::user()->role == "upgrade") {
+            return redirect()->route('upgrade');
+        } else if (Auth::user()->role == "pasar") {
+            return redirect()->route('market');
+        }
 
         $batch = Batch::find(1)->batch;
         $team = Team::find(Auth::user()->team);
@@ -26,7 +32,6 @@ class ToPostController extends Controller
         $limit = $team->packages()->wherePivot('packages_id', $batch)->first()->pivot->remaining;
         $product_name = ['Keripik Apel', 'Dodol Apel', 'Sari Buah Apel', 'Selai Kulit Apel', 'Cuka Apel'];
         $product_amount = [];
-
         for ($i = 1; $i<=5; $i++){
             $team_product = DB::table('product_inventory')->where('teams_id', $team->id)->where('products_id', $i)->sum('amount');
             array_push($product_amount, $team_product);

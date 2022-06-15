@@ -9,11 +9,19 @@ use App\Transportation;
 use App\MachineType;
 use App\Ingredient;
 use Illuminate\Http\Request;
+use Auth;
 
 class BatchController extends Controller
 {
     public function index(){
-        $this->authorize('superadmin');
+        if (Auth::user()->role == "peserta"){
+            return redirect()->route('peserta');
+        } else if (Auth::user()->role == "upgrade") {
+            return redirect()->route('upgrade');
+        } else if (Auth::user()->role == "pasar") {
+            return redirect()->route('market');
+        }
+
         return view('update-batch');
     }
 

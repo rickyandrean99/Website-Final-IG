@@ -31,6 +31,7 @@ class MachineController extends Controller
             foreach ($machine_id as $index => $id) {
                 // ambil id terbaru
                 $new_id = DB::table('team_machine')->select('id')
+                ->where('teams_id', $team->id)
                 ->where('machine_types_id', $id)->orderBy('id', 'desc')->get();
 
                 if (count($new_id) > 0) {
@@ -94,8 +95,12 @@ class MachineController extends Controller
         $id = $request->get("id");
         $batch = Batch::find(1)->batch;
         $team = Team::find(Auth::user()->team);
+        $type_id = $request->get("type_id");
         
-        $machine = DB::table("team_machine")->where('id', $id)->get();
+        $machine = DB::table("team_machine")
+        ->where('teams_id', $team->id)
+        ->where('id', $id)
+        ->where('machine_types_id', $type_id)->get();
         $nama = DB::table('machine_types')->where('id', $machine[0]->machine_types_id)->get();
         
         $lifetime = $batch - $machine[0]->batch + 1;
@@ -104,7 +109,11 @@ class MachineController extends Controller
         $update_price = $team->increment('balance', $price);
         $team->save();
 
-        $update_exist = DB::table("team_machine")->where('id', $id)->update(['exist'=>0]);
+        DB::table("team_machine")
+        ->where('teams_id', $team->id)
+        ->where('id', $id)
+        ->where('machine_types_id', $type_id)
+        ->update(['exist'=>0]);
 
         return response()->json(array(
             'status'=> "success",

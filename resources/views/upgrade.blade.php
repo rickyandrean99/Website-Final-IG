@@ -74,6 +74,9 @@
                 },
                 success: function(data) {
                     alert(data.message)
+                },
+                error: function(error) {
+                    alert(error)
                 }
             })
         }
@@ -94,6 +97,9 @@
                 },
                 success: function(data) {
                     $(`#level-mesin-${id}`).text(data.level)
+                },
+                error: function(error) {
+                    alert(error)
                 }
             })
         }
@@ -125,6 +131,9 @@
                         $(`#level-mesin-${id}`).text(data.level)
                         $(`#limit-${id}`).text(data.limit)
                     }
+                },
+                error: function(error) {
+                    alert(error)
                 }
             })
         }

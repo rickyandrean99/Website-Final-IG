@@ -6,11 +6,16 @@ use App\Batch;
 use App\Team;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Auth;
 
 class MarketPostController extends Controller
 {
     public function dashboard(){
-        $this->authorize('pasar');
+        if (Auth::user()->role == "peserta"){
+            return redirect()->route('peserta');
+        } else if (Auth::user()->role == "upgrade") {
+            return redirect()->route('upgrade');
+        }
 
         $products = Product::all();
         return view('market', compact('products'));
@@ -23,7 +28,8 @@ class MarketPostController extends Controller
         $batch = Batch::find(1)->batch;
         $subtotal = 0;
 
-        foreach ($product_id as $index => $product) {
+        //mengecek apakah bisa jual atau tidak
+        foreach ($product_id as $index => $product){
             if($product_amount[$index] > 0){
                 $batch_amount = DB::table('transactions')
                     ->where('teams_id', $id)
@@ -48,61 +54,15 @@ class MarketPostController extends Controller
                 $current_price = DB::table('product_batchs')
                     ->where('products_id', $product)->where('id', $batch)->get();
 
-                $product_teams = DB::table('product_inventory')
+                $product_team = DB::table('product_inventory')
                 ->where('teams_id', $id)
-                ->where('products_id', $product)->get();
-                
-                $product_team = 0;
-                foreach ($product_teams as $value) {
-                    $product_team += $value->amount;
-                }
+                ->where('products_id', $product)->sum('amount');
 
                 //cek apakah produk cukup atau tidak
                 if($product_amount[$index] <= $product_team){
                     //cek apakah sudah memenuhi demand atau belum
                     if ($current_amount <= $current_demand[0]->amount){
-                        DB::table('transactions')->insert([
-                            'teams_id' => $id,
-                            'batch' => $batch,
-                            'subtotal' => $current_price[0]->price *  $product_amount[$index]
-                        ]);
-                        
-                        // kurangi produk inventory
-                        $amount = $product_amount[$index];
-                        foreach($product_teams as $team){
-                            if ($amount == 0){
-                                break;
-                            }
-                            else if($amount <= $team->amount){
-                                DB::table('product_inventory')
-                                ->where('teams_id', $id)
-                                ->where('products_id', $product)
-                                ->where('batch', $team->batch)
-                                ->decrement('amount', $amount);
-
-                                $amount = 0;
-                            }
-                            else{
-                                $amount -= $team->amount;
-                                DB::table('product_inventory')
-                                ->where('teams_id', $id)
-                                ->where('products_id', $product)
-                                ->where('batch', $team->batch)
-                                ->decrement('amount', $team->amount);
-                            }
-                        }
-
                         $subtotal += $current_price[0]->price *  $product_amount[$index];
-    
-                        $get_id = DB::table('transactions')->select('id')->orderBy('id', 'desc')->get();
-                        $get_id = $get_id[0]->id;
-    
-                        DB::table('product_transaction')->insert([
-                            'products_id' => $product,
-                            'transactions_id' => $get_id,
-                            'amount' => $product_amount[$index]
-                        ]);
-    
                     }else{
                         return response()->json(array(
                             'status' =>  "failed",
@@ -112,13 +72,62 @@ class MarketPostController extends Controller
                 }else{
                     return response()->json(array(
                         'status' =>  "failed",
-                        'message' => "Produk kurang",
+                        'message' => "Produk yang ingin dijual kurang",
                     ), 200);
                 }
             }
         }
 
-        
+        //jual produk
+        //masukkan ke transaksi baru
+        DB::table('transactions')->insert([
+            'teams_id' => $id,
+            'batch' => $batch,
+            'subtotal' => $subtotal
+        ]);
+
+        $transaction_id = DB::table('transactions')->select('id')->orderBy('id', 'desc')->get();
+        $transaction_id = $transaction_id[0]->id;
+
+        $product_teams = DB::table('product_inventory')
+        ->where('teams_id', $id)
+        ->where('products_id', $product)->get();
+
+        //masukkan ke transaksi produk (row sesuai dengan jumlah jenis produk)
+        foreach ($product_id as $index => $product) {
+            if($product_amount[$index] > 0){
+                // kurangi produk inventory
+                $amount = $product_amount[$index];
+                foreach($product_teams as $team){
+                    if ($amount == 0){
+                        break;
+                    }
+                    else if($amount <= $team->amount){
+                        DB::table('product_inventory')
+                        ->where('teams_id', $id)
+                        ->where('products_id', $product)
+                        ->where('batch', $team->batch)
+                        ->decrement('amount', $amount);
+                        $amount = 0;
+                    }
+                    else{
+                        $amount -= $team->amount;
+                        DB::table('product_inventory')
+                        ->where('teams_id', $id)
+                        ->where('products_id', $product)
+                        ->where('batch', $team->batch)
+                        ->decrement('amount', $team->amount);
+                    }
+                }
+                
+                //masukkan ke transaksi produk
+                DB::table('product_transaction')->insert([
+                    'products_id' => $product,
+                    'transactions_id' => $transaction_id,
+                    'amount' => $product_amount[$index]
+                ]);
+            }
+        }
 
         $status = "success";
         $message = "Berhasil menjual produk, tim mendapatkan koin sejumlah $subtotal TC";
@@ -212,7 +221,7 @@ class MarketPostController extends Controller
                 }
             }
 
-            $jumlah_team = $jumlah_team - $selai_team - $cuka_team;
+            $jumlah_team = ($jumlah_team - $selai_team) - $cuka_team;
 
             array_push($jumlah, $jumlah_team);
             array_push($keripik, $keripik_team);
