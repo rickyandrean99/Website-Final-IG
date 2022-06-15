@@ -27,7 +27,7 @@ class BatchController extends Controller
         // Jika Batch 6, Potong saldonya yang belum bayar
         if ($batch->batch == 6) {
             $hutang = 25000;
-            for($i = 1; $i < $batch->batch; $i++) $hutang += (0.05 * $hutang);
+            for($i = 1; $i <= $batch->batch; $i++) $hutang += (0.05 * $hutang);
 
             $teams = Team::all();
             foreach($teams as $team) {

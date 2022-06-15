@@ -63,7 +63,7 @@ class ToPostController extends Controller
         } else {
             $batch = Batch::find(1)->batch;
             $hutang = 25000;
-            for($i = 1; $i < $batch; $i++) {
+            for($i = 1; $i <= $batch; $i++) {
                 $hutang += (0.05 * $hutang);
             }
 
@@ -90,7 +90,7 @@ class ToPostController extends Controller
         
         $batch = Batch::find(1)->batch;
         $hutang = 25000;
-        for ($i = 1; $i < $batch; $i++) {
+        for ($i = 1; $i <= $batch; $i++) {
             $hutang += (0.05 * $hutang);
         }
 
