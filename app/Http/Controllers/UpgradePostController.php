@@ -75,53 +75,58 @@ class UpgradePostController extends Controller
         $team = Team::find($id);
         $price = DB::table('machine_types')->where('id', $machine_types_id)->get();
         $price = $price[0]->upgrade_price;
-        $level = 0;
-        $limit = 0;
-
+        
         $mesin = DB::table('team_machine')
-            ->where('id', $machine_id)
-            ->where('machine_types_id', $machine_types_id)
-            ->where('teams_id', $id)
-            ->where('exist', 1)
-            ->get();
+        ->where('id', $machine_id)
+        ->where('machine_types_id', $machine_types_id)
+        ->where('teams_id', $id)
+        ->where('exist', 1)
+        ->get();
 
+        $level = $mesin[0]->level;
+        $limit = $team->upgrade_machine_limit;
+        
         if (count($mesin) > 0) {
             if ($mesin[0]->is_upgrade == 0){
                 if ($team->upgrade_machine_limit > 0){
                     if($team->balance >= $price){
-                        // Perlu pengecekan terlebih dahulu apakah mesin sudah mencapai level maksimal
+                        if($mesin[0]->level != 3){
+                            $team->decrement('balance', $price);
+                            $team->decrement('upgrade_machine_limit', 1);
+            
+                            DB::table('team_machine')
+                            ->where('id', $machine_id)
+                            ->where('machine_types_id', $machine_types_id)
+                            ->where('teams_id', $id)
+                            ->increment('level', 1);
+        
+                            DB::table('team_machine')
+                            ->where('id', $machine_id)
+                            ->where('machine_types_id', $machine_types_id)
+                            ->where('teams_id', $id)
+                            ->increment('is_upgrade', 1);
+            
+                            $type = DB::table('machine_types')->where('id', $machine_types_id)->get();
+            
+                            $new_defact = DB::table('machine_level')
+                                ->where('machines_id', $type[0]->machines_id)
+                                ->where('levels_id', $mesin[0]->level + 1)->get();
+            
+                            DB::table('team_machine')
+                            ->where('id', $machine_id)
+                            ->where('machine_types_id', $machine_types_id)
+                            ->where('teams_id', $id)
+                            ->update(['defact' => $new_defact[0]->defact]);
+            
+                            $status = "success";
+                            $message = "Berhasil upgrade machine";
+                            $level = $mesin[0]->level + 1;
+                            $limit = $team->upgrade_machine_limit;
 
-                        $team->decrement('balance', $price);
-                        $team->decrement('upgrade_machine_limit', 1);
-        
-                        DB::table('team_machine')
-                        ->where('id', $machine_id)
-                        ->where('machine_types_id', $machine_types_id)
-                        ->where('teams_id', $id)
-                        ->increment('level', 1);
-    
-                        DB::table('team_machine')
-                        ->where('id', $machine_id)
-                        ->where('machine_types_id', $machine_types_id)
-                        ->where('teams_id', $id)
-                        ->increment('is_upgrade', 1);
-        
-                        $type = DB::table('machine_types')->where('id', $machine_types_id)->get();
-        
-                        $new_defact = DB::table('machine_level')
-                            ->where('machines_id', $type[0]->machines_id)
-                            ->where('levels_id', $mesin[0]->level + 1)->get();
-        
-                        DB::table('team_machine')
-                        ->where('id', $machine_id)
-                        ->where('machine_types_id', $machine_types_id)
-                        ->where('teams_id', $id)
-                        ->update(['defact' => $new_defact[0]->defact]);
-        
-                        $status = "success";
-                        $message = "Berhasil upgrade machine";
-                        $level = $mesin[0]->level + 1;
-                        $limit = $team->upgrade_machine_limit;
+                        }else{
+                            $status = "failed";
+                            $message = "Mesin ini sudah mencapai level maksimal";
+                        }
                     } else {
                         $status = "failed";
                         $message = "Koin tidak mencukupi";

@@ -133,7 +133,7 @@
                     }
                 },
                 error: function(error) {
-                    alert(error)
+                    alert(error.message)
                 }
             })
         }
