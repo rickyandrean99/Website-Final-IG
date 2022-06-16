@@ -632,7 +632,7 @@
                                                         </td>
                                                         <td class="border-0 text-center align-middle">
                                                             {{ $machine->name_type }}</td>
-                                                        <td class="border-0 text-center align-middle"></td>
+                                                        <td class="border-0 text-center align-middle">
                                                             <input type="number" style="margin: auto"
                                                                 class="form-control machine-amount w-50 text-center"
                                                                 id="machine-amount-{{ $machine->id }}" value="0" min="0"

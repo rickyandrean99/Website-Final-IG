@@ -6,7 +6,7 @@ use App\Batch;
 use App\Team;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Auth;
+use Illuminate\Support\Facades\Auth;
 
 class MarketPostController extends Controller
 {
