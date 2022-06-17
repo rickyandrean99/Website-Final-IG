@@ -151,4 +151,31 @@ class UpgradePostController extends Controller
             'limit' => $limit
         ), 200);
     }
+
+    public function getMachineById(Request $request){
+        $machine_id = $request->get('machine_id');
+        $machine_types_id = $request->get('machine_types_id');
+        $id = $request->get('id');
+        $price = DB::table('machine_types')->where('id', $machine_types_id)->get();
+        $price = $price[0]->upgrade_price;
+        
+        $mesin = DB::table('team_machine')
+        ->where('id', $machine_id)
+        ->where('machine_types_id', $machine_types_id)
+        ->where('teams_id', $id)
+        ->where('exist', 1)
+        ->get();
+
+        $machine = DB::table('machine_types')->where('id', $machine_types_id)->get();
+
+        $level = $mesin[0]->level;
+
+        $name = $machine[0]->name_type;
+
+        return response()->json(array(
+            'name' => $name,
+            'level' => $level,
+            'price' => $price
+        ), 200);
+    }
 }

@@ -49,7 +49,9 @@
                     </td>
                     <td class="w-20" id="limit-{{$team->id}}">{{ $team->upgrade_machine_limit }}</td>
                     <td>
-                        <button type="button" class="btn btn-block btn-success m-2" onclick="upgradeMachine({{ $team->id }})">Upgrade</button>
+                        <button type="button" class="btn btn-block btn-success m-2" 
+                        data-bs-target="#modalJualMachine" data-bs-toggle="modal"
+                        onclick="showMachineUpgrade({{ $team->id }})">Upgrade</button>
                     </td>
                     <td>
                         <button type="button" class="btn btn-block btn-primary m-2" onclick="buyFridge({{ $team->id }})">Buy Fridge</button>
@@ -58,6 +60,36 @@
             @endforeach
         </tbody>
     </table>
+
+    <!-- MODAL KONFIRMASI UPGRADE -->
+    <div class="modal fade" id="modalJualMachine" aria-hidden="true"
+    aria-labelledby="modalJualTransportLabel" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalToggleLabel2">Upgrade Mesin</h5>
+                    <button type="button" class="btn-close" data-bs-toggle="modal"
+                        data-bs-target="#modalTransport"></button>
+                </div>
+
+                <div class="modal-body">
+                    <p><input type="hidden" id="sell-machine-team" value=""></p>
+                    <p><input type="hidden" id="sell-machine-id" value=""></p>
+                    <p><input type="hidden" id="sell-machine-type" value=""></p>
+
+                    <p>Nama Tim : <span id="sell-machine-tim"></span></p>
+                    <p>Nama Mesin : <span id="sell-machine-name"></span></p>
+                    <p>Level : <span id="sell-machine-level"></span></p>
+                    <p>Biaya Upgrade : <span id="sell-machine-price"></span></p>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                    onclick="upgradeMachine()">Upgrade Mesin</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
     <script type="text/javascript">
@@ -104,12 +136,45 @@
             })
         }
 
-        // upgrade machine
-        const upgradeMachine = (id) =>{
-            if (!confirm("Are you sure?")) return
-
+        //show machine upgrade
+        const showMachineUpgrade = (id) =>{
             let machine_id = $(`#select-machine-${id}`).val()
             let machine_types_id = $(`#select-machine-${id}`).find(":selected").attr("machinetypeid")
+
+            if (machine_id == null) {
+                alert("Pilih mesin terlebih dahulu!")
+                return
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("machine.getbyid") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                    'machine_id': machine_id,
+                    'machine_types_id': machine_types_id,
+                    'id': id
+                },
+                success: function(data) {
+                    $(`#sell-machine-team`).val(id)
+                    $(`#sell-machine-id`).val(machine_id)
+                    $(`#sell-machine-type`).val(machine_types_id)
+                    $(`#sell-machine-tim`).text("Perusahaan " + id)
+                    $(`#sell-machine-name`).text(data.name +" " + machine_id)
+                    $(`#sell-machine-level`).text(data.level)
+                    $(`#sell-machine-price`).text(data.price)
+                },
+                error: function(error) {
+                    alert(error.message)
+                }
+            })
+        }
+
+        // upgrade machine
+        const upgradeMachine = () =>{
+            let id = $(`#sell-machine-team`).val()
+            let machine_id = $(`#sell-machine-id`).val()
+            let machine_types_id = $(`#sell-machine-type`).val()
 
             if (machine_id == null) {
                 alert("Pilih mesin terlebih dahulu!")

@@ -31,11 +31,12 @@ Route::middleware(['auth'])->group(function() {
     Route::post('/add-production', 'ProductionController@addProduction')->name('add-production');
     Route::post('/change-production', 'ProductionController@changeProduction')->name('change-production');
     Route::post('/start-production', 'ProductionController@startProduction')->name('start-production');
-
+    
     // Pos upgrade
     Route::get('/upgrade', 'UpgradePostController@dashboard')->name('upgrade');
     Route::post('/buy-fridge', 'UpgradePostController@buyFridge')->name('buy-fridge');
     Route::post('/update-level', 'UpgradePostController@updateLevel')->name('update-level');
+    Route::post('/get-machine', 'UpgradePostController@getMachineById')->name('machine.getbyid');
     Route::post('/upgrade-machine', 'UpgradePostController@upgradeMachine')->name('upgrade-machine');
 
     // Pos pasar
