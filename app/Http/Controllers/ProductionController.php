@@ -223,7 +223,7 @@ class ProductionController extends Controller
                         $id_ingredient = 13;
                         if ($product_id == 3) $id_ingredient = 14;
 
-                        if ($team->ingredients->contains($id_ingredient)) {
+                        if (count($team->ingredients()->wherePivot('ingredients_id', $id_ingredient)->get()) > 0) {
                             $team->ingredients()->wherePivot('ingredients_id', $id_ingredient)->increment('ingredient_inventory.amount', $result);
                         } else {
                             $team->ingredients()->attach($id_ingredient, ['amount' => $result]);
