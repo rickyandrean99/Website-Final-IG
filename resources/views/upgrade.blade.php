@@ -25,6 +25,7 @@
                 <th scope="col">Nama Tim</th>
                 <th scope="col">Nama Mesin</th>
                 <th scope="col">Level</th>
+                <th scope="col">Defect</th>
                 <th scope="col">Limit</th>
                 <th scope="col"><i class="bi-arrow-up-right-square-fill text-success fw-bold"></th>
                 <th scope="col"><i class="bi-snow text-primary fw-bold"></i></th>
@@ -46,6 +47,9 @@
                     </td>
                     <td class="w-20">
                         <div><span id="level-mesin-{{$team->id}}">0</span></div>
+                    </td>
+                    <td class="w-20">
+                        <div><span id="defect-mesin-{{$team->id}}">0</span></div>
                     </td>
                     <td class="w-20" id="limit-{{$team->id}}">{{ $team->upgrade_machine_limit }}</td>
                     <td>
@@ -129,6 +133,7 @@
                 },
                 success: function(data) {
                     $(`#level-mesin-${id}`).text(data.level)
+                    $(`#defect-mesin-${id}`).text(data.defect)
                 },
                 error: function(error) {
                     alert(error)
@@ -194,6 +199,7 @@
                     alert(data.message)
                     if (data.status == "success") {
                         $(`#level-mesin-${id}`).text(data.level)
+                        $(`#defect-mesin-${id}`).text(data.defect)
                         $(`#limit-${id}`).text(data.limit)
                     }
                 },

@@ -57,12 +57,15 @@ class UpgradePostController extends Controller
         if (count($mesin) > 0) {
             $status = "success";
             $message = $mesin[0]->level;
+            $defect = $mesin[0]->defact;
         } else {
             $status = "failed";
             $message = "Mesin ini sudah tidak ada di inventory";
+            $defect = 0;
         }
 
         return response()->json(array(
+            'defect'=> $defect,
             'status'=> $status,
             'level' => $message
         ), 200);
@@ -85,6 +88,7 @@ class UpgradePostController extends Controller
 
         $level = $mesin[0]->level;
         $limit = $team->upgrade_machine_limit;
+        $defect = $mesin[0]->defact;
         
         if (count($mesin) > 0) {
             if ($mesin[0]->is_upgrade == 0){
@@ -117,10 +121,18 @@ class UpgradePostController extends Controller
                             ->where('machine_types_id', $machine_types_id)
                             ->where('teams_id', $id)
                             ->update(['defact' => $new_defact[0]->defact]);
-            
+                            
+                            $mesin = DB::table('team_machine')
+                            ->where('id', $machine_id)
+                            ->where('machine_types_id', $machine_types_id)
+                            ->where('teams_id', $id)
+                            ->where('exist', 1)
+                            ->get();
+
                             $status = "success";
                             $message = "Berhasil upgrade machine";
-                            $level = $mesin[0]->level + 1;
+                            $level = $mesin[0]->level;
+                            $defect = $mesin[0]->defact;
                             $limit = $team->upgrade_machine_limit;
 
                         }else{
@@ -147,6 +159,7 @@ class UpgradePostController extends Controller
         return response()->json(array(
             'status'=> $status,
             'message' => $message,
+            'defect' => $defect,
             'level' => $level,
             'limit' => $limit
         ), 200);
