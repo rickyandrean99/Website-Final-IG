@@ -69,9 +69,17 @@ class IngredientController extends Controller
             $message = "Saldo tidak mencukupi";
         }
 
+        $team = Team::find(Auth::user()->team);
+        $balance = $team->balance;
+        $ingredients = $team->ingredients;
+        $used = $team->ingredients->sum('pivot.amount');
+
         return response()->json(array(
             'status' => $status,
             'message' => $message,
+            'balance' => $balance,
+            'used' => $used,
+            'ingredients' => $ingredients,
             'limit' => $limit
         ), 200);
     }

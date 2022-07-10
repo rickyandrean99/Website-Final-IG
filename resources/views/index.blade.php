@@ -61,7 +61,7 @@
                     <!-- SALDO -->
                     <div class="bg-white rounded shadow p-3 d-flex flex-row align-items-center">
                         <img src="{{ asset('') }}assets/icons/coin.png" height="20" alt="Coin">
-                        <div class="ms-2">{{ $team->balance }} TC</div>
+                        <div id="balance" class="ms-2">{{ $team->balance }} TC</div>
                     </div>
 
                     <!-- BATCH  -->
@@ -233,7 +233,7 @@
                                                     <th scope="col" class="border-0 text-center">Jumlah</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody id="tbody-ingredient">
                                                 @php
                                                 $i = 1
                                                 @endphp
@@ -1193,6 +1193,24 @@
                         $(`#pengeluaran-ingredient`).text("0 TC")
                         $(`#package-limit-hidden`).val(data.limit)
                         $(`#package-limit`).text(data.limit)
+                        $(`#balance`).text(data.balance + " TC")
+                        
+                        //perbarui inventory
+                        let table = document.getElementById("tbody-ingredient");
+	                    table.innerHTML = "";
+                        let counter = 1
+
+                        data.ingredients.forEach(ingredient => {
+                            $(`#tbody-ingredient`).append(`
+                                <tr>
+                                    <td class="border-0 text-center align-middle">${counter+1}</td>
+                                    <td class="border-0 text-center align-middle">${ingredient.name}</td>
+                                    <td class="border-0 text-center align-middle">${ingredient.pivot.amount}</td>
+                                </tr>
+                            `)
+                        })
+
+                        $(`#used-capacity-ingredient`).text(data.used)
                     }
                     alert(data.message)
                 },
