@@ -9,6 +9,7 @@ use App\Ingredient;
 use Auth;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProductionController extends Controller
 {
@@ -86,6 +87,9 @@ class ProductionController extends Controller
         $productions_machine = $request->get('production_machine');
         $productions_team_machine = $request->get('production_team_machine');
         $apple_need = [1=>0,2=>0,3=>0];
+        $total_defact = 0.0;
+        $sigma_produk = 0;
+        $defact_array = array(450060, 200020, 140030, 805, 356, 3);
 
         try {
             // Cek jumlah bahan baku keseluruhan yang diperlukan
@@ -176,12 +180,32 @@ class ProductionController extends Controller
                                     $machine["capacity"] = $value["capacity"];
                                     $machine["defact"] = $value["defact"];
 
+                                    $total_defact += $machine["defact"];
+
                                     array_push($machine_process, $machine);
                                     break 2;
                                 }
                             }
                         }
                     }
+
+                    // var_dump($total_defact);
+                    $total_defact *= 1000000;
+
+                    for($i = 0; $i < count($defact_array); $i++){
+                        if($total_defact <= $defact_array[$i] && $total_defact >= $defact_array[$i + 1]){
+                            $defact_atas = $defact_array[$i];
+                            $defact_bawah = $defact_array[$i+1];
+                            $level_atas = $i + 1;
+                            $level_bawah = $i + 2;
+
+                            $sigma_produk = round(((($total_defact-$defact_bawah)/($defact_atas-$defact_bawah))*
+                                            ($level_atas-$level_bawah)) + $level_bawah, 2);
+                            break;
+                        }
+                    }
+
+                    // var_dump($sigma_produk);
                     
                     // Lakukan proses produksi berdasarkan spesifikasi mesin
                     foreach($machine_process as $index => $machine) {
@@ -209,7 +233,16 @@ class ProductionController extends Controller
                         } else {
                             $team->products()->attach($product_id, ['batch' => $batch, 'amount' => $product_amount]);
                         }
+
+                        //masukkan sigma level
+                        DB::table('sigma_levels')->insert([
+                            'product_inventory_teams_id' => $team_id,
+                            'product_inventory_products_id' => $product_id,
+                            'product_inventory_batch' => $batch,
+                            'sigma_level' => $sigma_produk
+                        ]);
                     }
+
 
                     // Kurangi jumlah bahan baku
                     foreach($ingredients_need as $id => $amount){
