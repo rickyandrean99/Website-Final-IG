@@ -36,7 +36,7 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/upgrade', 'UpgradePostController@dashboard')->name('upgrade');
     Route::post('/buy-fridge', 'UpgradePostController@buyFridge')->name('buy-fridge');
     Route::post('/update-level', 'UpgradePostController@updateLevel')->name('update-level');
-    Route::post('/get-machine', 'UpgradePostController@getMachineById')->name('machine.getbyid');
+    Route::post('/get-machine', 'UpgradePostController@getMachineById')->name('machine.getbyid2');
     Route::post('/upgrade-machine', 'UpgradePostController@upgradeMachine')->name('upgrade-machine');
 
     // Pos pasar

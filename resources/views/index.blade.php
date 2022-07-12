@@ -268,7 +268,7 @@
                                                     <th scope="col" class="border-0 text-center">Level</th>
                                                 </tr>
                                             </thead>
-                                            <tbody>
+                                            <tbody id="tbody-machine">
                                                 @php
                                                     $i = 1
                                                 @endphp
@@ -441,7 +441,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#modalInventory" onclick="sellMachine()">Jual Mesin</button>
+                                    data-bs-target="#modalInventory" onclick="sellMachine({{ $batch }})">Jual Mesin</button>
                             </div>
                         </div>
                     </div>
@@ -664,7 +664,7 @@
                                         <div class="row mt-5 pt-3 position-fixed" style="width:160px;">
                                             <button class="btn btn-success fw-bold p-3 text-white"
                                                 style="font-size: 20px; font-weight: bold"
-                                                onclick="buyMachine()">Buy</button>
+                                                onclick="buyMachine({{ $batch }})">Buy</button>
                                             <!-- <button class="col-12 btn btn-success fw-bold p-3 text-white" data-bs-toggle="modal"
                                                 data-bs-target="#modalBeliMachine" style="font-size: 20px; font-weight: bold">Buy</button> -->
                                         </div>
@@ -1223,7 +1223,7 @@
         }
 
         // Beli mesin
-        const buyMachine = () => {
+        const buyMachine = (batch) => {
             if (!confirm("Are you sure?")) return
 
             let machineId = $(`.machine-id`).map(function() {
@@ -1245,6 +1245,31 @@
                     if (data.status == "success") {
                         $(`.machine-amount`).val(0)
                         $(`#pengeluaran-machine`).text("0 TC")
+                        $(`#balance`).text(data.balance + " TC")
+
+                        //perbarui inventory machine
+                        let table = document.getElementById("tbody-machine");
+	                    table.innerHTML = "";
+                        let counter = 1
+
+                        data.machines.forEach(machine => {
+                            let lifetime = batch - machine.pivot.batch  + 1
+                            if(machine.pivot.exist){
+                                $(`#tbody-machine`).append(`
+                                    <tr>
+                                        <td class="border-0 text-center align-middle">${counter}</td>
+                                        <td class="border-0 text-center align-middle">${machine.name_type} ${machine.pivot.id}</td>
+                                        <td class="border-0 text-center align-middle">${machine.pivot.level}</td>
+                                        <td class="border-0 text-center align-middle">
+                                            <button type="button" class="btn btn-danger"
+                                                data-bs-target="#modalJualMesin" data-bs-toggle="modal"
+                                                onclick="showMachineSell(${ machine.pivot.id }, ${ machine.pivot.machine_types_id })">Jual</button>
+                                        </td>
+                                    </tr>
+                                `)
+                                counter++
+                            }
+                        })
                     }
                     alert(data.message)
                 },
@@ -1442,7 +1467,7 @@
             })
         }
 
-        const sellMachine = () => {
+        const sellMachine = (batch) => {
             let id = $(`#sell-machine-id`).val()
             let type_id = $(`#sell-machine-type-id`).val()
 
@@ -1455,6 +1480,33 @@
                     'type_id': type_id
                 },
                 success: function(data) {
+                    if (data.status == "success") {
+                        $(`#balance`).text(data.balance + " TC")
+
+                        //perbarui inventory machine
+                        let table = document.getElementById("tbody-machine");
+	                    table.innerHTML = "";
+                        let counter = 1
+
+                        data.machines.forEach(machine => {
+                            let lifetime = batch - machine.pivot.batch  + 1
+                            if(machine.pivot.exist){
+                                $(`#tbody-machine`).append(`
+                                    <tr>
+                                        <td class="border-0 text-center align-middle">${counter}</td>
+                                        <td class="border-0 text-center align-middle">${machine.name_type} ${machine.pivot.id}</td>
+                                        <td class="border-0 text-center align-middle">${machine.pivot.level}</td>
+                                        <td class="border-0 text-center align-middle">
+                                            <button type="button" class="btn btn-danger"
+                                                data-bs-target="#modalJualMesin" data-bs-toggle="modal"
+                                                onclick="showMachineSell(${ machine.pivot.id }, ${ machine.pivot.machine_types_id })">Jual</button>
+                                        </td>
+                                    </tr>
+                                `)
+                                counter++
+                            }
+                        })
+                    }
                     alert(data.message)
                 },
                 error: function(error) {

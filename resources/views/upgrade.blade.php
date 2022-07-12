@@ -153,7 +153,7 @@
 
             $.ajax({
                 type: 'POST',
-                url: '{{ route("machine.getbyid") }}',
+                url: '{{ route("machine.getbyid2") }}',
                 data: {
                     '_token': '<?php echo csrf_token() ?>',
                     'machine_id': machine_id,

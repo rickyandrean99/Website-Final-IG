@@ -64,7 +64,13 @@ class MachineController extends Controller
             $message = "Saldo tidak mencukupi";
         }    
 
+        $team = Team::find(Auth::user()->team);
+        $balance = $team->balance;
+        $machines = $team->machineTypes;
+
         return response()->json(array(
+            'balance' => $balance,
+            'machines' => $machines,
             'status' => $status,
             'message' => $message,
         ), 200);
@@ -74,8 +80,16 @@ class MachineController extends Controller
         $batch = Batch::find(1)->batch;
         $id = $request->get("id");
         $type_id = $request->get("type_id");
+        $team = Team::find(Auth::user()->team);
         
-        $machine = DB::table("team_machine")->where('id', $id)->where('machine_types_id', $type_id)->get();
+        // var_dump($id);
+
+        $machine = DB::table("team_machine")
+                    ->where('id', $id)
+                    ->where('machine_types_id', $type_id)
+                    ->where('teams_id', $team->id)->get();
+
+
         $nama = DB::table('machine_types')->where('id', $machine[0]->machine_types_id)->get();
         
         $lifetime = $batch - $machine[0]->batch + 1;
@@ -106,7 +120,7 @@ class MachineController extends Controller
         $lifetime = $batch - $machine[0]->batch + 1;
         $price =  $nama[0]->price - ($lifetime/5*($nama[0]->price - $nama[0]->residual_price));
         
-        $update_price = $team->increment('balance', $price);
+        $team->increment('balance', $price);
         $team->save();
 
         DB::table("team_machine")
@@ -115,7 +129,13 @@ class MachineController extends Controller
         ->where('machine_types_id', $type_id)
         ->update(['exist'=>0]);
 
+        $team = Team::find(Auth::user()->team);
+        $balance = $team->balance;
+        $machines = $team->machineTypes;
+
         return response()->json(array(
+            'balance' => $balance,
+            'machines' => $machines,
             'status'=> "success",
             'message' => "Berhasil menjual mesin"
         ), 200);
