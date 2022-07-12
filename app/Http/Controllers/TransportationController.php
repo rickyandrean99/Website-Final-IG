@@ -61,7 +61,13 @@ class TransportationController extends Controller
             $message = "Saldo tidak mencukupi";
         }    
 
+        $team = Team::find(Auth::user()->team);
+        $balance = $team->balance;
+        $transportations = $team->transportations;
+
         return response()->json(array(
+            'balance' => $balance,
+            'transportations' => $transportations,
             'status' => $status,
             'message' => $message,
         ), 200);
@@ -78,12 +84,18 @@ class TransportationController extends Controller
         $lifetime = $batch - $transportation[0]->batch + 1;
         $price = $transport->price - ($lifetime/5*($transport->price - $transport->residual_price));
         
-        $update_price = $team->increment('balance', $price);
+        $team->increment('balance', $price);
         $team->save();
 
-        $update_exist = DB::table("team_transportation")->where('id', $id)->update(['exist'=>0]);
+        DB::table("team_transportation")->where('id', $id)->update(['exist'=>0]);
+
+        $team = Team::find(Auth::user()->team);
+        $balance = $team->balance;
+        $transportations = $team->transportations;
 
         return response()->json(array(
+            'balance' => $balance,
+            'transportations' => $transportations,
             'status'=> "success",
             'message' => "Berhasil menjual transportasi"
         ), 200);

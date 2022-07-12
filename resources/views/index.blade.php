@@ -199,8 +199,9 @@
             <div class="p-1 align-items-center">
                 <!-- Button Modal -->
                 <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal"
-                    data-bs-target="#modalInventory" onclick="updateUsedCapacity()"><i class="bi-bag"></i> Inventory</button>
+                    data-bs-target="#modalInventory"><i class="bi-bag"></i> Inventory</button>
                 <!-- Modal Content -->
+                {{-- onclick="updateUsedCapacity()" --}}
 
                 {{-- MODAL INVENTORY --}}
                 <div class="modal fade p-3" id="modalInventory" aria-hidden="true" aria-labelledby="modalInventoryLabel"
@@ -767,7 +768,7 @@
                                         <div class="row mt-5 pt-2 position-fixed" style="width:160px;">
                                             <button class="btn btn-success fw-bold p-3 text-white"
                                                 style="font-size: 20px; font-weight: bold"
-                                                onclick="buyTransportations()">Buy</button>
+                                                onclick="buyTransportations({{ $batch }})">Buy</button>
                                             <!-- <button class="col-12 btn btn-success fw-bold p-3 text-white" data-bs-toggle="modal"
                                                 data-bs-target="#modalBeliTransport"style="font-size: 20px; font-weight: bold">Buy</button> -->
                                         </div>
@@ -832,7 +833,7 @@
                                             <th class="border-0 text-center">Masa Pakai</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody id="tbody-transportation">
                                         @php
                                         $i = 1
                                         @endphp
@@ -887,7 +888,7 @@
 
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-danger" data-bs-toggle="modal"
-                                    data-bs-target="#modalTransport" onclick="sellTransportations()">Jual
+                                    data-bs-target="#modalTransport" onclick="sellTransportations({{ $batch }})">Jual
                                     Transoprtasi</button>
                             </div>
                         </div>
@@ -1203,11 +1204,12 @@
                         data.ingredients.forEach(ingredient => {
                             $(`#tbody-ingredient`).append(`
                                 <tr>
-                                    <td class="border-0 text-center align-middle">${counter+1}</td>
+                                    <td class="border-0 text-center align-middle">${counter}</td>
                                     <td class="border-0 text-center align-middle">${ingredient.name}</td>
                                     <td class="border-0 text-center align-middle">${ingredient.pivot.amount}</td>
                                 </tr>
                             `)
+                            counter++
                         })
 
                         $(`#used-capacity-ingredient`).text(data.used)
@@ -1287,7 +1289,7 @@
         }
 
         // Method buy transportation
-        const buyTransportations = () => {
+        const buyTransportations = (batch) => {
             if (!confirm("Are you sure?")) return
 
             let transportationId = $(`.transportation-id`).map(function() {
@@ -1308,13 +1310,41 @@
                 },
                 success: function(data) {
                     if (data.status == "success") {
-                        $(`.transportaion-amount`).val(0)
-                        $(`#pengeluaran-transportaion`).text("0 TC")
+                        $(`.transportation-amount`).val(0)
+                        $(`#pengeluaran-transportation`).text("0 TC")
+                        $(`#balance`).text(data.balance + " TC")
+
+                        //perbarui inventory
+                        let table = document.getElementById("tbody-transportation");
+	                    table.innerHTML = "";
+                        let counter = 1
+
+                        data.transportations.forEach(transport => {
+                            let lifetime = batch - transport.pivot.batch  + 1
+                            if(transport.pivot.exist){
+                                $(`#tbody-transportation`).append(`
+                                    <tr>
+                                        <td class="border-0 text-center align-middle">${counter}</td>
+                                        <td class="border-0 text-center align-middle">${transport.name}</td>
+                                        <td class="border-0 text-center align-middle">${transport.capacity}</td>
+                                        <td class="border-0 text-center align-middle">${transport.duration}</td>
+                                        <td class="border-0 text-center align-middle">${lifetime}</td>
+                                        <td class="border-0 text-center align-middle">
+                                            <button type="button" class="btn btn-danger"
+                                                data-bs-target="#modalJualTransport" data-bs-toggle="modal"
+                                                onclick="showTransportSell(${ transport.pivot.id })">Jual
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `)
+                                counter++
+                            }
+                        })
                     }
-                    alert(data.message)
+                    alert(data.message) 
                 },
                 error: function(error) {
-                    alert(error)
+                    alert(error.message)
                 }
             })
         }
@@ -1335,12 +1365,12 @@
                     $(`#sell-transport-id`).val(data.id)
                 },
                 error: function(error) {
-                    alert(error)
+                    alert(error.message)
                 }
             })
         }
 
-        const sellTransportations = () => {
+        const sellTransportations = (batch) => {
             let id = $(`#sell-transport-id`).val()
 
             $.ajax({
@@ -1351,10 +1381,40 @@
                     'id': id
                 },
                 success: function(data) {
+                    if (data.status == "success"){
+                        $(`#balance`).text(data.balance + " TC")
+
+                        //perbarui inventory
+                        let table = document.getElementById("tbody-transportation");
+	                    table.innerHTML = "";
+                        let counter = 1
+
+                        data.transportations.forEach(transport => {
+                            let lifetime = batch - transport.pivot.batch  + 1
+                            if(transport.pivot.exist){
+                                $(`#tbody-transportation`).append(`
+                                    <tr>
+                                        <td class="border-0 text-center align-middle">${counter}</td>
+                                        <td class="border-0 text-center align-middle">${transport.name}</td>
+                                        <td class="border-0 text-center align-middle">${transport.capacity}</td>
+                                        <td class="border-0 text-center align-middle">${transport.duration}</td>
+                                        <td class="border-0 text-center align-middle">${lifetime}</td>
+                                        <td class="border-0 text-center align-middle">
+                                            <button type="button" class="btn btn-danger"
+                                                data-bs-target="#modalJualTransport" data-bs-toggle="modal"
+                                                onclick="showTransportSell(${ transport.pivot.id })">Jual
+                                            </button>
+                                        </td>
+                                    </tr>
+                                `)
+                                counter++
+                            }
+                        })
+                    }
                     alert(data.message)
                 },
                 error: function(error) {
-                    alert(error)
+                    alert(error.message)
                 }
             })
         }
@@ -1377,7 +1437,7 @@
                     $(`#sell-machine-type-id`).val(type_id)
                 },
                 error: function(error) {
-                    alert(error)
+                    alert(error.message)
                 }
             })
         }
