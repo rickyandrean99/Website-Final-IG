@@ -1570,7 +1570,9 @@
                 },
                 success: function(data) {
                     alert(data.message)
-                    $(`#balance`).text(data.balance + " TC")
+                    if (data.status == "success"){
+                        $(`#balance`).text(data.balance + " TC")
+                    }
                     $(`#jumlahHutang`).text(data.info)
                     $(`#jumlah-bayar`).val(null)
                 },
