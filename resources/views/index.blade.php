@@ -946,13 +946,20 @@
                             </div>
                             <div class="modal-body">
                                 <div class="mb-3">
-                                    <h4 class="col-form-label" id="hutang">Total Hutang:</h4>
-                                    <h2 id="jumlahHutang"></h2>    
+                                    <h2 id="jumlahHutang"></h2>
+
+                                    <div class="mb-3">
+                                        <label for="jumlah-bayar" class="col-form-label">Bayar Hutang</label>
+                                        <div class="d-flex flex-row">
+                                            <input type="number" class="form-control w-50" id="jumlah-bayar">
+                                            <button type="button" class="btn btn-success w-25 ms-2"
+                                                id="btnBayarHutang" onclick = "bayarHutang()">Bayar</button>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
-                                <button type="button" class="btn btn-success"id="btnBayarHutang" onclick = "bayarHutang()">Bayar</button>
                             </div>
                         </div>
                     </div>
@@ -1190,7 +1197,7 @@
                 },
                 success: function(data) {
                     if (data.status == "success") {
-                        $(`.ingredient-amount`).val(0)
+                        $(`.ingredient-amount`).val(null)
                         $(`#pengeluaran-ingredient`).text("0 TC")
                         $(`#package-limit-hidden`).val(data.limit)
                         $(`#package-limit`).text(data.limit)
@@ -1243,7 +1250,7 @@
                 },
                 success: function(data) {
                     if (data.status == "success") {
-                        $(`.machine-amount`).val(0)
+                        $(`.machine-amount`).val(null)
                         $(`#pengeluaran-machine`).text("0 TC")
                         $(`#balance`).text(data.balance + " TC")
 
@@ -1335,7 +1342,7 @@
                 },
                 success: function(data) {
                     if (data.status == "success") {
-                        $(`.transportation-amount`).val(0)
+                        $(`.transportation-amount`).val(null)
                         $(`#pengeluaran-transportation`).text("0 TC")
                         $(`#balance`).text(data.balance + " TC")
 
@@ -1542,36 +1549,33 @@
                     '_token': '<?php echo csrf_token() ?>',
                 },
                 success: function(data) {
-                    if(data.status == "success"){
-                        $(`#hutang`).text("")
-                    }
                     $(`#jumlahHutang`).text(data.info)
                 },
                 error: function(error) {
-                    alert(error)
+                    alert(error.message)
                 }
             })
         }
 
         const bayarHutang = () =>{
             if (!confirm("Are you sure?")) return
+            let bayar = $('#jumlah-bayar').val()
 
             $.ajax({
                 type: 'POST',
                 url: '{{ route("bayar-hutang") }}',
                 data: {
                     '_token': '<?php echo csrf_token() ?>',
+                    'bayar' : bayar
                 },
                 success: function(data) {
                     alert(data.message)
-
-                    if(data.status == "success"){
-                        $(`#hutang`).text("")
-                        $(`#jumlahHutang`).text(data.info)
-                    }
+                    $(`#balance`).text(data.balance + " TC")
+                    $(`#jumlahHutang`).text(data.info)
+                    $(`#jumlah-bayar`).val(null)
                 },
                 error: function(error) {
-                    alert(error)
+                    alert(error.message)
                 }
             })
         }

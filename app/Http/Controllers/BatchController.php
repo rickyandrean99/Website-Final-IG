@@ -59,7 +59,9 @@ class BatchController extends Controller
         $teams = Team::all();
         foreach($teams as $team) {
             $rent_price = $team->inventory_ingredient_rent + $team->inventory_product_rent;
+            $interest = 0.07 * $team->debt;
             $team->decrement('balance', $rent_price);
+            $team->increment('debt', $interest);
         }
 
         // Transportasi lewat 5 batch, langsung jual otomatis

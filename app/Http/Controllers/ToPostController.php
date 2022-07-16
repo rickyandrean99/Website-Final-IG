@@ -61,62 +61,50 @@ class ToPostController extends Controller
 
     public function infoHutang(){
         $team = Team::find(Auth::user()->team);
-
-        if ($team->debt_paid != 0) {
-            $status = "success";
-            $info = "Hutang Lunas";
-        } else {
-            $batch = Batch::find(1)->batch;
-            $hutang = 25000;
-            for($i = 1; $i <= $batch; $i++) {
-                $hutang += (0.05 * $hutang);
-            }
-
-            $status = "failed";
-            $info = "Jumlah Hutang: ".ceil($hutang)." TC";
-        }
+        $hutang = $team->debt;
+        $info = "Jumlah Hutang: ".$hutang." TC";
 
         return response()->json(array(
-            'status' => $status,
+            'status' => "success",
             'info' => $info
         ), 200);
     }
 
-    public function bayarHutang(){
+    public function bayarHutang(Request $request){
         $team = Team::find(Auth::user()->team);
-        
-        if ($team->debt_paid != 0){
+        $bayar = $request->get('bayar');
+        $hutang = $team->debt;
+
+        if ($bayar > $team->debt){
             return response()->json(array(
-                'message' => "Hutang sudah lunas",
-                'status' => "success",
-                'info' => "Hutang Lunas"
+                'message' => "Jumlah yang dibayar melebihi hutang",
+                'status' => "failed",
+                'info' => "Jumlah Hutang: ".$hutang." TC"
             ), 200);
         }
-        
-        $batch = Batch::find(1)->batch;
-        $hutang = 25000;
-        for ($i = 1; $i <= $batch; $i++) {
-            $hutang += (0.05 * $hutang);
-        }
 
-        if ($team->balance >= ceil($hutang)) {
-            $team->decrement('balance', ceil($hutang));
-            $team->debt_paid = $batch;
+
+        if ($team->balance >= $bayar) {
+            $team->decrement('balance', $bayar);
+            $team->decrement('debt', $bayar);
             $team->save();
 
             $status = "success";
             $message = "Berhasil bayar hutang";
-            $info = "Hutang Lunas";
         } else {
             $status = "failed";
             $message = "Saldo tidak mencukupi";
-            $info = "Hutang belum lunas";
         }
+
+        $team = Team::find(Auth::user()->team);
+        $hutang = $team->debt;
+        $balance = $team->balance;
 
         return response()->json(array(
             'status' => $status,
             'message' => $message,
-            'info' => $info
+            'balance' => $balance,
+            'info' => "Jumlah Hutang: ".$hutang." TC"
         ), 200);
     }
 }
