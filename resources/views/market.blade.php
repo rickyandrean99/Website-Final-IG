@@ -21,7 +21,7 @@
 
     <div class="d-flex justify-content-between align-center">
         <!-- SELECT BATCH -->
-        <select name="selectBatch" id="selectBatch" onchange="updateMarket()" class="form-select fw-bold w-75" style="color: #EA435E;">
+        <select name="selectBatch" id="selectBatch" onchange="updateMarket('yes')" class="form-select fw-bold w-75" style="color: #EA435E;">
             <option value="0" disabled selected>Pilih Batch</option>    
             @for ($i = 1; $i < 7; $i++)
                 <option value="{{$i}}">Batch {{$i}}</option>
@@ -164,7 +164,7 @@
                 },
                 success: function(data) {
                     alert(data.message)
-                    updateMarket()
+                    updateMarket('no')
                 },
                 error: function(error) {
                     alert("Gagal menjual produk")
@@ -172,13 +172,14 @@
             })
         }
 
-        const updateMarket = () =>{
+        const updateMarket = (info) =>{
             let batch = $(`#selectBatch`).val();
             let keripiks = 0;
             let dodols = 0;
             let saris = 0;
             let jumlahs = 0;
             let subtotals = 0;
+            let is_info = info;
 
             $.ajax({
                 type: 'POST',
@@ -188,7 +189,9 @@
                     'batch' : batch
                 },
                 success: function(data) {
-                    alert("Berhasil update product batch")
+                    if(is_info == 'yes'){
+                        alert("Berhasil update product batch")
+                    }
 
                     data.keripik.forEach((value, index)=>{
                         $(`#keripik-${index+1}`).text(value)

@@ -31,23 +31,6 @@ class MarketPostController extends Controller
         //mengecek apakah bisa jual atau tidak
         foreach ($product_id as $index => $product){
             if($product_amount[$index] > 0){
-                $batch_amount = DB::table('transactions')
-                    ->where('teams_id', $id)
-                    ->where('batch', $batch)->get();
-                
-                $current_amount = $product_amount[$index];
-                
-                //cek jumlah sebelumnya + jumlah saat ini
-                if(count($batch_amount) > 0){
-                    foreach($batch_amount as $i){
-                        $transaction = DB::table('product_transaction')
-                        ->where('transactions_id', $i->id)
-                        ->where('products_id', $product)->get();
-                        if(count($transaction)> 0){
-                            $current_amount += $transaction[0]->amount; 
-                        }
-                    }
-                }
 
                 $current_demand = DB::table('product_demand')->where('products_id', $product)->where('demands_id', $batch)->get();
 
@@ -61,7 +44,7 @@ class MarketPostController extends Controller
                 //cek apakah produk cukup atau tidak
                 if($product_amount[$index] <= $product_team){
                     //cek apakah sudah memenuhi demand atau belum
-                    if ($current_amount <= $current_demand[0]->amount){
+                    if ($product_amount[$index] <= $current_demand[0]->amount){
                         $subtotal += $current_price[0]->price *  $product_amount[$index];
                     }else{
                         return response()->json(array(
@@ -86,17 +69,22 @@ class MarketPostController extends Controller
             'subtotal' => $subtotal
         ]);
 
+        
         $transaction_id = DB::table('transactions')->select('id')->orderBy('id', 'desc')->get();
         $transaction_id = $transaction_id[0]->id;
         
         //masukkan ke transaksi produk (row sesuai dengan jumlah jenis produk)
         foreach ($product_id as $index => $product) {
-
+            
             $product_teams = DB::table('product_inventory')
             ->where('teams_id', $id)
             ->where('products_id', $product)->get();
-
+            
             if($product_amount[$index] > 0){
+                //kurangi demand
+                DB::table('product_demand')
+                ->where('products_id', $product)
+                ->where('demands_id', $batch)->decrement('amount', $product_amount[$index]);
                 // kurangi produk inventory
                 $amount = $product_amount[$index];
                 foreach($product_teams as $team){
