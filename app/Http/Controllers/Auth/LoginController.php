@@ -31,7 +31,7 @@ class LoginController extends Controller
         } else if (Auth::user()->role == "pasar") {
             return route('market');
         } else if (Auth::user()->role == "acara") {
-            return route('batch');
+            return route('score-recap');
         } else if (Auth::user()->role == "administrator") {
             return route('batch');
         }

@@ -48,10 +48,10 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/batch', "BatchController@index")->name('batch');
     Route::post('/update-batch', "BatchController@updateBatch")->name('update-batch');
     Route::post('/update-preparation', "BatchController@updatePreparation")->name('update-preparation');
+
+    // Rekap Skor
+    Route::get('/score-recap', "AcaraController@index")->name('score-recap');
 });
 
 Auth::routes(['register' => false]);
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/score-recap', function() {
-    return view('score-recap');
-})->name('score-recap');
