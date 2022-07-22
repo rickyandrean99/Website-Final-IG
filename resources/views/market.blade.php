@@ -70,13 +70,73 @@
                                 </tbody>
                             </table>
 
-                            <div class="d-flex justify-content-center mt-2">    
-                                <button type="button" class="btn btn-danger w-25" id="btnTambahTC" onclick = "sellProducts()">Jual</button>
+                            <div class="divider py-1 bg-warning"></div>
+                            {{-- Metode Pengiriman --}}
+                            <label for="metode" class="col-form-label mx-2 my-3 fw-bold">Metode Pengiriman: </label>
+                            <div class="form-check-inline">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked>
+                                <label class="form-check-label" for="flexRadioDefault1">
+                                  Antar Sendiri
+                                </label>
+                              </div>
+                              <div class="form-check-inline">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
+                                <label class="form-check-label" for="flexRadioDefault2">
+                                  Delivery
+                                </label>
+                            </div>
+
+                            <div class="divider py-1 bg-warning"></div>
+                            {{-- Transportation --}}
+                            <div class="row">
+                                <div class="col-8 ps-4">
+                                    <div class="table-responsive">
+                                        <table class="table table-centered table-wrap">
+                                            <thead>
+                                                <tr>
+                                                    <th class="border-0 text-center">Kendaraan</th>
+                                                    <th class="border-0 rounded-end text-center">Jumlah</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach($transportations as $transportation)
+                                                <tr>
+                                                    <td class="border-0 text-center">{{ $transportation->name }}
+                                                    </td>
+                                                    <td class="border-0 text-center text-danger">
+                                                        <input type="number" style="margin: auto"
+                                                            class="form-control transportation-amount w-50 text-center"
+                                                            id="transportation-amount-{{ $transportation->id }}"
+                                                            value="0" min="0"
+                                                            onchange="updateCapacity()">
+                                                    </td>
+                                                    <input type="hidden" class="transportation-capacity"
+                                                            id="transportation-capacity-{{ $transportation->id }}"
+                                                            value="{{ $transportation->capacity }}">
+                                                </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-4 px-1 py-5">
+                                    <!-- Kapasitas -->
+                                    <div class="row" style="width:150px;">
+                                        <div class="col-10 bg-dark rounded-top text-white text-center fw-bold ">
+                                            Kapasitas Maksimal
+                                        </div>
+                                        <div class="col-10 bg-danger rounded-bottom text-white text-center fw-bold "
+                                            id="kapasitas-transportation">
+                                            0
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
+                        <button type="button" class="btn btn-danger w-20" id="btnTambahTC" onclick = "sellProducts()">Jual</button>
                     </div>
                 </div>
             </div>
@@ -232,6 +292,23 @@
                     alert("Gagal update product batch")
                 }
             })
+        }
+
+        //update kapasitas transportasi
+        const updateCapacity = () => {
+            let transportationsAmount = $('.transportation-amount').map(function() {
+                return $(this).val()
+            }).get()
+            let transportationsCapacity = $('.transportation-capacity').map(function() {
+                return $(this).val()
+            }).get()
+
+            let totalCapacity = 0
+            for (let i = 0; i < transportationsAmount.length; i++) {
+                totalCapacity += (transportationsAmount[i] * transportationsCapacity[i])
+            }
+
+            $('#kapasitas-transportation').text(totalCapacity)
         }
     </script>
 </body>

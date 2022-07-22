@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Product;
 use App\Batch;
 use App\Team;
+use App\Transportation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -18,7 +19,8 @@ class MarketPostController extends Controller
         }
 
         $products = Product::all();
-        return view('market', compact('products'));
+        $transportations = Transportation::all();
+        return view('market', compact('products', 'transportations'));
     }
 
     public function sellProduct(Request $request){
