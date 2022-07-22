@@ -74,14 +74,14 @@
                             {{-- Metode Pengiriman --}}
                             <label for="metode" class="col-form-label mx-2 my-3 fw-bold">Metode Pengiriman: </label>
                             <div class="form-check-inline">
-                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" checked>
-                                <label class="form-check-label" for="flexRadioDefault1">
+                                <label class="form-check-label" for="metode1">
+                                <input class="form-check-input" type="radio" name="metode" id="metode1" value="1" checked>
                                   Antar Sendiri
                                 </label>
                               </div>
                               <div class="form-check-inline">
-                                <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2">
-                                <label class="form-check-label" for="flexRadioDefault2">
+                                <label class="form-check-label" for="metode2">
+                                <input class="form-check-input" type="radio" name="metode" id="metode2" value="2">
                                   Delivery
                                 </label>
                             </div>
@@ -201,6 +201,7 @@
     <script type="text/javascript">
         //jual produk
         const sellProducts = () => {
+            let a = $('input[name="metode"]:checked').val()
             if (!confirm("Are you sure?")) return
 
             let productId = $(`.product-id`).map(function() {
