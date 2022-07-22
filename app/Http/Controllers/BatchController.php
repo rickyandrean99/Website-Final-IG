@@ -145,4 +145,17 @@ class BatchController extends Controller
             'message' => "Berhasil update preparation"
         ), 200);
     }
+
+    public function updateMarketShare(){
+        // Jika masuk preperation, kalkulasi pangsa pasar
+        if($batch->preparation == 1){
+            DB::table('team_round')
+            ->where('teams_id', $team->id)
+            ->where('rounds_id', $batch->batch)
+            ->update(["market_share" => 0]);
+        }
+        else{
+
+        }
+    }
 }

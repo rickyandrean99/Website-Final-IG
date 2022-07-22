@@ -21,6 +21,8 @@ class ToPostController extends Controller
             return redirect()->route('upgrade');
         } else if (Auth::user()->role == "pasar") {
             return redirect()->route('market');
+        } else if (Auth::user()->role == "acara") {
+            return redirect()->route('score-recap');
         }
 
         $batch = Batch::find(1)->batch;

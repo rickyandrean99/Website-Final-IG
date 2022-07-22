@@ -35,20 +35,19 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @for ($j = 1; $j <= 10; $j++)
+                    @foreach($teams as $team)
                     <tr class="text-center align-middle">
-                        <td style="width: 40%;">Perusahaan {{$j}}</td>
+                        <td style="width: 40%;">Perusahaan {{ $team -> id }}</td>
                         <td>0</td>
                         <td>0</td>
                         <td>0</td>
                         <td>0</td>
                     </tr>
-                    @endfor
+                    @endforeach
                 </tbody>
             </table>
         </div>
     @endfor
-
-   
+       
 </body>
 </html>

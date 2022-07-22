@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Team;
+use App\Batch;
 use DB;
 use Illuminate\Http\Request;
 use Auth;
@@ -15,9 +17,12 @@ class AcaraController extends Controller
             return redirect()->route('upgrade');
         } else if (Auth::user()->role == "pasar") {
             return redirect()->route('market');
+        } else if (Auth::user()->role == "administrator"){
+            return redirect()->route('batch');
         }
 
-        return view('score-recap');
+        $teams = Team::all();
+        return view('score-recap', compact('teams'));
     }
     
     //
