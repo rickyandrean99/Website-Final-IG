@@ -27,8 +27,48 @@ class MarketPostController extends Controller
         $id = $request->get('id');
         $product_id = $request->get('product_id');
         $product_amount = $request->get('product_amount');
+        $transportation_id = $request->get('transportation_id');
+        $transportation_amount = $request->get('transportation_amount');
+        $metode = $request->get('metode');
+        $capacity = $request->get('capacity');
         $batch = Batch::find(1)->batch;
         $subtotal = 0;
+
+        if(array_sum($product_amount) > $capacity){
+            return response()->json(array(
+                'status' =>  "failed",
+                'message' => "Kapasitas transportasi kurang",
+            ), 200);
+        }
+
+        $denda = $capacity - array_sum($product_amount);
+        $ongkir = 0;
+
+        //mengecek apakah transportasi dimiliki tim atau tidak
+        foreach ($transportation_id as $index => $transportation){
+            if($transportation_amount[$index] > 0){
+                $transportation_team = DB::table('team_transportation')
+                ->where('teams_id', $id)
+                ->where('transportations_id', $transportation)->where('exist', 1)->get();
+
+                //hitung ongkir
+                $trans = Transportation::where('id', $index + 1)->first();
+
+                if($metode == 1){
+                    $ongkir += $transportation_amount[$index] * $trans->self_price;
+                }else{
+                    $ongkir += $transportation_amount[$index] * $trans->delivery_price;
+                }
+
+                if($transportation_amount[$index] > count($transportation_team)){
+                    return response()->json(array(
+                        'status' =>  "failed",
+                        'message' => "Transportasi yang dipilih tidak dimiliki",
+                    ), 200);
+                }
+            }
+        }
+
 
         //mengecek apakah bisa jual atau tidak
         foreach ($product_id as $index => $product){
@@ -63,12 +103,16 @@ class MarketPostController extends Controller
             }
         }
 
+        //hitung total yak => subtotal - ongkir - denda
+        $total = $subtotal - $ongkir - $denda;
+
         //jual produk
         //masukkan ke transaksi baru
         DB::table('transactions')->insert([
             'teams_id' => $id,
             'batch' => $batch,
-            'subtotal' => $subtotal
+            'subtotal' => $subtotal,
+            'total' => $total
         ]);
 
         
@@ -121,7 +165,10 @@ class MarketPostController extends Controller
         }
 
         $status = "success";
-        $message = "Berhasil menjual produk, tim mendapatkan koin sejumlah $subtotal TC";
+        $message = "Berhasil menjual produk, detail transaksi:\n
+                -Hasil jual produk: $subtotal TC\n
+                -Ongkos kirim: $ongkir TC\n
+                -Denda: $denda TC\n\nSehingga tim mendapatkan koin sejumlah $total TC";
 
         return response()->json(array(
             'status' => $status,

@@ -31,4 +31,12 @@ class Team extends Model
     public function packages() {
         return $this->belongsToMany("App\Package", "team_package", "teams_id", "packages_id")->withPivot("remaining");
     }
+
+    public function histories() {
+        return $this->hasMany("App\History", "teams_id");
+    }
+
+    public function rounds() {
+        return $this->belongsToMany("App\Round", "team_round", "teams_id", "rounds_id")->withPivot("six_sigma", "market_share", "profit");
+    }
 }

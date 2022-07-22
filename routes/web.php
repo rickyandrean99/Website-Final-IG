@@ -51,6 +51,11 @@ Route::middleware(['auth'])->group(function() {
 
     // Rekap Skor
     Route::get('/score-recap', "AcaraController@index")->name('score-recap');
+
+    // Routing khusus penilaian [Kalian sesuaiin aja, testnya mau pakai method get atau post]
+    Route::get('/calculate-profit', "BatchController@calculateProfit")->name('calculate-profit');
+    Route::get('/calculate-pangsa', "BatchController@calculatePangsa")->name('calculate-pangsa');
+    Route::post('/calculate-sigma', "BatchController@calculateSigma")->name('calculate-sigma');
 });
 
 Auth::routes(['register' => false]);

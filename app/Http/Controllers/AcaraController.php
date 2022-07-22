@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Team;
-use App\Batch;
 use DB;
 use Illuminate\Http\Request;
 use Auth;
@@ -25,5 +24,6 @@ class AcaraController extends Controller
         return view('score-recap', compact('teams'));
     }
     
+
     //
 }

@@ -102,6 +102,8 @@
                                                 @foreach($transportations as $transportation)
                                                 <tr>
                                                     <td class="border-0 text-center">{{ $transportation->name }}
+                                                        <input type="hidden" class="transportation-id"
+                                                                value="{{ $transportation->id }}">
                                                     </td>
                                                     <td class="border-0 text-center text-danger">
                                                         <input type="number" style="margin: auto"
@@ -201,9 +203,12 @@
     <script type="text/javascript">
         //jual produk
         const sellProducts = () => {
-            let a = $('input[name="metode"]:checked').val()
             if (!confirm("Are you sure?")) return
 
+            //metode
+            let metode = $('input[name="metode"]:checked').val()
+
+            //produk
             let productId = $(`.product-id`).map(function() {
                 return $(this).val()
             }).get()
@@ -214,6 +219,19 @@
 
             let id = $(`#selectTim`).val()
 
+            //transportasi
+
+            let capacity = $('#kapasitas-transportation').text()
+
+            let transportationId = $(`.transportation-id`).map(function() {
+                return $(this).val()
+            }).get()
+
+            let transportationAmount = $(`.transportation-amount`).map(function() {
+                return $(this).val()
+            }).get()
+
+
             $.ajax({
                 type: 'POST',
                 url: '{{ route("product.sell") }}',
@@ -221,7 +239,12 @@
                     '_token': '<?php echo csrf_token() ?>',
                     'id': id,
                     'product_id': productId,
-                    'product_amount': productAmount
+                    'product_amount': productAmount,
+                    'capacity': capacity,
+                    'metode': metode,
+                    'transportation_id': transportationId,
+                    'transportation_amount': transportationAmount
+
                 },
                 success: function(data) {
                     alert(data.message)

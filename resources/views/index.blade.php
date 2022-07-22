@@ -912,6 +912,20 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
+                                {{-- Metode Pengiriman --}}
+                                <label for="metode" class="col-form-label mx-2 my-3 fw-bold">Jenis Input TC: </label>
+                                <div class="form-check-inline">
+                                    <label class="form-check-label" for="metode1">
+                                    <input class="form-check-input" type="radio" name="metode" id="metode1" value="1" checked>
+                                        Non Hutang
+                                    </label>
+                                    </div>
+                                    <div class="form-check-inline">
+                                    <label class="form-check-label" for="metode2">
+                                    <input class="form-check-input" type="radio" name="metode" id="metode2" value="2">
+                                        Hutang
+                                    </label>
+                                </div>
                                 <div class="mb-3">
                                     <label for="jumlah-tc" class="col-form-label">Jumlah TC</label>
                                     <div class="d-flex flex-row">
@@ -1523,17 +1537,25 @@
         }
 
         const addCoin = () =>{
+            if (!confirm("Are you sure?")) return
+
             let coin = $('#jumlah-tc').val()
+            let metode = $('input[name="metode"]:checked').val()
            
             $.ajax({
                 type: 'POST',
                 url: '{{ route("add-coin") }}',
                 data: {
                     '_token': '<?php echo csrf_token() ?>',
-                    'coin': coin
+                    'coin': coin,
+                    'metode': metode,
                 },
                 success: function(data) {
                     alert(data.message)
+                    if (data.status == "success"){
+                        $(`#balance`).text(data.balance + " TC")
+                    }
+                    $(`#jumlah-tc`).val(null)
                 },
                 error: function(error) {
                     alert(error)

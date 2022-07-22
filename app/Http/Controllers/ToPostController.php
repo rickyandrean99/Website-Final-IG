@@ -52,10 +52,36 @@ class ToPostController extends Controller
         $this->authorize("peserta");
 
         $coin = $request->get('coin');
+        $metode = $request->get('metode');
+
         $team = Team::find(Auth::user()->team);
-        $team->increment('balance', $coin);
+
+        if($metode == 1){
+            $team->increment('balance', $coin);
+        }else{
+            if($team->debt_batch == 1){
+                return response()->json(array(
+                    'status' => "failed",
+                    'message' => "Tim sudah melakukan hutang pada batch ini",
+                ), 200);
+            }
+            if($coin > 7500){
+                return response()->json(array(
+                    'status' => "failed",
+                    'message' => "Batas maksimal hutang adalah 7500 TC",
+                ), 200);
+            }
+            $team->increment('balance', $coin);
+            $team->debt_batch = 1;
+            $team->save();
+        }
+
+        $team = Team::find(Auth::user()->team);
+        $balance = $team->balance;
+
 
         return response()->json(array(
+            'balance' => $balance,
             'status' => "success",
             'message' => "Berhasil menambah koin",
         ), 200);

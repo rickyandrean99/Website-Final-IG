@@ -6,6 +6,7 @@ use DB;
 use App\Team;
 use App\Batch;
 use App\Transportation;
+use App\Transaction;
 use App\MachineType;
 use App\Ingredient;
 use Illuminate\Http\Request;
@@ -32,16 +33,13 @@ class BatchController extends Controller
         $batch->preparation = 0;
         $batch->save();
 
-        // Jika Batch 6, Potong saldonya yang belum bayar
+        // Jika Batch 6 (selesai game), Potong saldonya yang belum bayar
         if ($batch->batch == 6) {
-            $hutang = 25000;
-            for($i = 1; $i <= $batch->batch; $i++) $hutang += (0.05 * $hutang);
-
             $teams = Team::all();
             foreach($teams as $team) {
-                if ($team->debt_paid == 0) {
-                    $team->decrement('balance', $hutang);
-                    $team->debt_paid = 6;
+                if ($team->debt > 0) {
+                    $team->decrement('balance', $team->debt);
+                    $team->debt = 0;
                     $team->save();
                 }
             }
@@ -49,55 +47,20 @@ class BatchController extends Controller
         
         // Reset Limit
         DB::table('teams')->update([
-            'upgrade_machine_limit' => 4,
+            'upgrade_machine_limit' => 5,
             'upgrade_ingredient_limit' => 1,
             'upgrade_product_limit' => 1,
+            'debt_batch' => 0,
         ]);
         DB::table('team_machine')->update(['is_upgrade' => 0]);
         
-        // Bayar Sewa Inventory
+        // Bayar Sewa Inventory & Tambah bunga hutang
         $teams = Team::all();
         foreach($teams as $team) {
             $rent_price = $team->inventory_ingredient_rent + $team->inventory_product_rent;
-            $interest = 0.07 * $team->debt;
+            $interest = 0.05 * $team->debt;
             $team->decrement('balance', $rent_price);
             $team->increment('debt', $interest);
-        }
-
-        // Transportasi lewat 5 batch, langsung jual otomatis
-        $team_transportation = DB::table('team_transportation')->get();
-        foreach($team_transportation as $transport){
-            if (($batch->batch - $transport->batch >= 5) && $transport->exist) {
-                // Hapus transport
-                DB::table('team_transportation')
-                ->where('teams_id', $transport->teams_id)
-                ->where('transportations_id', $transport->transportations_id)
-                ->where('id', $transport->id)
-                ->update(["exist" => 0]);
-
-                // Tambah saldo
-                $team = Team::find($transport->teams_id);
-                $team->balance = $team->balance + Transportation::find($transport->transportations_id)->residual_price;
-                $team->save();
-            }
-        }
-
-        // Mesin lewat 5 batch, langsung jual otomatis
-        $team_machine = DB::table('team_machine')->get();
-        foreach($team_machine as $machine){
-            if (($batch->batch - $machine->batch >= 5) && $machine->exist) {
-                // Hapus machine
-                DB::table('team_machine')
-                ->where('teams_id', $machine->teams_id)
-                ->where('machine_types_id', $machine->machine_types_id)
-                ->where('id', $machine->id)
-                ->update(["exist" => 0]);
-
-                // Tambah saldo
-                $team = Team::find($machine->teams_id);
-                $team->balance = $team->balance + MachineType::find($machine->machine_types_id)->residual_price;
-                $team->save();
-            }
         }
 
         // Buang bahan milik tim yang tidak memiliki kulkas
@@ -120,7 +83,6 @@ class BatchController extends Controller
         $product_inventory = DB::table('product_inventory')->get();
         foreach($product_inventory as $inventory){
             if ($batch->batch - $inventory->batch >= 2) {
-                // Hapus produk
                 DB::table('product_inventory')
                 ->where('teams_id', $inventory->teams_id)
                 ->where('products_id', $inventory->products_id)
@@ -139,23 +101,54 @@ class BatchController extends Controller
         $batch = Batch::find(1);
         $batch->preparation = 1;
         $batch->save();
+        
+        $teams = Team::all();
+        foreach ($teams as $team) {
+            $profit = self::calculateProfit($team, $batch->batch);
+            $market_share = self::calculatePangsaPasar($team, $batch->batch);
+            $six_sigma = self::calculateSigma($team, $batch->batch);
+
+            $team->rounds()->attach($batch->batch, [
+                'profit' => $profit,
+                'market_share' => $market_share,
+                'six_sigma' => $six_sigma,
+            ]);
+        }
 
         return response()->json(array(
             'status' => 'success',
             'message' => "Berhasil update preparation"
         ), 200);
     }
+    
+    public function calculateProfit($team, $batch) {
+        // Hitung hasil penjualan
+        $hasil_penjualan = $team->transactions()->where("batch", $batch)->sum("subtotal");
+        
+        // Hitung harga pokok produksi
+        $ingredients_price = $team->histories()->where("batch", $batch)->where("kategori", "INGREDIENT")->sum("amount");
+        $current_transportations = $team->transportations()->where("batch", $batch)->where("exist", 1)->sum("price");
+        $current_machines = $team->machineTypes()->where("batch", $batch)->where("exist", 1)->sum("price");
+        $previously_transportation = $team->transportations()->where("batch", "<", $batch)->where("exist", 1)->sum("residual_price");
+        $previously_machines = $team->machineTypes()->where("batch", "<", $batch)->where("exist", 1)->sum("residual_price");
+        $harga_pokok_produksi = $ingredients_price + $current_transportations + $current_machines + $previously_transportation + $previously_machines;
 
-    public function updateMarketShare(){
-        // Jika masuk preperation, kalkulasi pangsa pasar
-        if($batch->preparation == 1){
-            DB::table('team_round')
-            ->where('teams_id', $team->id)
-            ->where('rounds_id', $batch->batch)
-            ->update(["market_share" => 0]);
-        }
-        else{
+        return ($hasil_penjualan - $harga_pokok_produksi);
+    }
 
-        }
+
+    public function calculatePangsaPasar($team, $batch) {
+        //kalkulasi total penjualan semua tim
+        $sales_total = Transaction::where("batch", $batch)->sum("subtotal");
+            
+        //Kalkulasi total penjualan tim
+        $sales_team = $team->transactions()->where("batch", $batch)->sum("subtotal");
+            
+        //Market share = penjualan tim / penjualan keseluruhan tim
+        return ($sales_team/$sales_total);
+    }
+
+    public function calculateSigma() {
+        return 0;
     }
 }

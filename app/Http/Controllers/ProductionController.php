@@ -89,7 +89,7 @@ class ProductionController extends Controller
         $apple_need = [1=>0,2=>0,3=>0];
         $total_defact = 0.0;
         $sigma_produk = 0;
-        $defact_array = array(450060, 200020, 140030, 805, 356, 3);
+        $defact_array = array(450060, 200020, 140030, 8805, 3356, 134);
 
         try {
             // Cek jumlah bahan baku keseluruhan yang diperlukan

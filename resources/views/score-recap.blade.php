@@ -38,9 +38,12 @@
                     @foreach($teams as $team)
                     <tr class="text-center align-middle">
                         <td style="width: 40%;">Perusahaan {{ $team -> id }}</td>
-                        <td>0</td>
-                        <td>0</td>
-                        <td>0</td>
+                        <td> {{$team
+                            ->rounds()
+                            ->where("batch", "$i")
+                            -> }} </td>
+                        <td> </td>
+                        <td> </td>
                         <td>0</td>
                     </tr>
                     @endforeach
