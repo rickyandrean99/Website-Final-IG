@@ -38,7 +38,9 @@
                                                 <label>Impor</label>
                                             </div>
                                         </td>
-                                        <td class="text-center" style='width:25%' id="ingredient-import-{{ $i->id }}">30 Paket</td>
+                                        <td class="text-center" style='width:25%' id="ingredient-import-{{ $i->id }}">
+                                            {{ $i->rounds()->wherePivot("rounds_id", $batch)->first()->pivot->amount }} Paket
+                                        </td>
                                     </tr>
                                     @endforeach
                                 </tbody>

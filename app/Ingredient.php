@@ -15,4 +15,8 @@ class Ingredient extends Model
     public function products() {
         return $this->belongsToMany("App\Product", "ingredient_requirement", "ingredients_id", "products_id")->withPivot("amount");
     }
+
+    public function rounds() {
+        return $this->belongsToMany("App\Round", "import_ingredient", "ingredients_id", "rounds_id")->withPivot("amount");
+    }
 }

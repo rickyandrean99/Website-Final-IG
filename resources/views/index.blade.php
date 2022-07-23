@@ -354,29 +354,14 @@
                 },
                 success: function(data) {
                     if (data.status == "success") {
-                        $(`.ingredient-amount`).val(null)
+                        $(`.ingredient-amount`).val(0)
+                        $('.ingredient-type').prop('checked', false);
+                        $(`#total-ingredient`).text("0 TC")
+                        $(`#ongkir-ingredient`).text("0 TC")
                         $(`#subtotal-ingredient`).text("0 TC")
                         $(`#package-limit-hidden`).val(data.limit)
                         $(`#package-limit`).text(data.limit)
                         $(`#balance`).text(data.balance + " TC")
-                        
-                        //perbarui inventory
-                        let table = document.getElementById("tbody-ingredient");
-	                    table.innerHTML = "";
-                        let counter = 1
-
-                        // data.ingredients.forEach(ingredient => {
-                        //     $(`#tbody-ingredient`).append(`
-                        //         <tr>
-                        //             <td class="border-0 text-center align-middle">${counter}</td>
-                        //             <td class="border-0 text-center align-middle">${ingredient.name}</td>
-                        //             <td class="border-0 text-center align-middle">${ingredient.pivot.amount}</td>
-                        //         </tr>
-                        //     `)
-                        //     counter++
-                        // })
-
-                        // $(`#used-capacity-ingredient`).text(data.used)
                     }
                     alert(data.message)
                 },
