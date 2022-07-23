@@ -3,7 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Industrial Games 30</title>
+    <title>Final Industrial Games 30</title>
     <link type="text/css" href="{{ asset('') }}vendor/sweetalert2/dist/sweetalert2.min.css" rel="stylesheet">
     <link type="text/css" href="{{ asset('') }}vendor/notyf/notyf.min.css" rel="stylesheet">
     <link type="text/css" href="{{ asset('') }}css/volt.css" rel="stylesheet">
@@ -305,7 +305,7 @@
             for (let i = 0; i < ingredientsAmount.length; i++) {
                 totalPrice += (ingredientsAmount[i] * ingredientsPrice[i])
             }
-            $(`#pengeluaran-ingredient`).text(`${totalPrice} TC`)
+            $(`#subtotal-ingredient`).text(`${totalPrice} TC`)
 
             // Update limit
             let limit = $(`#package-limit-hidden`).val()
@@ -324,53 +324,52 @@
         const buyIngredients = () => {
             if (!confirm("Are you sure?")) return
 
-            let ingredientId = $(`.ingredient-id`).map(function() {
-                return $(this).val()
-            }).get()
-            let ingredientAmount = $(`.ingredient-amount`).map(function() {
-                return $(this).val()
-            }).get()
+            let ingredientId = $(`.ingredient-id`).map(function() { return $(this).val() }).get()
+            let ingredientAmount = $(`.ingredient-amount`).map(function() { return $(this).val() }).get()
+            let ingredientType = $(`.ingredient-type`).map(function() { return $(this).val() }).get()
+            
+            alert(ingredientId + "; " + ingredientAmount + "; " + ingredientType)
 
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("buy-ingredient") }}',
-                data: {
-                    '_token': '<?php echo csrf_token() ?>',
-                    'ingredient_id': ingredientId,
-                    'ingredient_amount': ingredientAmount
-                },
-                success: function(data) {
-                    if (data.status == "success") {
-                        $(`.ingredient-amount`).val(null)
-                        $(`#pengeluaran-ingredient`).text("0 TC")
-                        $(`#package-limit-hidden`).val(data.limit)
-                        $(`#package-limit`).text(data.limit)
-                        $(`#balance`).text(data.balance + " TC")
+            // $.ajax({
+            //     type: 'POST',
+            //     url: '{{ route("buy-ingredient") }}',
+            //     data: {
+            //         '_token': '<?php echo csrf_token() ?>',
+            //         'ingredient_id': ingredientId,
+            //         'ingredient_amount': ingredientAmount
+            //     },
+            //     success: function(data) {
+            //         if (data.status == "success") {
+            //             $(`.ingredient-amount`).val(null)
+            //             $(`#subtotal-ingredient`).text("0 TC")
+            //             $(`#package-limit-hidden`).val(data.limit)
+            //             $(`#package-limit`).text(data.limit)
+            //             $(`#balance`).text(data.balance + " TC")
                         
-                        //perbarui inventory
-                        let table = document.getElementById("tbody-ingredient");
-	                    table.innerHTML = "";
-                        let counter = 1
+            //             //perbarui inventory
+            //             let table = document.getElementById("tbody-ingredient");
+	        //             table.innerHTML = "";
+            //             let counter = 1
 
-                        data.ingredients.forEach(ingredient => {
-                            $(`#tbody-ingredient`).append(`
-                                <tr>
-                                    <td class="border-0 text-center align-middle">${counter}</td>
-                                    <td class="border-0 text-center align-middle">${ingredient.name}</td>
-                                    <td class="border-0 text-center align-middle">${ingredient.pivot.amount}</td>
-                                </tr>
-                            `)
-                            counter++
-                        })
+            //             data.ingredients.forEach(ingredient => {
+            //                 $(`#tbody-ingredient`).append(`
+            //                     <tr>
+            //                         <td class="border-0 text-center align-middle">${counter}</td>
+            //                         <td class="border-0 text-center align-middle">${ingredient.name}</td>
+            //                         <td class="border-0 text-center align-middle">${ingredient.pivot.amount}</td>
+            //                     </tr>
+            //                 `)
+            //                 counter++
+            //             })
 
-                        $(`#used-capacity-ingredient`).text(data.used)
-                    }
-                    alert(data.message)
-                },
-                error: function(error) {
-                    alert(error)
-                }
-            })
+            //             $(`#used-capacity-ingredient`).text(data.used)
+            //         }
+            //         alert(data.message)
+            //     },
+            //     error: function(error) {
+            //         alert(error)
+            //     }
+            // })
         }
 
         // Beli mesin

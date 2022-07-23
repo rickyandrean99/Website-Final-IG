@@ -38,13 +38,28 @@
                     @foreach($teams as $team)
                     <tr class="text-center align-middle">
                         <td style="width: 40%;">Perusahaan {{ $team -> id }}</td>
-                        <td> {{$team
-                            ->rounds()
-                            ->where("batch", "$i")
-                            -> }} </td>
-                        <td> </td>
-                        <td> </td>
-                        <td>0</td>
+                        <td> 
+                            {{ 
+                                $team ->rounds()->where('batch',$i)->sum("six_sigma") 
+                            }} 
+                        </td>
+                        <td> 
+                            {{ 
+                                round($team->rounds()->where('batch',$i)->sum("market_share")*100,2)
+                            }} %
+                        </td>
+                        <td> 
+                            {{ 
+                                $team->rounds()->where('batch',$i)->sum("profit") 
+                            }} 
+                        </td>
+                        <td>
+                            {{ 
+                                $team ->rounds()->where('batch',$i)->sum("six_sigma") +
+                                round($team->rounds()->where('batch',$i)->sum("market_share")*0.2) +
+                                $team->rounds()->where('batch',$i)->sum("profit")*0.2
+                            }} 
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>

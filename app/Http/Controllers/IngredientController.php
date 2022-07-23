@@ -55,7 +55,7 @@ class IngredientController extends Controller
                 $current_limit = ($team->packages()->wherePivot('packages_id', $batch)->get()[0])->pivot->remaining;
                 if ($current_limit > array_sum($ingredient_amount)) {
                     $limit = $current_limit - array_sum($ingredient_amount);
-                }
+                } 
                 $team->packages()->wherePivot('packages_id', $batch)->update(['team_package.remaining' => $limit]);
 
                 $status = "success";

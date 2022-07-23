@@ -13,20 +13,32 @@
                                 <thead class="thead-dark" style="table-layout: fixed; width: calc( 100% - 1em ); display: table;">
                                     <tr>
                                         <th class="border-0 rounded-start text-center" style='width:10%'>No</th>
-                                        <th class="border-0 text-center" style='width:40%'>Bahan Baku</th>
-                                        <th class="border-0 rounded-end text-center" style='width:50%'>Jumlah</th>
+                                        <th class="border-0 text-center" style='width:30%'>Bahan Baku</th>
+                                        <th class="border-0 text-center" style='width:25%'>Jumlah</th>
+                                        <th class="border-0 text-center" style='width:10%'>Tipe</th>
+                                        <th class="border-0 rounded-end text-center" style='width:25%'>Impor Tersedia</th>
                                     </tr>
                                 </thead>
-                                <tbody class="border-0" style="display: block; overflow-y: auto; height: 70vh;">
+                                <tbody style="display: block; overflow-y: auto; height: 70vh; border-top: 0">
+                                    @php $index = 1 @endphp
                                     @foreach($ingredient as $i)
                                     <tr style='display: table; table-layout: fixed; width: 100%'>
                                         <input type="hidden" class="ingredient-id" value="{{ $i->id }}">
                                         <input type="hidden" class="ingredient-price" id="ingredient-price-{{ $i->id }}" value="{{ $i->price }}">
-                                        <td class="border-0 text-center" style='width:10%'>{{ $i->id }}</td>
-                                        <td class="border-0 text-center" style='width:40%'>{{ $i->name }}</td>
-                                        <td class="border-0 text-center text-danger" style='width:50%'>
+                                        <input type="hidden" class="import-price" id="import-price-{{ $i->id }}" value="{{ $i->import_price }}">
+
+                                        <td class="text-center" style='width:10%'>{{ $index++ }}</td>
+                                        <td class="text-center" style='width:30%'>{{ $i->name }}</td>
+                                        <td class="text-center" style='width:25%'>
                                             <input type="number" style="margin: auto" class="form-control ingredient-amount w-50 text-center" id="ingredient-amount-{{ $i->id }}" value="0" min="0" onchange="updateIngredientPriceAndLimit()">
                                         </td>
+                                        <td class="text-center" style='width:10%'>
+                                            <div class="form-check form-switch">
+                                                <input class="form-check-input ingredient-type" type="checkbox" id="ingredient-type-{{ $i->id }}"/>
+                                                <label>Impor</label>
+                                            </div>
+                                        </td>
+                                        <td class="text-center" style='width:25%' id="ingredient-import-{{ $i->id }}">30 Paket</td>
                                     </tr>
                                     @endforeach
                                 </tbody>
@@ -43,8 +55,8 @@
                         </div>
 
                         <div class="row mt-3">
-                            <div class="col-6 bg-info text-white text-center fw-bold p-3 rounded-start">Pengeluaran</div>
-                            <div class="col-6 bg-primary text-white text-center fw-bold p-3 rounded-end"id="pengeluaran-ingredient">0 TC</div>
+                            <div class="col-6 bg-info text-white text-center fw-bold p-3 rounded-start">Subtotal</div>
+                            <div class="col-6 bg-primary text-white text-center fw-bold p-3 rounded-end" id="subtotal-ingredient">0 TC</div>
                         </div>
 
                         <div class="row mt-4">
