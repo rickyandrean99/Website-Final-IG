@@ -24,7 +24,7 @@
     <nav class="navbar navbar-top navbar-expand navbar-dashboard navbar-dark ps-0 pe-2 pb-0">
         <div class="container-fluid px-0">
             <div class="d-flex flex-row justify-content-between w-100" id="navbarSupportedContent">
-                <div class="bg-white rounded shadow p-3 d-flex flex-row align-items-center">
+                <div class="bg-white rounded shadow p-3 ms-2 d-flex flex-row align-items-center">
                     <img src="{{ asset('') }}assets/icons/coin.png" height="20" alt="Coin">
                     <div id="balance" class="ms-2">{{ $team->balance }} TC</div>
                 </div>
@@ -46,7 +46,7 @@
             </div>
         </div>
                 
-        <div class="d-flex justify-content-around  p-5">
+        <div class="d-flex justify-content-around  p-3">
             <!-- PROFIT -->
             <div class="card shadow mb-3" style="max-width: 18rem;">
                 <img src="{{ asset('')}}assets/img/profit.jpg" class="card-img-top" alt="...">
@@ -54,16 +54,7 @@
                     <div class="col-12">
                         <div class="d-flex d-sm-block">
                             <h2 class="mb-0">Profit</h2>
-                            <h4 class="fw-extrabold text-success mb-2">+3,450 TC</h4>
-                        </div>
-                        <div class="d-flex mt-1">
-                            <div>
-                                Persentase 
-                                <svg class="icon icon-xs text-success" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                                    <path fill-rule="evenodd" d="M14.707 12.707a1 1 0 01-1.414 0L10 9.414l-3.293 3.293a1 1 0 01-1.414-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 010 1.414z" clip-rule="evenodd"></path>
-                                </svg>
-                                <span class="text-success fw-bolder">22%</span>
-                            </div>
+                            <h2 id="profit" class="mb-2 mt-1 fw-bold">{{$team->rounds()->where('batch',$batch)->sum("profit")}} TC</h2>
                         </div>
                     </div>
                 </div>
@@ -76,7 +67,7 @@
                     <div class="col-12 ">
                         <div class="d-flex d-sm-block">
                             <h2 class="mb-0">Pangsa Pasar</h2>
-                            <h1 class="fw-extrabold text-success mb-2">+38%</h1>
+                            <h1 class="fw-extrabold text-success mb-2"> {{round($team->rounds()->where('batch',$batch)->sum("market_share")*100,2)}}%</h1>
                         </div>
                     </div>
                 </div>
@@ -107,7 +98,8 @@
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalMarketMenu"><i class="bi-shop"></i> Market</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow  m-2" data-bs-toggle="modal" data-bs-target="#modalTransport"><i class="bi-truck"></i> Transportation</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalTambahTC"><i class="bi-coin"></i> Tambah TC</button>
-            <button type="button" class="btn btn-block btn-outline-primary m-2 shadow" data-bs-toggle="modal" data-bs-target="#modalInfoHutang" onclick="infoHutang()"><i class="bi-cash-coin"></i> Info Hutang</button>
+            <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalInfoHutang" onclick="infoHutang()"><i class="bi-cash-coin"></i> Info Hutang</button>
+            <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalHistory"><i class="bi-list-task"></i> Histori Transaksi</button>
         </div>
     </footer>
 
@@ -127,9 +119,22 @@
     @include("modal.production")
     @include("modal.transportation-sell")
     @include("modal.transportation")
+    @include("modal.history")
 
     <script src="{{ asset('vendor/bootstrap/dist/js/bootstrap.min.js') }}"></script>
     <script type="text/javascript">
+        $("#profit").ready(function(){
+            var str = $("#profit").html();
+            if(str.indexOf("-") >= 0){
+                $("#profit").addClass("text-danger");
+                $("#profit").removeClass("text-success");
+            }else{
+                $("#profit").addClass("text-success");
+                $("#profit").removeClass("text-danger");
+                $("#profit").prepend("+");             
+            }   
+        })
+        
         const addProduction = () => {
             $.ajax({
                 type: 'POST',
@@ -177,7 +182,7 @@
                     $(`#production-amount`).val(counter+1)
                 },
                 error: function(error) {
-                    alert(error)
+                    showError(error)
                 }
             })
         }
@@ -219,7 +224,7 @@
                     $(`#produksi-${row}-input-jumlah`).val(1)
                 },
                 error: function(error) {
-                    alert(error)
+                    showError(error)
                 }
             })
         })
@@ -279,7 +284,7 @@
                             alert(data.message)
                         },
                         error: function(error) {
-                            alert(error)
+                            showError(error)
                         }
                     })
                 } else {
@@ -293,32 +298,42 @@
 
         // Update total bahan baku dan limit
         const updateIngredientPriceAndLimit = () => {
-            let ingredientsAmount = $(`.ingredient-amount`).map(function() {
-                return $(this).val()
-            }).get()
-            let ingredientsPrice = $(`.ingredient-price`).map(function() {
-                return $(this).val()
-            }).get()
+            let ingredientId = $(`.ingredient-id`).map(function() { return $(this).val() }).get()
+            let ingredientType = ingredientId.map(id => { return $(`#ingredient-type-${id}`).is(':checked') })
+            let ingredientsAmount = $(`.ingredient-amount`).map(function() { return $(this).val() }).get()
+            let ingredientsPrice = $(`.ingredient-price`).map(function() { return $(this).val() }).get()
+            let ingredientsImportPrice = $(`.import-price`).map(function() { return $(this).val() }).get()
 
-            // Update total price
+            // Update Total
             let totalPrice = 0
             for (let i = 0; i < ingredientsAmount.length; i++) {
-                totalPrice += (ingredientsAmount[i] * ingredientsPrice[i])
+                if (ingredientType[i]) {
+                    totalPrice += (ingredientsAmount[i] * ingredientsImportPrice[i])
+                } else {
+                    totalPrice += (ingredientsAmount[i] * ingredientsPrice[i])
+                }
             }
-            $(`#subtotal-ingredient`).text(`${totalPrice} TC`)
 
-            // Update limit
-            let limit = $(`#package-limit-hidden`).val()
+            // Update limit dan Ongkir
+            let limit = parseInt($(`#package-limit-hidden`).val())
             let quantity = 0
+            let ongkir = 0
             ingredientsAmount.forEach(amount => {
                 quantity += parseInt(amount)
             })
             let remaining = limit - quantity
-            if (remaining < 0) remaining = 0
+            if (remaining < 0) { 
+                remaining = 0
+                ongkir = limit + ((quantity-limit)*3)
+            } else {
+                ongkir = quantity
+            }
 
+            $(`#total-ingredient`).text(`${totalPrice} TC`)
             $(`#package-limit`).text(remaining)
+            $(`#ongkir-ingredient`).text(`${ongkir} TC`)
+            $(`#subtotal-ingredient`).text(`${totalPrice+ongkir} TC`)
         }
-
 
         // Beli bahan baku
         const buyIngredients = () => {
@@ -326,50 +341,49 @@
 
             let ingredientId = $(`.ingredient-id`).map(function() { return $(this).val() }).get()
             let ingredientAmount = $(`.ingredient-amount`).map(function() { return $(this).val() }).get()
-            let ingredientType = $(`.ingredient-type`).map(function() { return $(this).val() }).get()
-            
-            alert(ingredientId + "; " + ingredientAmount + "; " + ingredientType)
+            let ingredientType = ingredientId.map(id => { return $(`#ingredient-type-${id}`).is(':checked') })
 
-            // $.ajax({
-            //     type: 'POST',
-            //     url: '{{ route("buy-ingredient") }}',
-            //     data: {
-            //         '_token': '<?php echo csrf_token() ?>',
-            //         'ingredient_id': ingredientId,
-            //         'ingredient_amount': ingredientAmount
-            //     },
-            //     success: function(data) {
-            //         if (data.status == "success") {
-            //             $(`.ingredient-amount`).val(null)
-            //             $(`#subtotal-ingredient`).text("0 TC")
-            //             $(`#package-limit-hidden`).val(data.limit)
-            //             $(`#package-limit`).text(data.limit)
-            //             $(`#balance`).text(data.balance + " TC")
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("buy-ingredient") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                    'ingredient_id': ingredientId,
+                    'ingredient_amount': ingredientAmount,
+                    'ingredient_type': ingredientType
+                },
+                success: function(data) {
+                    if (data.status == "success") {
+                        $(`.ingredient-amount`).val(null)
+                        $(`#subtotal-ingredient`).text("0 TC")
+                        $(`#package-limit-hidden`).val(data.limit)
+                        $(`#package-limit`).text(data.limit)
+                        $(`#balance`).text(data.balance + " TC")
                         
-            //             //perbarui inventory
-            //             let table = document.getElementById("tbody-ingredient");
-	        //             table.innerHTML = "";
-            //             let counter = 1
+                        //perbarui inventory
+                        let table = document.getElementById("tbody-ingredient");
+	                    table.innerHTML = "";
+                        let counter = 1
 
-            //             data.ingredients.forEach(ingredient => {
-            //                 $(`#tbody-ingredient`).append(`
-            //                     <tr>
-            //                         <td class="border-0 text-center align-middle">${counter}</td>
-            //                         <td class="border-0 text-center align-middle">${ingredient.name}</td>
-            //                         <td class="border-0 text-center align-middle">${ingredient.pivot.amount}</td>
-            //                     </tr>
-            //                 `)
-            //                 counter++
-            //             })
+                        // data.ingredients.forEach(ingredient => {
+                        //     $(`#tbody-ingredient`).append(`
+                        //         <tr>
+                        //             <td class="border-0 text-center align-middle">${counter}</td>
+                        //             <td class="border-0 text-center align-middle">${ingredient.name}</td>
+                        //             <td class="border-0 text-center align-middle">${ingredient.pivot.amount}</td>
+                        //         </tr>
+                        //     `)
+                        //     counter++
+                        // })
 
-            //             $(`#used-capacity-ingredient`).text(data.used)
-            //         }
-            //         alert(data.message)
-            //     },
-            //     error: function(error) {
-            //         alert(error)
-            //     }
-            // })
+                        // $(`#used-capacity-ingredient`).text(data.used)
+                    }
+                    alert(data.message)
+                },
+                error: function(error) {
+                    showError(error)
+                }
+            })
         }
 
         // Beli mesin
@@ -424,7 +438,7 @@
                     alert(data.message)
                 },
                 error: function(error) {
-                    alert(error)
+                    showError(error)
                 }
             })
         }
@@ -519,7 +533,7 @@
                     alert(data.message) 
                 },
                 error: function(error) {
-                    alert(error.message)
+                    showError(error)
                 }
             })
         }
@@ -540,7 +554,7 @@
                     $(`#sell-transport-id`).val(data.id)
                 },
                 error: function(error) {
-                    alert(error.message)
+                    showError(error)
                 }
             })
         }
@@ -589,7 +603,7 @@
                     alert(data.message)
                 },
                 error: function(error) {
-                    alert(error.message)
+                    showError(error)
                 }
             })
         }
@@ -612,7 +626,7 @@
                     $(`#sell-machine-type-id`).val(type_id)
                 },
                 error: function(error) {
-                    alert(error.message)
+                    showError(error)
                 }
             })
         }
@@ -660,7 +674,7 @@
                     alert(data.message)
                 },
                 error: function(error) {
-                    alert(error)
+                    showError(error)
                 }
             })
         }
@@ -687,7 +701,7 @@
                     $(`#jumlah-tc`).val(null)
                 },
                 error: function(error) {
-                    alert(error)
+                    showError(error)
                 }
             })
         }
@@ -703,7 +717,7 @@
                     $(`#jumlahHutang`).text(data.info)
                 },
                 error: function(error) {
-                    alert(error.message)
+                    showError(error)
                 }
             })
         }
@@ -728,7 +742,7 @@
                     $(`#jumlah-bayar`).val(null)
                 },
                 error: function(error) {
-                    alert(error.message)
+                    showError(error)
                 }
             })
         }
@@ -748,9 +762,15 @@
                     alert(data.message)
                 },
                 error: function(error) {
-                    alert(error)
+                    showError(error)
                 }
             })
+        }
+
+        const showError = (error) => {
+            let errorMessage = JSON.parse(error.responseText).message
+            alert(`Error: ${errorMessage}`)
+            console.log(`Error: ${errorMessage}`)
         }
     </script>
 </body>

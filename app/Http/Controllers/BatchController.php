@@ -106,12 +106,10 @@ class BatchController extends Controller
         foreach ($teams as $team) {
             $profit = self::calculateProfit($team, $batch->batch);
             $market_share = self::calculatePangsaPasar($team, $batch->batch);
-            $six_sigma = self::calculateSigma($team, $batch->batch);
 
-            $team->rounds()->attach($batch->batch, [
+            $team->rounds()->wherePivot('ingredients_id', $id)->update([
                 'profit' => $profit,
-                'market_share' => $market_share,
-                'six_sigma' => $six_sigma,
+                'market_share' => $market_share
             ]);
         }
 
@@ -146,9 +144,5 @@ class BatchController extends Controller
             
         //Market share = penjualan tim / penjualan keseluruhan tim
         return ($sales_team/$sales_total);
-    }
-
-    public function calculateSigma() {
-        return 0;
     }
 }

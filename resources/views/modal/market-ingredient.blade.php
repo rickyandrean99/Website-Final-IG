@@ -34,7 +34,7 @@
                                         </td>
                                         <td class="text-center" style='width:10%'>
                                             <div class="form-check form-switch">
-                                                <input class="form-check-input ingredient-type" type="checkbox" id="ingredient-type-{{ $i->id }}"/>
+                                                <input class="form-check-input ingredient-type" type="checkbox" id="ingredient-type-{{ $i->id }}" value="{{ $i->id }}" onchange="updateIngredientPriceAndLimit()"/>
                                                 <label>Impor</label>
                                             </div>
                                         </td>
@@ -52,6 +52,16 @@
                                 <span id="package-limit">{{ $limit }}</span>
                                 <input type="hidden" id="package-limit-hidden" value="{{ $limit }}">
                             </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-6 bg-info text-white text-center fw-bold p-3 rounded-start">Total</div>
+                            <div class="col-6 bg-primary text-white text-center fw-bold p-3 rounded-end" id="total-ingredient">0 TC</div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-6 bg-info text-white text-center fw-bold p-3 rounded-start">Ongkir</div>
+                            <div class="col-6 bg-primary text-white text-center fw-bold p-3 rounded-end" id="ongkir-ingredient">0 TC</div>
                         </div>
 
                         <div class="row mt-3">

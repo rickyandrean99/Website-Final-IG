@@ -226,21 +226,39 @@ class ProductionController extends Controller
                 // Cek apakah inventory produk dapat menyimpan produk yang bisa dibuat ini
                 $inventory_amount = $team->products->sum('pivot.amount');
                 if ((array_sum($product_total_amount)+$inventory_amount) <= $team->product_inventory) {
-                    // Tambah Produk Jadi ke Inventori
-                    foreach ($product_total_amount as $product_id => $product_amount) {
-                        if (count($team->products()->wherePivot('products_id', $product_id)->wherePivot('batch', $batch)->get()) > 0) {
-                            $team->products()->wherePivot('products_id', $product_id)->wherePivot('batch', $batch)->increment('product_inventory.amount', $product_amount);
-                        } else {
-                            $team->products()->attach($product_id, ['batch' => $batch, 'amount' => $product_amount]);
-                        }
 
-                        //masukkan sigma level
-                        DB::table('sigma_levels')->insert([
-                            'product_inventory_teams_id' => $team_id,
-                            'product_inventory_products_id' => $product_id,
-                            'product_inventory_batch' => $batch,
-                            'sigma_level' => $sigma_produk
-                        ]);
+                    // Tambah Produk Jadi ke Inventori
+                    
+                    foreach ($product_total_amount as $product_id => $product_amount){
+                        //Kemungkinan 1: jika batch, products_id, dan sigma level sama -> tambah amount
+                        //Kemungkinan 2: jika berbeda -> tambah baris baru
+                        if(count($team->products()
+                            ->wherePivot('products_id', $product_id)
+                            ->wherePivot('batch', $batch)
+                            ->wherePivot('sigma_level', $sigma_produk)->get()) > 0){
+                                $team->products()
+                                    ->wherePivot('products_id', $product_id)
+                                    ->wherePivot('batch', $batch)
+                                    ->wherePivot('sigma_level', $sigma_produk)
+                                    ->increment('product_inventory.amount', $product_amount);
+
+                        }else{
+                            // ambil id terbaru
+                            $new_id = DB::table('product_inventory')->select('id')
+                            ->where('teams_id', $team->id)
+                            ->where('products_id', $product_id)
+                            ->orderBy('id', 'desc')->get();
+
+                            if (count($new_id) > 0) {
+                                $new_id = $new_id[0]->id + 1;
+                            } else {
+                                $new_id = 1;
+                            }
+
+                            //tambah baris baru
+                            $team->products()->attach($product_id, ['id' => $new_id, 'batch' => $batch, 
+                            'amount' => $product_amount, 'sigma_level' => $sigma_produk]);
+                        }
                     }
 
 

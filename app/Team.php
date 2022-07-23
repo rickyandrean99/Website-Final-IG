@@ -21,7 +21,7 @@ class Team extends Model
     }
 
     public function products() {
-        return $this->belongsToMany("App\Product", "product_inventory", "teams_id", "products_id")->withPivot("amount");
+        return $this->belongsToMany("App\Product", "product_inventory", "teams_id", "products_id")->withPivot("id", "amount", "batch", "sigma_level");
     }
 
     public function machineTypes() {

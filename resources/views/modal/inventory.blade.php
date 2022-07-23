@@ -33,8 +33,8 @@
                                 @foreach ($team->ingredients as $ingre)
                                 <tr>
                                     <td class="border-0 text-center align-middle">{{ $i++ }}</td>
-                                    <td class="border-0 text-center align-middle">{{ $ingre->name }}
-                                    </td>
+                                    <td class="border-0 text-center align-middle">
+                                        {{ $ingre->name }}</td>
                                     <td class="border-0 text-center align-middle">
                                         {{ $ingre->pivot->amount}}</td>
                                 </tr>
@@ -106,13 +106,13 @@
                                 @php
                                 $i = 1
                                 @endphp
-                                @foreach ($product_name as $index=> $product)
+                                @foreach ($team->products as $product)
                                 <tr>
                                     <td class="border-0 text-center align-middle">{{ $i++ }}</td>
-                                    <td class="border-0 text-center align-middle">{{ $product }}
-                                    </td>
                                     <td class="border-0 text-center align-middle">
-                                        {{ $product_amount[$index]}}</td>
+                                        {{$product->name}} {{$product->pivot->id}}</td>
+                                    <td class="border-0 text-center align-middle">
+                                        {{ $product->pivot->amount}}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -123,10 +123,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                    data-bs-target="#modalUpgradeInventoryIngredient">+ Kapasitas Bahan Baku</button>
-                <button type="button" class="btn btn-success" data-bs-toggle="modal"
-                    data-bs-target="#modalUpgradeInventoryProduct">+ Kapasitas Produk</button>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalUpgradeInventoryIngredient">+ Kapasitas Bahan Baku</button>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalUpgradeInventoryProduct">+ Kapasitas Produk</button>
             </div>
         </div>
     </div>
