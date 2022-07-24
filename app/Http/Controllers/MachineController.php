@@ -154,6 +154,8 @@ class MachineController extends Controller
         $machines = $team->machineTypes;
 
         return response()->json(array(
+            'type' => $type_id,
+            'id' => $id,
             'balance' => $balance,
             'machines' => $machines,
             'status'=> "success",

@@ -190,18 +190,22 @@ class ToPostController extends Controller
 
     public function loadInventory(){
         $team = Team::find(Auth::user()->team);
-        $team_ingre = $team->ingredients()-sum('pivot.amount');
+        $team_ingre = $team->ingredients->sum('pivot.amount');
         $inventory_ingre = $team->ingredient_inventory;
-        $team_prod = $team->products()-sum('pivot.amount');
-        $prod_ingre = $team->product_inventory;
-        $ingredient_list = $team->ingredient()->get();
+        $team_prod = $team->products->sum('pivot.amount');
+        $inventory_prod = $team->product_inventory;
+        $ingredient_list = $team->ingredients()->get();
         $machine_list = $team->machineTypes()->get();
+        $product_list = $team->products()->get();
 
         return response()->json(array(
             'team_ingre' => $team_ingre,
             'inventory_ingre' => $inventory_ingre,
+            'team_prod' => $team_prod,
+            'inventory_prod' => $inventory_prod,
             'ingredients' => $ingredient_list,
             'machines' => $machine_list,
+            'products' => $product_list,
         ), 200); 
     }
 }

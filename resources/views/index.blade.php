@@ -405,33 +405,9 @@
                 },
                 success: function(data) {
                     if (data.status == "success") {
-                        $(`.machine-amount`).val(null)
+                        $(`.machine-amount`).val(0)
                         $(`#pengeluaran-machine`).text("0 TC")
                         $(`#balance`).text(data.balance + " TC")
-
-                        //perbarui inventory machine
-                        let table = document.getElementById("tbody-machine");
-	                    table.innerHTML = "";
-                        let counter = 1
-
-                        data.machines.forEach(machine => {
-                            let lifetime = batch - machine.pivot.batch  + 1
-                            if(machine.pivot.exist){
-                                $(`#tbody-machine`).append(`
-                                    <tr>
-                                        <td class="border-0 text-center align-middle">${counter}</td>
-                                        <td class="border-0 text-center align-middle">${machine.name_type} ${machine.pivot.id}</td>
-                                        <td class="border-0 text-center align-middle">${machine.pivot.level}</td>
-                                        <td class="border-0 text-center align-middle">
-                                            <button type="button" class="btn btn-danger"
-                                                data-bs-target="#modalJualMesin" data-bs-toggle="modal"
-                                                onclick="showMachineSell(${ machine.pivot.id }, ${ machine.pivot.machine_types_id })">Jual</button>
-                                        </td>
-                                    </tr>
-                                `)
-                                counter++
-                            }
-                        })
                     }
                     alert(data.message)
                 },
@@ -541,8 +517,8 @@
                     'id': id
                 },
                 success: function(data) {
-                    $(`#transport-${data.id}`).remove()
                     if (data.status == "success"){
+                        $(`#transport-${data.id}`).remove()
                         $(`#balance`).text(data.balance + " TC")
                     }
                     alert(data.message)
@@ -590,31 +566,9 @@
                 },
                 success: function(data) {
                     if (data.status == "success") {
+                        $(`#machine-${data.type}-${data.id}`).remove()
                         $(`#balance`).text(data.balance + " TC")
 
-                        //perbarui inventory machine
-                        let table = document.getElementById("tbody-machine");
-	                    table.innerHTML = "";
-                        let counter = 1
-
-                        data.machines.forEach(machine => {
-                            let lifetime = batch - machine.pivot.batch  + 1
-                            if(machine.pivot.exist){
-                                $(`#tbody-machine`).append(`
-                                    <tr>
-                                        <td class="border-0 text-center align-middle">${counter}</td>
-                                        <td class="border-0 text-center align-middle">${machine.name_type} ${machine.pivot.id}</td>
-                                        <td class="border-0 text-center align-middle">${machine.pivot.level}</td>
-                                        <td class="border-0 text-center align-middle">
-                                            <button type="button" class="btn btn-danger"
-                                                data-bs-target="#modalJualMesin" data-bs-toggle="modal"
-                                                onclick="showMachineSell(${ machine.pivot.id }, ${ machine.pivot.machine_types_id })">Jual</button>
-                                        </td>
-                                    </tr>
-                                `)
-                                counter++
-                            }
-                        })
                     }
                     alert(data.message)
                 },
@@ -780,16 +734,18 @@
                 },
                 success: function(data) {
                 
-                    let counter1 = 0
+                    let counter1 = 1
+                    let counter2 = 1
                     let ingredientText = ""
                     let machineText = ""
+                    let productText = ""
 
                     data.ingredients.forEach(ingredient => {
                         ingredientText += `
                             <tr>
-                                <td class="border-0 text-center align-middle">${ $counter1++ }}</td>
-                                <td class="border-0 text-center align-middle">${ $ingredient.name }}</td>
-                                <td class="border-0 text-center align-middle">${ $ingredient.pivot.amount}}</td>
+                                <td class="border-0 text-center align-middle">${ counter1++ }</td>
+                                <td class="border-0 text-center align-middle">${ ingredient.name }</td>
+                                <td class="border-0 text-center align-middle">${ ingredient.pivot.amount}</td>
                             </tr>
                         `
                     })
@@ -798,16 +754,26 @@
                         if (machine.pivot.exist) {
                             machineText += `
                                 <tr id="machine-${machine.pivot.machine_types_id}-${machine.pivot.id}">
-                                    <td class="border-0 text-center align-middle">${ $machine.name_type }} ${$machine.pivot.id}}</td>
-                                    <td class="border-0 text-center align-middle">${ $machine.pivot.level}}</td>
+                                    <td class="border-0 text-center align-middle">${ machine.name_type } ${machine.pivot.id}</td>
+                                    <td class="border-0 text-center align-middle">${ machine.pivot.level}</td>
                                     <td class="border-0 text-center align-middle">
                                         <button type="button" class="btn btn-danger" data-bs-target="#modalJualMesin"
                                             data-bs-toggle="modal"
-                                            onclick="showMachineSell(${ $machine.pivot.id }, ${ $machine.pivot.machine_types_id })">Jual</button>
+                                            onclick="showMachineSell(${ machine.pivot.id }, ${ machine.pivot.machine_types_id })">Jual</button>
                                     </td>
                                 </tr>
                             `
                         }
+                    })
+
+                    data.products.forEach(product => {
+                        productText += `
+                            <tr>
+                                <td class="border-0 text-center align-middle">${ counter2++ }</td>
+                                <td class="border-0 text-center align-middle">${ product.name } ${product.pivot.id}</td>
+                                <td class="border-0 text-center align-middle">${ product.pivot.amount}</td>
+                            </tr>
+                        `
                     })
                     
                     $(`#modal-body-inventory`).html(`
@@ -819,7 +785,7 @@
                                     <div class="d-flex justify-content-center text-gray-100">
                                         <h5 id="used-capacity-ingredient">${ data.team_ingre }</h5>
                                         <h5>/</h5>
-                                        <h5>${ data.inventory_ingre }}</h5>
+                                        <h5>${ data.inventory_ingre }</h5>
                                     </div>
                                 </div>
                                 <table class="table">
@@ -859,9 +825,9 @@
                                 <div class="bg-info rounded">
                                     <h3 class="text-center text-gray-100">PRODUK</h3>
                                     <div class="d-flex justify-content-center text-gray-100">
-                                        <h5 id="used-capacity-product">{{ $team->products->sum('pivot.amount') }}</h5>
+                                        <h5 id="used-capacity-product">${ data.team_prod }</h5>
                                         <h5>/</h5>
-                                        <h5>{{ $team->product_inventory }}</h5>
+                                        <h5>${ data.inventory_prod }</h5>
                                     </div>
                                 </div>
                                 <table class="table">
@@ -872,20 +838,7 @@
                                             <th scope="col" class="border-0 text-center">Jumlah</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        @php
-                                        $i = 1
-                                        @endphp
-                                        @foreach ($team->products as $product)
-                                        <tr>
-                                            <td class="border-0 text-center align-middle">{{ $i++ }}</td>
-                                            <td class="border-0 text-center align-middle">
-                                                {{$product->name}} {{$product->pivot->id}}</td>
-                                            <td class="border-0 text-center align-middle">
-                                                {{ $product->pivot->amount}}</td>
-                                        </tr>
-                                        @endforeach
-                                    </tbody>
+                                    <tbody>${productText}</tbody>
                                 </table>
                             </div>
                         </div>
