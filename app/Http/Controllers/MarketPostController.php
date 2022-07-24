@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Product;
 use App\Batch;
 use App\Team;
+use App\Transaction;
 use App\Transportation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -156,6 +157,33 @@ class MarketPostController extends Controller
                 ]);
             }
         }
+
+
+        //Hitung sigma level
+        $get = DB::table('transactions')->where('teams_id', $id)->where('batch', $batch)->get();
+
+        $total_product = 0;
+        foreach($get as $trans){
+            $amount = DB::table('product_transaction')
+                ->where('transactions_id', $trans->id)->sum('amount');
+            $total_product += $amount;
+        }
+
+        $sigma_team = 0;
+        foreach($get as $trans){
+            $amount = DB::table('product_transaction')
+                ->where('transactions_id', $trans->id)->sum('amount');
+            $sigma = DB::table('product_transaction')
+            ->where('transactions_id', $trans->id)->sum('sigma_level');
+            $calculate = $amount / $total_product * $sigma;
+            $sigma_team += $calculate;
+        }
+
+        $sigma_team = round($sigma_team,2);
+
+        //update sigma level
+        DB::table('team_round')->where('teams_id', $id)->where('rounds_id', $batch)->update(['six_sigma'=>$sigma_team]);
+
 
         $status = "success";
         $message = "Berhasil menjual produk, detail transaksi:\n

@@ -25,7 +25,7 @@ class Product extends Model
     }
 
     public function transactions() {
-        return $this->belongsToMany("App\Transaction", "product_transaction", "products_id", "transactions_id")->withPivot("amount");
+        return $this->belongsToMany("App\Transaction", "product_transaction", "products_id", "transactions_id")->withPivot("amount", "sigma_level");
     }
 
     public function machines() {
