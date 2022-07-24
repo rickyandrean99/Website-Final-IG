@@ -9,7 +9,7 @@ class Product extends Model
     public $timestamps = false;
 
     public function teams() {
-        return $this->belongsToMany("App\Team", "product_inventory", "products_id", "teams_id")->withPivot("amount");
+        return $this->belongsToMany("App\Team", "product_inventory", "products_id", "teams_id")->withPivot("id", "amount", "batch", "sigma_level");
     }
 
     public function ingredients() {

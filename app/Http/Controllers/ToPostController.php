@@ -62,13 +62,19 @@ class ToPostController extends Controller
             if($team->debt_batch == 1){
                 return response()->json(array(
                     'status' => "failed",
-                    'message' => "Tim sudah melakukan hutang pada batch ini",
+                    'message' => "Perusahaan sudah meminjam modal tambahan pada batch ini",
                 ), 200);
             }
-            if($coin > 7500){
+            if($team->balance >= 7500){
                 return response()->json(array(
                     'status' => "failed",
-                    'message' => "Batas maksimal hutang adalah 7500 TC",
+                    'message' => "Modal tambahan dapat ditambakan ketika modal perusahaan kurang dari 7500 TC",
+                ), 200);
+            }
+            if($coin > 8000){
+                return response()->json(array(
+                    'status' => "failed",
+                    'message' => "Batas maksimal modal tambahan adalah 8000 TC",
                 ), 200);
             }
             $team->increment('balance', $coin);

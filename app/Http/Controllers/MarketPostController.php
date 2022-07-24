@@ -25,6 +25,7 @@ class MarketPostController extends Controller
 
     public function sellProduct(Request $request){
         $id = $request->get('id');
+        $team = Team::find($id);
         $product_id = $request->get('product_id');
         $product_amount = $request->get('product_amount');
         $transportation_id = $request->get('transportation_id');
@@ -79,9 +80,10 @@ class MarketPostController extends Controller
                 $current_price = DB::table('product_batchs')
                     ->where('products_id', $product)->where('id', $batch)->get();
 
-                $product_team = DB::table('product_inventory')
-                ->where('teams_id', $id)
-                ->where('products_id', $product)->sum('amount');
+                //isinya jumlah produk dengan ID terkecil yang amountnya tidak 0
+                $product_team = $team->products()
+                ->wherePivot('products_id', $product)->where('amount', '>', 0)
+                ->first()->pivot->amount;
 
                 //cek apakah produk cukup atau tidak
                 if($product_amount[$index] <= $product_team){
@@ -97,7 +99,7 @@ class MarketPostController extends Controller
                 }else{
                     return response()->json(array(
                         'status' =>  "failed",
-                        'message' => "Produk yang ingin dijual kurang",
+                        'message' => "Gagal, harus produk ID terkecil yang bisa dijual",
                     ), 200);
                 }
             }
@@ -122,44 +124,35 @@ class MarketPostController extends Controller
         //masukkan ke transaksi produk (row sesuai dengan jumlah jenis produk)
         foreach ($product_id as $index => $product) {
             
-            $product_teams = DB::table('product_inventory')
-            ->where('teams_id', $id)
-            ->where('products_id', $product)->get();
             
             if($product_amount[$index] > 0){
+                //keluarkan sigma level
+                $sigma_level = $team->products()
+                ->wherePivot('products_id', $product)->where('amount', '>', 0)
+                ->first()->pivot->sigma_level;
+
                 //kurangi demand
                 DB::table('product_demand')
                 ->where('products_id', $product)
                 ->where('demands_id', $batch)->decrement('amount', $product_amount[$index]);
+                
                 // kurangi produk inventory
                 $amount = $product_amount[$index];
-                foreach($product_teams as $team){
-                    if ($amount == 0){
-                        break;
-                    }
-                    else if($amount <= $team->amount){
-                        DB::table('product_inventory')
-                        ->where('teams_id', $id)
-                        ->where('products_id', $product)
-                        ->where('batch', $team->batch)
-                        ->decrement('amount', $amount);
-                        $amount = 0;
-                    }
-                    else{
-                        $amount -= $team->amount;
-                        DB::table('product_inventory')
-                        ->where('teams_id', $id)
-                        ->where('products_id', $product)
-                        ->where('batch', $team->batch)
-                        ->decrement('amount', $team->amount);
-                    }
-                }
+                $prod_id = $team->products()
+                    ->wherePivot('products_id', $product)->where('amount', '>', 0)
+                    ->first()->pivot->id;
+                
+                $team->products()
+                    ->wherePivot('products_id', $product)
+                    ->wherePivot('id', $prod_id)->decrement('amount', $amount);
+
                 
                 //masukkan ke transaksi produk
                 DB::table('product_transaction')->insert([
                     'products_id' => $product,
                     'transactions_id' => $transaction_id,
-                    'amount' => $product_amount[$index]
+                    'amount' => $product_amount[$index],
+                    'sigma_level'=> $sigma_level
                 ]);
             }
         }
