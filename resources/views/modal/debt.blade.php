@@ -1,5 +1,5 @@
 <div class="modal fade" id="modalInfoHutang" aria-hidden="true" aria-labelledby="modalInfoHutangLabel" tabindex="-1">
-    <div class="modal-dialog modal-fullscreen">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header text-center">
                 <h5 class="modal-title w-100">INFO HUTANG</h5>

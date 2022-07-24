@@ -94,7 +94,7 @@
     <footer class="footer mt-auto text-inverse shadow" style="background: black">
         <div class="d-flex flex-row justify-content-center position-fixed w-100" style="bottom: 5%">
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalProduksi"><i class="bi-gear"></i> Produksi</button>
-            <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalInventory"><i class="bi-bag"></i> Inventory</button>
+            <button type="button" class="btn btn-block btn-outline-primary shadow m-2" onclick="loadInventory()"><i class="bi-bag"></i> Inventory</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalMarketMenu"><i class="bi-shop"></i> Market</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" onclick="loadTransportation()"><i class="bi-truck"></i> Transportation</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalTambahTC"><i class="bi-coin"></i> Tambah TC</button>
@@ -496,39 +496,12 @@
                     'transportation_amount': transportationAmount
                 },
                 success: function(data) {
+                    alert(data.message) 
                     if (data.status == "success") {
-                        $(`.transportation-amount`).val(null)
+                        $(`.transportation-amount`).val(0)
                         $(`#pengeluaran-transportation`).text("0 TC")
                         $(`#balance`).text(data.balance + " TC")
-
-                        //perbarui inventory
-                        let table = document.getElementById("tbody-transportation");
-	                    table.innerHTML = "";
-                        let counter = 1
-
-                        data.transportations.forEach(transport => {
-                            let lifetime = batch - transport.pivot.batch  + 1
-                            if(transport.pivot.exist){
-                                $(`#tbody-transportation`).append(`
-                                    <tr>
-                                        <td class="border-0 text-center align-middle">${counter}</td>
-                                        <td class="border-0 text-center align-middle">${transport.name}</td>
-                                        <td class="border-0 text-center align-middle">${transport.capacity}</td>
-                                        <td class="border-0 text-center align-middle">${transport.duration}</td>
-                                        <td class="border-0 text-center align-middle">${lifetime}</td>
-                                        <td class="border-0 text-center align-middle">
-                                            <button type="button" class="btn btn-danger"
-                                                data-bs-target="#modalJualTransport" data-bs-toggle="modal"
-                                                onclick="showTransportSell(${ transport.pivot.id })">Jual
-                                            </button>
-                                        </td>
-                                    </tr>
-                                `)
-                                counter++
-                            }
-                        })
                     }
-                    alert(data.message) 
                 },
                 error: function(error) {
                     showError(error)
@@ -568,35 +541,9 @@
                     'id': id
                 },
                 success: function(data) {
+                    $(`#transport-${data.id}`).remove()
                     if (data.status == "success"){
                         $(`#balance`).text(data.balance + " TC")
-
-                        //perbarui inventory
-                        let table = document.getElementById("tbody-transportation");
-	                    table.innerHTML = "";
-                        let counter = 1
-
-                        data.transportations.forEach(transport => {
-                            let lifetime = batch - transport.pivot.batch  + 1
-                            if(transport.pivot.exist){
-                                $(`#tbody-transportation`).append(`
-                                    <tr>
-                                        <td class="border-0 text-center align-middle">${counter}</td>
-                                        <td class="border-0 text-center align-middle">${transport.name}</td>
-                                        <td class="border-0 text-center align-middle">${transport.capacity}</td>
-                                        <td class="border-0 text-center align-middle">${transport.duration}</td>
-                                        <td class="border-0 text-center align-middle">${lifetime}</td>
-                                        <td class="border-0 text-center align-middle">
-                                            <button type="button" class="btn btn-danger"
-                                                data-bs-target="#modalJualTransport" data-bs-toggle="modal"
-                                                onclick="showTransportSell(${ transport.pivot.id })">Jual
-                                            </button>
-                                        </td>
-                                    </tr>
-                                `)
-                                counter++
-                            }
-                        })
                     }
                     alert(data.message)
                 },
@@ -692,6 +639,7 @@
                     'metode': metode,
                 },
                 success: function(data) {
+                    $('#modalTambahTC').modal('hide');
                     alert(data.message)
                     if (data.status == "success"){
                         $(`#balance`).text(data.balance + " TC")
@@ -737,7 +685,7 @@
                         $(`#balance`).text(data.balance + " TC")
                     }
                     $(`#jumlahHutang`).text(data.info)
-                    $(`#jumlah-bayar`).val(null)
+                    $(`#jumlah-bayar`).val(0)
                 },
                 error: function(error) {
                     showError(error)
@@ -781,15 +729,15 @@
                 },
                 success: function(data) {
                     let transportationText = ""
-                    // console.log(data.transportations)
-                    data.transportations.forEach((transportation, index) => {
+                    
+                    data.transportations.forEach(transportation => {
                         if (transportation.pivot.exist) {
                             transportationText += `
-                                <tr>
-                                    <td class="border-0 text-center align-middle">${index+1}</td>
+                                <tr id="transport-${transportation.pivot.id}">
                                     <td class="border-0 text-center align-middle">${transportation.name}</td>
                                     <td class="border-0 text-center align-middle">${transportation.capacity}</td>
-                                    <td class="border-0 text-center align-middle">${transportation.duration}</td>
+                                    <td class="border-0 text-center align-middle">${transportation.self_duration}</td>
+                                    <td class="border-0 text-center align-middle">${transportation.delivery_duration}</td>
                                     <td class="border-0 text-center align-middle">${data.batch - transportation.pivot.batch + 1}</td>
 
                                     <td class="border-0 text-center align-middle">
@@ -804,10 +752,10 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th class="border-0 text-center">No</th>
                                     <th class="border-0 text-center">Jenis</th>
                                     <th class="border-0 text-center">Kapasitas</th>
-                                    <th class="border-0 text-center">Durasi</th>
+                                    <th class="border-0 text-center">Durasi Antar Sendiri</th>
+                                    <th class="border-0 text-center">Durasi Delivery</th>
                                     <th class="border-0 text-center">Masa Pakai</th>
                                 </tr>
                             </thead>
@@ -816,6 +764,134 @@
                     `)
 
                     $('#modalTransport').modal('show');
+                },
+                error: function(error) {
+                    showError(error)
+                }
+            })
+        }
+
+        const loadInventory = _ => {
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("load-inventory") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>'
+                },
+                success: function(data) {
+                
+                    let counter1 = 0
+                    let ingredientText = ""
+                    let machineText = ""
+
+                    data.ingredients.forEach(ingredient => {
+                        ingredientText += `
+                            <tr>
+                                <td class="border-0 text-center align-middle">${ $counter1++ }}</td>
+                                <td class="border-0 text-center align-middle">${ $ingredient.name }}</td>
+                                <td class="border-0 text-center align-middle">${ $ingredient.pivot.amount}}</td>
+                            </tr>
+                        `
+                    })
+
+                    data.machines.forEach(machine => {
+                        if (machine.pivot.exist) {
+                            machineText += `
+                                <tr id="machine-${machine.pivot.machine_types_id}-${machine.pivot.id}">
+                                    <td class="border-0 text-center align-middle">${ $machine.name_type }} ${$machine.pivot.id}}</td>
+                                    <td class="border-0 text-center align-middle">${ $machine.pivot.level}}</td>
+                                    <td class="border-0 text-center align-middle">
+                                        <button type="button" class="btn btn-danger" data-bs-target="#modalJualMesin"
+                                            data-bs-toggle="modal"
+                                            onclick="showMachineSell(${ $machine.pivot.id }, ${ $machine.pivot.machine_types_id })">Jual</button>
+                                    </td>
+                                </tr>
+                            `
+                        }
+                    })
+                    
+                    $(`#modal-body-inventory`).html(`
+                        <div class="row">
+                            {{-- BAHAN BAKU --}}
+                            <div class="col-4">
+                                <div class="bg-info rounded">
+                                    <h3 class="text-center text-gray-100">BAHAN BAKU</h3>
+                                    <div class="d-flex justify-content-center text-gray-100">
+                                        <h5 id="used-capacity-ingredient">${ data.team_ingre }</h5>
+                                        <h5>/</h5>
+                                        <h5>${ data.inventory_ingre }}</h5>
+                                    </div>
+                                </div>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="border-0 text-center">No.</th>
+                                            <th scope="col" class="border-0 text-center">Nama Bahan</th>
+                                            <th scope="col" class="border-0 text-center">Jumlah</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-ingredient">${ingredientText}</tbody>
+                                </table>
+                            </div>
+
+                            {{-- MESIN --}}
+                            <div class="col-4">
+                                <div class="bg-info rounded">
+                                    <h3 class="text-center text-gray-100">MESIN</h3>
+                                    <div class="d-flex justify-content-center text-gray-100">
+                                        <h5>-------</h5>
+                                    </div>
+
+                                </div>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="border-0 text-center">Nama Mesin</th>
+                                            <th scope="col" class="border-0 text-center">Level</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tbody-machine">${machineText}</tbody>
+                                </table>
+                            </div>
+
+                            {{-- PRODUK --}}
+                            <div class="col-4">
+                                <div class="bg-info rounded">
+                                    <h3 class="text-center text-gray-100">PRODUK</h3>
+                                    <div class="d-flex justify-content-center text-gray-100">
+                                        <h5 id="used-capacity-product">{{ $team->products->sum('pivot.amount') }}</h5>
+                                        <h5>/</h5>
+                                        <h5>{{ $team->product_inventory }}</h5>
+                                    </div>
+                                </div>
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col" class="border-0 text-center">No.</th>
+                                            <th scope="col" class="border-0 text-center">Nama Produk</th>
+                                            <th scope="col" class="border-0 text-center">Jumlah</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @php
+                                        $i = 1
+                                        @endphp
+                                        @foreach ($team->products as $product)
+                                        <tr>
+                                            <td class="border-0 text-center align-middle">{{ $i++ }}</td>
+                                            <td class="border-0 text-center align-middle">
+                                                {{$product->name}} {{$product->pivot->id}}</td>
+                                            <td class="border-0 text-center align-middle">
+                                                {{ $product->pivot->amount}}</td>
+                                        </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `)
+
+                    $('#modalInventory').modal('show');
                 },
                 error: function(error) {
                     showError(error)

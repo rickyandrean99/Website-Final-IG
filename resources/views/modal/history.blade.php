@@ -7,26 +7,14 @@
             </div>
             <div class="modal-body">
                 <table class="table table-bordered table-secondary shadow">
-                            <thead>
-                                <tr>
-                                    <th scope="col" class="text-center">Jenis Transaksi</th>
-                                    <th scope="col" class="text-center">Jumlah TC</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr class="text-center">
-                                    <td>Bayar Hutang</td>
-                                    <td>50000 TC</td>
-                                </tr>
-                                <tr class="text-center">
-                                    <td>Upgrade Machine</td>
-                                    <td>30000 TC</td>
-                                </tr>
-                                <tr class="text-center">
-                                    <td>Upgrade Machine</td>
-                                    <td>30000 TC</td>
-                                </tr>
-                            </tbody>
+                        <thead>
+                            <tr>
+                                <th scope="col" class="text-center">Batch</th>
+                                <th scope="col" class="text-center">Keterangan Transaksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
                 </table>
             </div>
             <div class="modal-footer">

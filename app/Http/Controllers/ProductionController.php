@@ -88,7 +88,7 @@ class ProductionController extends Controller
         $productions_team_machine = $request->get('production_team_machine');
         $apple_need = [1=>0,2=>0,3=>0];
 
-        // TODO
+        // Sigma
         $total_defact = 0.0;
         $sigma_produk = 0;
         $defact_array = array(450060, 200020, 140030, 8805, 3356, 134);
@@ -143,6 +143,7 @@ class ProductionController extends Controller
                     $product_machine = $productions_machine[$index];
                     $product_team_machine = $productions_team_machine[$index];
                     $machine_input = [];
+                    $total_defact = 0;
 
                     // Buat 2d array dengan indexnya yaitu machineTypeId dan valuenya team_machine pivot id
                     foreach($product_machine as $index => $value) {
@@ -184,8 +185,8 @@ class ProductionController extends Controller
                                     $machine["capacity"] = $value["capacity"];
                                     $machine["defact"] = $value["defact"];
 
-                                    // Todo
-                                    // $total_defact += $machine["defact"];
+                                    // Sigma
+                                    $total_defact += $value["defact"];
 
                                     array_push($machine_process, $machine);
                                     break 2;
@@ -194,10 +195,18 @@ class ProductionController extends Controller
                         }
                     }
 
-                    // INI
+                    // Sigma
                     // $total_defact *= 1000000;
-                    // for($i = 0; $i < count($defact_array); $i++){
-                    //     if($total_defact <= $defact_array[$i] && $total_defact >= $defact_array[$i + 1]){
+                    // for($i = 0; $i < count($defact_array); $i++) {
+                    //     // if () {
+
+                    //     // } else if () {
+
+                    //     // } else {
+
+                    //     // }
+
+                    //     if ($total_defact <= $defact_array[$i] && $total_defact >= $defact_array[$i + 1]) {
                     //         $defact_atas = $defact_array[$i];
                     //         $defact_bawah = $defact_array[$i+1];
                     //         $level_atas = $i + 1;
@@ -207,7 +216,6 @@ class ProductionController extends Controller
                     //         break;
                     //     }
                     // }
-                    // INI
                     
                     // Lakukan proses produksi berdasarkan spesifikasi mesin
                     foreach($machine_process as $index => $machine) {
@@ -229,7 +237,13 @@ class ProductionController extends Controller
                 $inventory_amount = $team->products->sum('pivot.amount');
                 if ((array_sum($product_total_amount)+$inventory_amount) <= $team->product_inventory) {
                     // Tambah Produk Jadi ke Inventori
-
+                    // foreach ($product_total_amount as $product_id => $product_amount) {
+                    //     if (count($team->products()->wherePivot('products_id', $product_id)->wherePivot('batch', $batch)->get()) > 0) {
+                    //         $team->products()->wherePivot('products_id', $product_id)->wherePivot('batch', $batch)->increment('product_inventory.amount', $product_amount);
+                    //     } else {
+                    //         $team->products()->attach($product_id, ['batch' => $batch, 'amount' => $product_amount]);
+                    //     }
+                    // }
                     
                 //     foreach ($product_total_amount as $product_id => $product_amount){
                 //         //Kemungkinan 1: jika batch, products_id, dan sigma level sama -> tambah amount
@@ -265,26 +279,25 @@ class ProductionController extends Controller
 
 
                     // Kurangi jumlah bahan baku
-                    foreach($ingredients_need as $id => $amount){
-                        $team->ingredients()->wherePivot('ingredients_id', $id)->decrement('ingredient_inventory.amount', $amount);
-                    }
+                    // foreach($ingredients_need as $id => $amount){
+                    //     $team->ingredients()->wherePivot('ingredients_id', $id)->decrement('ingredient_inventory.amount', $amount);
+                    // }
 
                     // Tambahkan special occassion
-                    $apple_need = $apple_need;
-                    foreach($apple_need as $product_id => $apple_amount) {
-                        $result = floor($apple_amount/10);
-                        $id_ingredient = 13;
-                        if ($product_id == 3) $id_ingredient = 14;
+                    // foreach($apple_need as $product_id => $apple_amount) {
+                    //     $result = floor($apple_amount/10);
+                    //     $id_ingredient = 13;
+                    //     if ($product_id == 3) $id_ingredient = 14;
 
-                        if (count($team->ingredients()->wherePivot('ingredients_id', $id_ingredient)->get()) > 0) {
-                            $team->ingredients()->wherePivot('ingredients_id', $id_ingredient)->increment('ingredient_inventory.amount', $result);
-                        } else {
-                            $team->ingredients()->attach($id_ingredient, ['amount' => $result]);
-                        }
-                    }
+                    //     if (count($team->ingredients()->wherePivot('ingredients_id', $id_ingredient)->get()) > 0) {
+                    //         $team->ingredients()->wherePivot('ingredients_id', $id_ingredient)->increment('ingredient_inventory.amount', $result);
+                    //     } else {
+                    //         $team->ingredients()->attach($id_ingredient, ['amount' => $result]);
+                    //     }
+                    // }
 
-                //     $status = "success";
-                //     $message = "Berhasil memproduksi dengan hasil: \n";
+                    $status = "success";
+                    $message = "Berhasil memproduksi dengan hasil: \n";
 
                 //     $i = 0;
                 //     foreach($product_total_amount as $id => $amount) {

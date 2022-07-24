@@ -57,8 +57,9 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/calculate-pangsa', "BatchController@calculatePangsa")->name('calculate-pangsa');
     Route::post('/calculate-sigma', "BatchController@calculateSigma")->name('calculate-sigma');
 
-    //
+    // Realtime Modal
     Route::post('/load-transportation', "ToPostController@loadTransportation")->name('load-transportation');
+    Route::post('/load-inventory', "ToPostController@loadInventory")->name('load-inventory');
 });
 
 Auth::routes(['register' => false]);

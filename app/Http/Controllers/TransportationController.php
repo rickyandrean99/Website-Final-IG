@@ -117,7 +117,8 @@ class TransportationController extends Controller
             'balance' => $balance,
             'transportations' => $transportations,
             'status'=> "success",
-            'message' => "Berhasil menjual transportasi"
+            'message' => "Berhasil menjual transportasi",
+            "id" => $id
         ), 200);
     }
 

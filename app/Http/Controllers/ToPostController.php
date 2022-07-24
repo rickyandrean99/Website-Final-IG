@@ -31,6 +31,7 @@ class ToPostController extends Controller
         $machines = MachineType::all();
         $transportations = Transportation::all();
         $products = Product::all();
+        // $histories = History::all();
         $limit = $team->packages()->wherePivot('packages_id', $batch)->first()->pivot->remaining;
         $product_name = ['Keripik Apel', 'Dodol Apel', 'Sari Buah Apel', 'Selai Kulit Apel', 'Cuka Apel'];
         $product_amount = [];
@@ -184,6 +185,23 @@ class ToPostController extends Controller
         return response()->json(array(
             'transportations' => $transportation_list,
             'batch' => $batch
+        ), 200); 
+    }
+
+    public function loadInventory(){
+        $team = Team::find(Auth::user()->team);
+        $team_ingre = $team->ingredients()-sum('pivot.amount');
+        $inventory_ingre = $team->ingredient_inventory;
+        $team_prod = $team->products()-sum('pivot.amount');
+        $prod_ingre = $team->product_inventory;
+        $ingredient_list = $team->ingredient()->get();
+        $machine_list = $team->machineTypes()->get();
+
+        return response()->json(array(
+            'team_ingre' => $team_ingre,
+            'inventory_ingre' => $inventory_ingre,
+            'ingredients' => $ingredient_list,
+            'machines' => $machine_list,
         ), 200); 
     }
 }
