@@ -56,6 +56,16 @@ class TransportationController extends Controller
             $status = "success";
             $message = "Berhasil membeli transportasi";
 
+            //tambah  history beli transportation
+            DB::table('histories')->insert([
+                "teams_id" => $team->id,
+                "kategori" => "TRANSPORTATION",
+                "batch" => $batch,
+                "type" => "OUT",
+                "amount" => array_sum($prices),
+                "keterangan" => "Berhasil membeli transportasi seharga ".array_sum($prices)." TC"
+            ]);
+
         } else {
             $status = "failed";
             $message = "Saldo tidak mencukupi";
@@ -88,6 +98,16 @@ class TransportationController extends Controller
         $team->save();
 
         DB::table("team_transportation")->where('id', $id)->update(['exist'=>0]);
+
+        //tambah  history jual transportation
+        DB::table('histories')->insert([
+            "teams_id" => $team->id,
+            "kategori" => "TRANSPORTATION",
+            "batch" => $batch,
+            "type" => "IN",
+            "amount" => $price,
+            "keterangan" => "Berhasil menjual ".$transport->name." seharga ".$price." TC"
+        ]);
 
         $team = Team::find(Auth::user()->team);
         $balance = $team->balance;

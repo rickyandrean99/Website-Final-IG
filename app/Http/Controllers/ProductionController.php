@@ -87,19 +87,22 @@ class ProductionController extends Controller
         $productions_machine = $request->get('production_machine');
         $productions_team_machine = $request->get('production_team_machine');
         $apple_need = [1=>0,2=>0,3=>0];
+
+        // TODO
         $total_defact = 0.0;
         $sigma_produk = 0;
         $defact_array = array(450060, 200020, 140030, 8805, 3356, 134);
 
         try {
-            // Cek jumlah bahan baku keseluruhan yang diperlukan
             $ingredients_need = [];
             $ingredient_list = Ingredient::all();
 
+            // Mapping Ingredient Need, set default 0
             foreach($ingredient_list as $ingredient) {
                 $ingredients_need[$ingredient->id] = 0.0;
             }
 
+            // Cek jumlah bahan baku keseluruhan yang diperlukan
             foreach($productions_id as $index => $id) {
                 $product = Product::find($id);
                 foreach($product->ingredients as $ingredient) {
@@ -128,8 +131,9 @@ class ProductionController extends Controller
                 }
             }
 
-            // Apakah bahan baku cukup?
+            // Pengecekan apakah bahan baku cukup
             if ($sufficient_stock) {
+                // Array untuk menyimpan daftar produk jadi. Key berupa idproduk dengan valuenya berupa jumlah produk yang dihasilkan (sudah dikali 10)
                 $product_total_amount = [];
 
                 // Lakukan proses produksi
@@ -140,22 +144,22 @@ class ProductionController extends Controller
                     $product_team_machine = $productions_team_machine[$index];
                     $machine_input = [];
 
-                    // Make array with machineType id as index and team_machine pivot id as value
+                    // Buat 2d array dengan indexnya yaitu machineTypeId dan valuenya team_machine pivot id
                     foreach($product_machine as $index => $value) {
                         $machine_input[$value] = $product_team_machine[$index];
                     }
 
-                    // Cari id machine yang sudah di order
+                    // Cari id dari machine yang sudah di order
                     $machines_id = [];
                     foreach($product->machines()->orderBy('order', 'ASC')->get() as $machine){
                         array_push($machines_id, $machine->pivot->machines_id);
                     }
 
-                    // Cari machine type berdasarkan id machine
+                    // Cari daftar machine type berdasarkan id machine yang sudah di order
                     $m_id = implode(',', $machines_id);
                     $machines_need = MachineType::whereIn('machines_id', $machines_id)->orderByRaw("FIELD(machines_id, $m_id)")->get();
 
-                    // Eliminasi machine type berdasarkan yang tim punya dan simpan defactnya berdasarkan machinetype dan id pivot keberapa
+                    // Eliminasi machine type berdasarkan dengan yang tim punya dan simpan defactnya berdasarkan machinetype dan id pivot keberapa
                     $ordered_machines = [];
                     foreach($machines_need as $machine_need){
                         $machine_team_used = $machine_need->teams()->wherePivot('teams_id', $team_id)->wherePivot('exist', '1')->get();
@@ -180,7 +184,8 @@ class ProductionController extends Controller
                                     $machine["capacity"] = $value["capacity"];
                                     $machine["defact"] = $value["defact"];
 
-                                    $total_defact += $machine["defact"];
+                                    // Todo
+                                    // $total_defact += $machine["defact"];
 
                                     array_push($machine_process, $machine);
                                     break 2;
@@ -189,23 +194,20 @@ class ProductionController extends Controller
                         }
                     }
 
-                    // var_dump($total_defact);
-                    $total_defact *= 1000000;
+                    // INI
+                    // $total_defact *= 1000000;
+                    // for($i = 0; $i < count($defact_array); $i++){
+                    //     if($total_defact <= $defact_array[$i] && $total_defact >= $defact_array[$i + 1]){
+                    //         $defact_atas = $defact_array[$i];
+                    //         $defact_bawah = $defact_array[$i+1];
+                    //         $level_atas = $i + 1;
+                    //         $level_bawah = $i + 2;
 
-                    for($i = 0; $i < count($defact_array); $i++){
-                        if($total_defact <= $defact_array[$i] && $total_defact >= $defact_array[$i + 1]){
-                            $defact_atas = $defact_array[$i];
-                            $defact_bawah = $defact_array[$i+1];
-                            $level_atas = $i + 1;
-                            $level_bawah = $i + 2;
-
-                            $sigma_produk = round(((($total_defact-$defact_bawah)/($defact_atas-$defact_bawah))*
-                                            ($level_atas-$level_bawah)) + $level_bawah, 2);
-                            break;
-                        }
-                    }
-
-                    // var_dump($sigma_produk);
+                    //         $sigma_produk = round(((($total_defact-$defact_bawah)/($defact_atas-$defact_bawah))* ($level_atas-$level_bawah)) + $level_bawah, 2);
+                    //         break;
+                    //     }
+                    // }
+                    // INI
                     
                     // Lakukan proses produksi berdasarkan spesifikasi mesin
                     foreach($machine_process as $index => $machine) {
@@ -226,40 +228,40 @@ class ProductionController extends Controller
                 // Cek apakah inventory produk dapat menyimpan produk yang bisa dibuat ini
                 $inventory_amount = $team->products->sum('pivot.amount');
                 if ((array_sum($product_total_amount)+$inventory_amount) <= $team->product_inventory) {
-
                     // Tambah Produk Jadi ke Inventori
+
                     
-                    foreach ($product_total_amount as $product_id => $product_amount){
-                        //Kemungkinan 1: jika batch, products_id, dan sigma level sama -> tambah amount
-                        //Kemungkinan 2: jika berbeda -> tambah baris baru
-                        if(count($team->products()
-                            ->wherePivot('products_id', $product_id)
-                            ->wherePivot('batch', $batch)
-                            ->wherePivot('sigma_level', $sigma_produk)->get()) > 0){
-                                $team->products()
-                                    ->wherePivot('products_id', $product_id)
-                                    ->wherePivot('batch', $batch)
-                                    ->wherePivot('sigma_level', $sigma_produk)
-                                    ->increment('product_inventory.amount', $product_amount);
+                //     foreach ($product_total_amount as $product_id => $product_amount){
+                //         //Kemungkinan 1: jika batch, products_id, dan sigma level sama -> tambah amount
+                //         //Kemungkinan 2: jika berbeda -> tambah baris baru
+                //         if(count($team->products()
+                //             ->wherePivot('products_id', $product_id)
+                //             ->wherePivot('batch', $batch)
+                //             ->wherePivot('sigma_level', $sigma_produk)->get()) > 0){
+                //                 $team->products()
+                //                     ->wherePivot('products_id', $product_id)
+                //                     ->wherePivot('batch', $batch)
+                //                     ->wherePivot('sigma_level', $sigma_produk)
+                //                     ->increment('product_inventory.amount', $product_amount);
 
-                        }else{
-                            // ambil id terbaru
-                            $new_id = DB::table('product_inventory')->select('id')
-                            ->where('teams_id', $team->id)
-                            ->where('products_id', $product_id)
-                            ->orderBy('id', 'desc')->get();
+                //         }else{
+                //             // ambil id terbaru
+                //             $new_id = DB::table('product_inventory')->select('id')
+                //             ->where('teams_id', $team->id)
+                //             ->where('products_id', $product_id)
+                //             ->orderBy('id', 'desc')->get();
 
-                            if (count($new_id) > 0) {
-                                $new_id = $new_id[0]->id + 1;
-                            } else {
-                                $new_id = 1;
-                            }
+                //             if (count($new_id) > 0) {
+                //                 $new_id = $new_id[0]->id + 1;
+                //             } else {
+                //                 $new_id = 1;
+                //             }
 
-                            //tambah baris baru
-                            $team->products()->attach($product_id, ['id' => $new_id, 'batch' => $batch, 
-                            'amount' => $product_amount, 'sigma_level' => $sigma_produk]);
-                        }
-                    }
+                //             //tambah baris baru
+                //             $team->products()->attach($product_id, ['id' => $new_id, 'batch' => $batch, 
+                //             'amount' => $product_amount, 'sigma_level' => $sigma_produk]);
+                //         }
+                //     }
 
 
                     // Kurangi jumlah bahan baku
@@ -281,14 +283,14 @@ class ProductionController extends Controller
                         }
                     }
 
-                    $status = "success";
-                    $message = "Berhasil memproduksi dengan hasil: \n";
+                //     $status = "success";
+                //     $message = "Berhasil memproduksi dengan hasil: \n";
 
-                    $i = 0;
-                    foreach($product_total_amount as $id => $amount) {
-                        $message .= "- ".$amount." ".Product::find($id)->name." (".($productions_amount[$i]*10-$amount)." gagal)\n";
-                        $i++;
-                    }
+                //     $i = 0;
+                //     foreach($product_total_amount as $id => $amount) {
+                //         $message .= "- ".$amount." ".Product::find($id)->name." (".($productions_amount[$i]*10-$amount)." gagal)\n";
+                //         $i++;
+                //     }
                 } else {
                     $status = "failed";
                     $message = "Produk inventori tidak mencukupi";

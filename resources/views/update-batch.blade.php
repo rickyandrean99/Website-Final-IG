@@ -53,7 +53,7 @@
                     alert(data.message)
                 },
                 error: function(error){
-                    alert(error)
+                    showError(error)
                 }
             })
         }
@@ -71,9 +71,15 @@
                     alert(data.message)
                 },
                 error: function(error){
-                    alert(error)
+                    showError(error)
                 }
             })
+        }
+
+        const showError = (error) => {
+            let errorMessage = JSON.parse(error.responseText).message
+            alert(`Error: ${errorMessage}`)
+            console.log(`Error: ${errorMessage}`)
         }
     </script>
 </body>

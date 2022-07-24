@@ -96,7 +96,7 @@
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalProduksi"><i class="bi-gear"></i> Produksi</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalInventory"><i class="bi-bag"></i> Inventory</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalMarketMenu"><i class="bi-shop"></i> Market</button>
-            <button type="button" class="btn btn-block btn-outline-primary shadow  m-2" data-bs-toggle="modal" data-bs-target="#modalTransport"><i class="bi-truck"></i> Transportation</button>
+            <button type="button" class="btn btn-block btn-outline-primary shadow m-2" onclick="loadTransportation()"><i class="bi-truck"></i> Transportation</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalTambahTC"><i class="bi-coin"></i> Tambah TC</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalInfoHutang" onclick="infoHutang()"><i class="bi-cash-coin"></i> Info Hutang</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalHistory"><i class="bi-list-task"></i> Histori Transaksi</button>
@@ -238,63 +238,76 @@
             let productionsMachines = []
             let productionsTeamMachines = []
             let machineUnique = true
-
-            // Mendapatkan Id MachineType dan juga id pivot dari team_machine
-            productionsId.forEach((product, index) => {
-                let machines = $(`.produksi-${index+1}-select-machine`).map(function() { return $(this).val() }).get()
-                let teamMachines = $(`.produksi-${index+1}-select-machine`).map(function() { return $(this).find(":selected").attr("teammachineid") }).get()
-                productionsMachines.push(machines)
-                productionsTeamMachines.push(teamMachines)
+            let productUnique = true
+            
+            // Check tidak boleh memproduksi produk yang sama bersamaan dalam satu produksi
+            productionsId.forEach((id1, index1) => {
+                productionsId.forEach((id2, index2) => {
+                    if (index1 != index2) {
+                        if (id1 == id2) productUnique = false
+                    }
+                })
             })
 
-            // Check apakah machine sudah terpilih, jika machineStatus true maka ada yang belum terpilih
-            let machineStatus = productionsMachines.some(machines => {
-                return machines.some(machine => machine == 0)
-            })
-
-            if (!machineStatus) {
-                // kalau ada yang kedouble dipilih machineType dengan idPivotnya, gagalkan produksi
-                let machineList = []
-                let teamMachineList = []
-                productionsMachines.forEach(machines => machines.forEach(machine => machineList.push(machine)))
-                productionsTeamMachines.forEach(machines => machines.forEach(machine => teamMachineList.push(machine)))
-
-                machineList.forEach((machine1, index1) => {
-                    machineList.forEach((machine2, index2) => {
-                        if (index1 != index2) {
-                            if (machine1 == machine2 && teamMachineList[index1] == teamMachineList[index2]) {
-                                machineUnique = false
-                            }
-                        }
-                    })
+            if (productUnique) {
+                // Mendapatkan Id MachineType dan juga id pivot dari team_machine
+                productionsId.forEach((product, index) => {
+                    let machines = $(`.produksi-${index+1}-select-machine`).map(function() { return $(this).val() }).get()
+                    let teamMachines = $(`.produksi-${index+1}-select-machine`).map(function() { return $(this).find(":selected").attr("teammachineid") }).get()
+                    productionsMachines.push(machines)
+                    productionsTeamMachines.push(teamMachines)
                 })
 
-                if (machineUnique) {
-                    $.ajax({
-                        type: 'POST',
-                        url: '{{ route("start-production") }}',
-                        data: {
-                            '_token': '<?php echo csrf_token() ?>',
-                            'production_id': productionsId,
-                            'production_amount': productionsAmount,
-                            'production_machine': productionsMachines,
-                            'production_team_machine': productionsTeamMachines 
-                        },
-                        success: function(data) {
-                            alert(data.message)
-                        },
-                        error: function(error) {
-                            showError(error)
-                        }
+                // Check apakah machine sudah terpilih, jika machineStatus true maka ada yang belum terpilih
+                let machineStatus = productionsMachines.some(machines => {
+                    return machines.some(machine => machine == 0)
+                })
+                
+                if (!machineStatus) {
+                    // kalau ada yang kedouble dipilih machineType dengan idPivotnya, gagalkan produksi
+                    let machineList = []
+                    let teamMachineList = []
+                    productionsMachines.forEach(machines => machines.forEach(machine => machineList.push(machine)))
+                    productionsTeamMachines.forEach(machines => machines.forEach(machine => teamMachineList.push(machine)))
+
+                    machineList.forEach((machine1, index1) => {
+                        machineList.forEach((machine2, index2) => {
+                            if (index1 != index2) {
+                                if (machine1 == machine2 && teamMachineList[index1] == teamMachineList[index2]) {
+                                    machineUnique = false
+                                }
+                            }
+                        })
                     })
+
+                    if (machineUnique) {
+                        $.ajax({
+                            type: 'POST',
+                            url: '{{ route("start-production") }}',
+                            data: {
+                                '_token': '<?php echo csrf_token() ?>',
+                                'production_id': productionsId,
+                                'production_amount': productionsAmount,
+                                'production_machine': productionsMachines,
+                                'production_team_machine': productionsTeamMachines 
+                            },
+                            success: function(data) {
+                                alert(data.message)
+                            },
+                            error: function(error) {
+                                showError(error)
+                            }
+                        })
+                    } else {
+                        alert("Tidak boleh menggunakan mesin yang sama di lini produksi yang berbeda!")
+                    }
                 } else {
-                    alert("Tidak boleh menggunakan mesin yang sama di lini produksi yang berbeda!")
+                    alert("Harap pilih mesin terlebih dahulu!")
                 }
             } else {
-                alert("Harap pilih mesin terlebih dahulu!")
+                alert("Tidak boleh memproduksi produk yang sama dalam sekali proses produksi!")
             }
         }
-        
 
         // Update total bahan baku dan limit
         const updateIngredientPriceAndLimit = () => {
@@ -745,6 +758,7 @@
                 },
                 success: function(data) {
                     alert(data.message)
+                    $(`#balance`).text(data.balance + " TC")
                 },
                 error: function(error) {
                     showError(error)
@@ -756,6 +770,57 @@
             let errorMessage = JSON.parse(error.responseText).message
             alert(`Error: ${errorMessage}`)
             console.log(`Error: ${errorMessage}`)
+        }
+
+        const loadTransportation = _ => {
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("load-transportation") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>'
+                },
+                success: function(data) {
+                    let transportationText = ""
+                    // console.log(data.transportations)
+                    data.transportations.forEach((transportation, index) => {
+                        if (transportation.pivot.exist) {
+                            transportationText += `
+                                <tr>
+                                    <td class="border-0 text-center align-middle">${index+1}</td>
+                                    <td class="border-0 text-center align-middle">${transportation.name}</td>
+                                    <td class="border-0 text-center align-middle">${transportation.capacity}</td>
+                                    <td class="border-0 text-center align-middle">${transportation.duration}</td>
+                                    <td class="border-0 text-center align-middle">${data.batch - transportation.pivot.batch + 1}</td>
+
+                                    <td class="border-0 text-center align-middle">
+                                        <button type="button" class="btn btn-danger" data-bs-target="#modalJualTransport" data-bs-toggle="modal" onclick="showTransportSell(${transportation.pivot.id})">Jual</button>
+                                    </td>
+                                </tr>
+                            `
+                        }
+                    })
+                    
+                    $(`#modal-body-transport`).html(`
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th class="border-0 text-center">No</th>
+                                    <th class="border-0 text-center">Jenis</th>
+                                    <th class="border-0 text-center">Kapasitas</th>
+                                    <th class="border-0 text-center">Durasi</th>
+                                    <th class="border-0 text-center">Masa Pakai</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody-transportation">${transportationText}</tbody>
+                        </table>
+                    `)
+
+                    $('#modalTransport').modal('show');
+                },
+                error: function(error) {
+                    showError(error)
+                }
+            })
         }
     </script>
 </body>

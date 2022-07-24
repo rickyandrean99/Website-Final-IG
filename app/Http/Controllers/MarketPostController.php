@@ -171,12 +171,15 @@ class MarketPostController extends Controller
 
         $sigma_team = 0;
         foreach($get as $trans){
-            $amount = DB::table('product_transaction')
-                ->where('transactions_id', $trans->id)->sum('amount');
-            $sigma = DB::table('product_transaction')
-            ->where('transactions_id', $trans->id)->sum('sigma_level');
-            $calculate = $amount / $total_product * $sigma;
-            $sigma_team += $calculate;
+            $get2 = DB::table('product_transaction')
+                ->where('transactions_id', $trans->id)->get();
+            foreach($get2 as $detail){
+                $amount = $detail->amount;
+                $sigma = $detail->sigma_level;
+                
+                $calculate = $amount / $total_product * $sigma;
+                $sigma_team += $calculate;
+            }
         }
 
         $sigma_team = round($sigma_team,2);

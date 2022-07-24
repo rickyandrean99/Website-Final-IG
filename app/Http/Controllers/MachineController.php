@@ -59,6 +59,16 @@ class MachineController extends Controller
             $status = "success";
             $message = "Berhasil membeli machine";
 
+            //tambah  history beli machine
+            DB::table('histories')->insert([
+                "teams_id" => $team->id,
+                "kategori" => "MACHINE",
+                "batch" => $batch,
+                "type" => "OUT",
+                "amount" => array_sum($prices),
+                "keterangan" => "Berhasil membeli mesin seharga ".array_sum($prices)." TC"
+            ]);
+
         } else {
             $status = "failed";
             $message = "Saldo tidak mencukupi";
@@ -128,6 +138,16 @@ class MachineController extends Controller
         ->where('id', $id)
         ->where('machine_types_id', $type_id)
         ->update(['exist'=>0]);
+
+        //tambah  history jual machine
+        DB::table('histories')->insert([
+            "teams_id" => $team->id,
+            "kategori" => "MACHINE",
+            "batch" => $batch,
+            "type" => "IN",
+            "amount" => $price,
+            "keterangan" => "Berhasil menjual ".$nama[0]->name_type."".$id." seharga ".$price." TC"
+        ]);
 
         $team = Team::find(Auth::user()->team);
         $balance = $team->balance;

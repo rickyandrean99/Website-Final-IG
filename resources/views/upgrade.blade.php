@@ -112,7 +112,7 @@
                     alert(data.message)
                 },
                 error: function(error) {
-                    alert(error)
+                    showError(error)
                 }
             })
         }
@@ -136,7 +136,7 @@
                     $(`#defect-mesin-${id}`).text(data.defect)
                 },
                 error: function(error) {
-                    alert(error)
+                    showError(error)
                 }
             })
         }
@@ -170,7 +170,7 @@
                     $(`#sell-machine-price`).text(data.price)
                 },
                 error: function(error) {
-                    alert(error.message)
+                    showError(error)
                 }
             })
         }
@@ -204,9 +204,15 @@
                     }
                 },
                 error: function(error) {
-                    alert(error.message)
+                    showError(error)
                 }
             })
+        }
+
+        const showError = (error) => {
+            let errorMessage = JSON.parse(error.responseText).message
+            alert(`Error: ${errorMessage}`)
+            console.log(`Error: ${errorMessage}`)
         }
     </script>
 </body>

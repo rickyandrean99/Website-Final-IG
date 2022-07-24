@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Team;
+use App\Batch;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -22,6 +23,7 @@ class UpgradePostController extends Controller
     public function buyFridge(Request $request){
         $id = $request->get('id');
         $team = Team::find($id);
+        $batch = Batch::find(1)->batch;
 
         if ($team->fridge == 0) {
             if ($team->balance >= 1000) {
@@ -30,6 +32,16 @@ class UpgradePostController extends Controller
                 $team->save();
 
                 $message = "Berhasil membeli kulkas";
+
+                //tambah history buy fridge
+                DB::table('histories')->insert([
+                    "teams_id" => $team->id,
+                    "kategori" => "FRIDGE",
+                    "batch" => $batch,
+                    "type" => "OUT",
+                    "amount" => 1000,
+                    "keterangan" => "Berhasil membeli kulkas seharga 1000 TC"
+                ]);
             } else {
                 $message = "Saldo TC tidak mencukupi";
             }
@@ -72,12 +84,12 @@ class UpgradePostController extends Controller
     }
 
     public function upgradeMachine(Request $request){
+        $batch = Batch::find(1)->batch;
         $machine_id = $request->get('machine_id');
         $machine_types_id = $request->get('machine_types_id');
         $id = $request->get('id');
         $team = Team::find($id);
         $price = DB::table('machine_types')->where('id', $machine_types_id)->get();
-        $price = $price[0]->upgrade_price;
         
         $mesin = DB::table('team_machine')
         ->where('id', $machine_id)
@@ -89,6 +101,16 @@ class UpgradePostController extends Controller
         $level = $mesin[0]->level;
         $limit = $team->upgrade_machine_limit;
         $defect = $mesin[0]->defact;
+
+        if($level == 0){
+            $price = $price[0]->upgrade_price1;
+        }else if($level == 1){
+            $price = $price[0]->upgrade_price2;
+        }else if($level == 2){
+            $price = $price[0]->upgrade_price3;
+        }else{
+            $price = 0;
+        }
         
         if (count($mesin) > 0) {
             if ($mesin[0]->is_upgrade == 0){
@@ -135,6 +157,16 @@ class UpgradePostController extends Controller
                             $defect = $mesin[0]->defact;
                             $limit = $team->upgrade_machine_limit;
 
+                            //tambah history upgrade machine
+                            DB::table('histories')->insert([
+                                "teams_id" => $team->id,
+                                "kategori" => "UPGRADE",
+                                "batch" => $batch,
+                                "type" => "OUT",
+                                "amount" => $price,
+                                "keterangan" => "Berhasil upgrade ".$type[0]->name_type."". $mesin[0]->id." ke level ".$level." seharga ".$price." TC"
+                            ]);
+
                         }else{
                             $status = "failed";
                             $message = "Mesin ini sudah mencapai level maksimal";
@@ -170,7 +202,6 @@ class UpgradePostController extends Controller
         $machine_types_id = $request->get('machine_types_id');
         $id = $request->get('id');
         $price = DB::table('machine_types')->where('id', $machine_types_id)->get();
-        $price = $price[0]->upgrade_price;
         
         $mesin = DB::table('team_machine')
         ->where('id', $machine_id)
@@ -180,10 +211,18 @@ class UpgradePostController extends Controller
         ->get();
 
         $machine = DB::table('machine_types')->where('id', $machine_types_id)->get();
-
         $level = $mesin[0]->level;
-
         $name = $machine[0]->name_type;
+
+        if($level == 0){
+            $price = $price[0]->upgrade_price1;
+        }else if($level == 1){
+            $price = $price[0]->upgrade_price2;
+        }else if($level == 2){
+            $price = $price[0]->upgrade_price3;
+        }else{
+            $price = 0;
+        }
 
         return response()->json(array(
             'name' => $name,

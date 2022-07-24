@@ -56,12 +56,24 @@ class BatchController extends Controller
         
         // Bayar Sewa Inventory & Tambah bunga hutang
         $teams = Team::all();
+        $batch1 = Batch::find(1)->batch;
         foreach($teams as $team) {
             $rent_price = $team->inventory_ingredient_rent + $team->inventory_product_rent;
             $interest = 0.05 * $team->debt;
             $team->decrement('balance', $rent_price);
             $team->increment('debt', $interest);
+
+            //tambah history fee
+            DB::table('histories')->insert([
+                "teams_id" => $team->id,
+                "kategori" => "FEE",
+                "batch" => $batch1,
+                "type" => "OUT",
+                "amount" => $rent_price,
+                "keterangan" => "Biaya simpan inventory bahan baku & produk sejumlah ".$rent_price." TC"
+            ]);
         }
+
 
         // Buang bahan milik tim yang tidak memiliki kulkas
         $teams = Team::all();

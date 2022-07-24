@@ -53,11 +53,22 @@ class ToPostController extends Controller
 
         $coin = $request->get('coin');
         $metode = $request->get('metode');
-
+        $batch = Batch::find(1)->batch;
         $team = Team::find(Auth::user()->team);
 
         if($metode == 1){
             $team->increment('balance', $coin);
+
+            //tambah history input TC
+            DB::table('histories')->insert([
+                "teams_id" => $team->id,
+                "kategori" => "INPUT",
+                "batch" => $batch,
+                "type" => "IN",
+                "amount" => $coin,
+                "keterangan" => "Berhasil mendapatkan pendapatan sejumlah ".$coin." TC"
+            ]);
+
         }else{
             if($team->debt_batch == 1){
                 return response()->json(array(
@@ -78,8 +89,19 @@ class ToPostController extends Controller
                 ), 200);
             }
             $team->increment('balance', $coin);
+            $team->increment('debt', $coin);
             $team->debt_batch = 1;
             $team->save();
+
+            //tambah history input TC
+            DB::table('histories')->insert([
+                "teams_id" => $team->id,
+                "kategori" => "INPUT",
+                "batch" => $batch,
+                "type" => "IN",
+                "amount" => $coin,
+                "keterangan" => "Berhasil mendapatkan modal tambahan sejumlah ".$coin." TC"
+            ]);
         }
 
         $team = Team::find(Auth::user()->team);
@@ -108,6 +130,7 @@ class ToPostController extends Controller
         $team = Team::find(Auth::user()->team);
         $bayar = $request->get('bayar');
         $hutang = $team->debt;
+        $batch = Batch::find(1)->batch;
 
         if ($bayar > $team->debt){
             return response()->json(array(
@@ -125,6 +148,17 @@ class ToPostController extends Controller
 
             $status = "success";
             $message = "Berhasil bayar hutang";
+
+            //tambah history output TC
+            DB::table('histories')->insert([
+                "teams_id" => $team->id,
+                "kategori" => "OUTPUT",
+                "batch" => $batch,
+                "type" => "OUT",
+                "amount" => $bayar,
+                "keterangan" => "Berhasil membayar hutang sejumlah ".$bayar." TC"
+            ]);
+
         } else {
             $status = "failed";
             $message = "Saldo tidak mencukupi";
@@ -140,5 +174,16 @@ class ToPostController extends Controller
             'balance' => $balance,
             'info' => "Jumlah Hutang: ".$hutang." TC"
         ), 200);
+    }
+
+    public function loadTransportation() {
+        $batch = Batch::find(1)->batch;
+        $team = Team::find(Auth::user()->team);
+        $transportation_list = $team->transportations()->get();
+        
+        return response()->json(array(
+            'transportations' => $transportation_list,
+            'batch' => $batch
+        ), 200); 
     }
 }

@@ -56,6 +56,9 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/calculate-profit', "BatchController@calculateProfit")->name('calculate-profit');
     Route::get('/calculate-pangsa', "BatchController@calculatePangsa")->name('calculate-pangsa');
     Route::post('/calculate-sigma', "BatchController@calculateSigma")->name('calculate-sigma');
+
+    //
+    Route::post('/load-transportation', "ToPostController@loadTransportation")->name('load-transportation');
 });
 
 Auth::routes(['register' => false]);
