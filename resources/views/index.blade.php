@@ -517,8 +517,8 @@
                     'id': id
                 },
                 success: function(data) {
+                    $(`#transport-${data.id}`).remove()
                     if (data.status == "success"){
-                        $(`#transport-${data.id}`).remove()
                         $(`#balance`).text(data.balance + " TC")
                     }
                     alert(data.message)
@@ -565,8 +565,8 @@
                     'type_id': type_id
                 },
                 success: function(data) {
+                    $(`#machine-${data.type}-${data.id}`).remove()
                     if (data.status == "success") {
-                        $(`#machine-${data.type}-${data.id}`).remove()
                         $(`#balance`).text(data.balance + " TC")
 
                     }
@@ -593,7 +593,7 @@
                     'metode': metode,
                 },
                 success: function(data) {
-                    $('#modalTambahTC').modal('hide');
+                    $('#modalTambahTC').modal('hide')
                     alert(data.message)
                     if (data.status == "success"){
                         $(`#balance`).text(data.balance + " TC")
@@ -614,6 +614,7 @@
                     '_token': '<?php echo csrf_token() ?>',
                 },
                 success: function(data) {
+                    $('#modalInfoHutang').modal('hide')
                     $(`#jumlahHutang`).text(data.info)
                 },
                 error: function(error) {
