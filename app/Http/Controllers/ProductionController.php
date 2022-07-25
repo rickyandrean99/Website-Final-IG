@@ -90,7 +90,7 @@ class ProductionController extends Controller
 
         // Sigma
         $total_defact = 0.0;
-        $sigma_produk = 0;
+        $sigma_produk = [];
         $defact_array = array(450060, 200020, 140030, 8805, 3356, 134);
 
         try {
@@ -143,7 +143,7 @@ class ProductionController extends Controller
                     $product_machine = $productions_machine[$index];
                     $product_team_machine = $productions_team_machine[$index];
                     $machine_input = [];
-                    $total_defact = 0;
+                    $total_defact = 0.0;
 
                     // Buat 2d array dengan indexnya yaitu machineTypeId dan valuenya team_machine pivot id
                     foreach($product_machine as $index => $value) {
@@ -195,27 +195,32 @@ class ProductionController extends Controller
                         }
                     }
 
-                    // Sigma
-                    // $total_defact *= 1000000;
-                    // for($i = 0; $i < count($defact_array); $i++) {
-                    //     // if () {
+                    // Perhitungan sigma produksi
+                    $total_defact *= 1000000;
+                    var_dump($total_defact);
+                    foreach($defact_array as $index => $dpmo) {
+                        // Start: Kalau acara sudah fix, modifikasi ini
+                        if ($total_defact > $defact_array[0]) {
+                            $sigma_produk[$id] = 0;
+                            break;
+                        }
 
-                    //     // } else if () {
-
-                    //     // } else {
-
-                    //     // }
-
-                    //     if ($total_defact <= $defact_array[$i] && $total_defact >= $defact_array[$i + 1]) {
-                    //         $defact_atas = $defact_array[$i];
-                    //         $defact_bawah = $defact_array[$i+1];
-                    //         $level_atas = $i + 1;
-                    //         $level_bawah = $i + 2;
-
-                    //         $sigma_produk = round(((($total_defact-$defact_bawah)/($defact_atas-$defact_bawah))* ($level_atas-$level_bawah)) + $level_bawah, 2);
-                    //         break;
-                    //     }
-                    // }
+                        if ($total_defact <= $defact_array[5]) {
+                            $sigma_produk[$id] = 10;
+                            break;
+                        }
+                        // End
+                        
+                        if ($total_defact <= $dpmo && $total_defact >= $defact_array[$index+1]) {
+                            $defact_atas = $dpmo;
+                            $defact_bawah = $defact_array[$index+1];
+                            $level_atas = $index+1;
+                            $level_bawah = $index+2;
+        
+                            $sigma_produk[$id] = round(((($total_defact-$defact_bawah)/($defact_atas-$defact_bawah))* ($level_atas-$level_bawah)) + $level_bawah, 2);
+                            break;
+                        }
+                    }
                     
                     // Lakukan proses produksi berdasarkan spesifikasi mesin
                     foreach($machine_process as $index => $machine) {
@@ -237,46 +242,50 @@ class ProductionController extends Controller
                 $inventory_amount = $team->products->sum('pivot.amount');
                 if ((array_sum($product_total_amount)+$inventory_amount) <= $team->product_inventory) {
                     // Tambah Produk Jadi ke Inventori
-                    // foreach ($product_total_amount as $product_id => $product_amount) {
-                    //     if (count($team->products()->wherePivot('products_id', $product_id)->wherePivot('batch', $batch)->get()) > 0) {
-                    //         $team->products()->wherePivot('products_id', $product_id)->wherePivot('batch', $batch)->increment('product_inventory.amount', $product_amount);
-                    //     } else {
-                    //         $team->products()->attach($product_id, ['batch' => $batch, 'amount' => $product_amount]);
-                    //     }
-                    // }
+                    foreach ($product_total_amount as $product_id => $product_amount) {
+                        if (count($team->products()->wherePivot('products_id', $product_id)->wherePivot('batch', $batch)->wherePivot('sigma_level', $sigma_produk[$product_id])->get()) > 0) {
+                            $team->products()->wherePivot('products_id', $product_id)->wherePivot('batch', $batch)->increment('product_inventory.amount', $product_amount);
+                        } else {
+                            // Dapatkan Id Terbaru
+                            $latest_id = DB::table('product_inventory')->select('id')->where('teams_id', $team->id)->where('products_id', $product_id)->orderBy('id', 'desc')->get();
+                            var_dump($)
+                            $team->products()->attach($product_id, ['batch' => $batch, 'amount' => $product_amount]);
+                        }
+                    }
                     
-                //     foreach ($product_total_amount as $product_id => $product_amount){
-                //         //Kemungkinan 1: jika batch, products_id, dan sigma level sama -> tambah amount
-                //         //Kemungkinan 2: jika berbeda -> tambah baris baru
-                //         if(count($team->products()
-                //             ->wherePivot('products_id', $product_id)
-                //             ->wherePivot('batch', $batch)
-                //             ->wherePivot('sigma_level', $sigma_produk)->get()) > 0){
-                //                 $team->products()
-                //                     ->wherePivot('products_id', $product_id)
-                //                     ->wherePivot('batch', $batch)
-                //                     ->wherePivot('sigma_level', $sigma_produk)
-                //                     ->increment('product_inventory.amount', $product_amount);
+                    foreach ($product_total_amount as $product_id => $product_amount){
+                        //Kemungkinan 1: jika batch, products_id, dan sigma level sama -> tambah amount
+                        //Kemungkinan 2: jika berbeda -> tambah baris baru
+                        if(count($team->products()
+                            ->wherePivot('products_id', $product_id)
+                            ->wherePivot('batch', $batch)
+                            ->wherePivot('sigma_level', $sigma_produk)->get()) > 0){
+                                $team->products()
+                                    ->wherePivot('products_id', $product_id)
+                                    ->wherePivot('batch', $batch)
+                                    ->wherePivot('sigma_level', $sigma_produk)
+                                    ->increment('product_inventory.amount', $product_amount);
 
-                //         }else{
-                //             // ambil id terbaru
-                //             $new_id = DB::table('product_inventory')->select('id')
-                //             ->where('teams_id', $team->id)
-                //             ->where('products_id', $product_id)
-                //             ->orderBy('id', 'desc')->get();
+                        } else{
+                            // ambil id terbaru
+                            $new_id = DB::table('product_inventory')->select('id')
+                            ->where('teams_id', $team->id)
+                            ->where('products_id', $product_id)
+                            ->orderBy('id', 'desc')->get();
 
-                //             if (count($new_id) > 0) {
-                //                 $new_id = $new_id[0]->id + 1;
-                //             } else {
-                //                 $new_id = 1;
-                //             }
+                            if (count($new_id) > 0) {
+                                $new_id = $new_id[0]->id + 1;
+                            } else {
+                                $new_id = 1;
+                            }
 
-                //             //tambah baris baru
-                //             $team->products()->attach($product_id, ['id' => $new_id, 'batch' => $batch, 
-                //             'amount' => $product_amount, 'sigma_level' => $sigma_produk]);
-                //         }
-                //     }
+                            //tambah baris baru
+                            $team->products()->attach($product_id, ['id' => $new_id, 'batch' => $batch, 
+                            'amount' => $product_amount, 'sigma_level' => $sigma_produk]);
+                        }
+                    }
 
+                    die();
 
                     // Kurangi jumlah bahan baku
                     // foreach($ingredients_need as $id => $amount){

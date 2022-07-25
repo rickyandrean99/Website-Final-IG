@@ -60,6 +60,7 @@ Route::middleware(['auth'])->group(function() {
     // Realtime Modal
     Route::post('/load-transportation', "ToPostController@loadTransportation")->name('load-transportation');
     Route::post('/load-inventory', "ToPostController@loadInventory")->name('load-inventory');
+    Route::post('/load-history', "ToPostController@loadHistory")->name('load-history');
 });
 
 Auth::routes(['register' => false]);

@@ -40,7 +40,7 @@
                         <td style="width: 40%;">Perusahaan {{ $team -> id }}</td>
                         <td> 
                             {{ 
-                                $team ->rounds()->where('batch',$i)->sum("six_sigma") 
+                                round($team ->rounds()->where('batch',$i)->sum("six_sigma"),2) 
                             }} 
                         </td>
                         <td> 
@@ -55,7 +55,7 @@
                         </td>
                         <td>
                             {{ 
-                                $team ->rounds()->where('batch',$i)->sum("six_sigma") +
+                                round($team ->rounds()->where('batch',$i)->sum("six_sigma"),2) +
                                 round($team->rounds()->where('batch',$i)->sum("market_share")*0.2*100) +
                                 $team->rounds()->where('batch',$i)->sum("profit")*0.2
                             }} 

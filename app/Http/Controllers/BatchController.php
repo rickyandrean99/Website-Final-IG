@@ -119,7 +119,7 @@ class BatchController extends Controller
             $profit = self::calculateProfit($team, $batch->batch);
             $market_share = self::calculatePangsaPasar($team, $batch->batch);
 
-            $team->rounds()->wherePivot('ingredients_id', $id)->update([
+            $team->rounds()->wherePivot('rounds_id', $batch->batch)->update([
                 'profit' => $profit,
                 'market_share' => $market_share
             ]);

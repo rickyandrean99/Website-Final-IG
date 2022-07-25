@@ -54,7 +54,7 @@
                     <div class="col-12">
                         <div class="d-flex d-sm-block">
                             <h2 class="mb-0">Profit</h2>
-                            <h2 id="profit" class="mb-2 mt-1 fw-bold">{{$team->rounds()->where('batch',$batch)->sum("profit")}} TC</h2>
+                            <h2 id="profit" class="mb-2 mt-1 fw-bold">{{$team->rounds()->where('rounds_id',$batch)->sum("profit")}} TC</h2>
                         </div>
                     </div>
                 </div>
@@ -67,7 +67,7 @@
                     <div class="col-12 ">
                         <div class="d-flex d-sm-block">
                             <h2 class="mb-0">Pangsa Pasar</h2>
-                            <h1 class="fw-extrabold text-success mb-2"> {{round($team->rounds()->where('batch',$batch)->sum("market_share")*100,2)}}%</h1>
+                            <h1 class="fw-extrabold text-success mb-2"> {{round($team->rounds()->where('rounds_id',$batch)->sum("market_share")*100,2)}}%</h1>
                         </div>
                     </div>
                 </div>
@@ -82,7 +82,7 @@
                             <h2 class="mb-0">Sigma</h2>
                             <div class="d-flex">
                                 <h1 class="fw-extrabold fs-1 mb-2">Σ</h1>
-                                <h3 class="fs-1 mb-2">4.34</h3>
+                                <h3 class="fs-1 mb-2">{{round($team->rounds()->where('rounds_id', $batch)->sum("six_sigma"),2)}}</h3>
                             </div>
                         </div>
                     </div>
@@ -93,13 +93,13 @@
 
     <footer class="footer mt-auto text-inverse shadow" style="background: black">
         <div class="d-flex flex-row justify-content-center position-fixed w-100" style="bottom: 5%">
-            <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalProduksi"><i class="bi-gear"></i> Produksi</button>
+            <button type="button" class="btn btn-block btn-outline-primary shadow m-2" onclick="loadProduction()"><i class="bi-gear"></i> Produksi</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" onclick="loadInventory()"><i class="bi-bag"></i> Inventory</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalMarketMenu"><i class="bi-shop"></i> Market</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" onclick="loadTransportation()"><i class="bi-truck"></i> Transportation</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalTambahTC"><i class="bi-coin"></i> Tambah TC</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalInfoHutang" onclick="infoHutang()"><i class="bi-cash-coin"></i> Info Hutang</button>
-            <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalHistory"><i class="bi-list-task"></i> Histori Transaksi</button>
+            <button type="button" class="btn btn-block btn-outline-primary shadow m-2" onclick="loadHistory()"><i class="bi-list-task"></i> Histori Transaksi</button>
         </div>
     </footer>
 
@@ -614,7 +614,6 @@
                     '_token': '<?php echo csrf_token() ?>',
                 },
                 success: function(data) {
-                    $('#modalInfoHutang').modal('hide')
                     $(`#jumlahHutang`).text(data.info)
                 },
                 error: function(error) {
@@ -626,7 +625,7 @@
         const bayarHutang = () =>{
             if (!confirm("Are you sure?")) return
             let bayar = $('#jumlah-bayar').val()
-
+            
             $.ajax({
                 type: 'POST',
                 url: '{{ route("bayar-hutang") }}',
@@ -636,6 +635,7 @@
                 },
                 success: function(data) {
                     alert(data.message)
+                    $('#modalInfoHutang').modal('hide')
                     if (data.status == "success"){
                         $(`#balance`).text(data.balance + " TC")
                     }
@@ -851,6 +851,67 @@
                     showError(error)
                 }
             })
+        }
+
+        const loadHistory = _ => {
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("load-history") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>'
+                },
+                success: function(data) {
+                    let historyText = ""
+                    
+                    data.histories.forEach(history => {
+                        historyText += `
+                            <tr">
+                                <td class="border-0 text-center align-middle">${history.batch}</td>
+                                <td class="border-0 text-center align-middle">${history.keterangan}</td>
+                            </tr>
+                        `
+                    })
+                    
+                    $(`#modal-body-history`).html(`
+                        <table class="table table-bordered table-secondary shadow">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="text-center">Batch</th>
+                                    <th scope="col" class="text-center">Keterangan Transaksi</th>
+                                </tr>
+                            </thead>
+                            <tbody>${historyText}</tbody>
+                        </table>
+                    `)
+
+                    $('#modalHistory').modal('show');
+                },
+                error: function(error) {
+                    showError(error)
+                }
+            })
+        }
+
+        const loadProduction = _ => {
+            $(`#modal-body-production`).html(`
+                <table class="table table-centered table-nowrap" style="vertical-align:middle">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th class="border-0 rounded-start text-center">No</th>
+                            <th class="border-0 text-center">Produk</th>
+                            <th class="border-0 text-center">Bahan</th>
+                            <th class="border-0 text-center">Mesin</th>
+                            <th class="border-0 rounded-end text-center">Jumlah Produksi</th>
+                        </tr>
+                    </thead>
+                    <input type="hidden" value="0" id="production-amount" />
+                    <tbody class="border-0" id="tbody-produksi">
+
+                    </tbody>
+                </table>
+            `)
+
+            $('#modalProduksi').modal('show');
         }
     </script>
 </body>

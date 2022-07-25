@@ -208,4 +208,13 @@ class ToPostController extends Controller
             'products' => $product_list,
         ), 200); 
     }
+
+    public function loadHistory(){
+        $team = Team::find(Auth::user()->team);
+        $history_list = $team->histories()->orderBy('id', 'desc')->get();
+
+        return response()->json(array(
+            'histories' => $history_list
+        ), 200); 
+    }
 }
