@@ -105,7 +105,7 @@ class BatchController extends Controller
             }
         }
 
-        event(new UpdateBatch($batch->batch, "batch"));
+        event(new UpdateBatch($batch->batch));
 
         return response()->json(array(
             'status' => 'success',
@@ -127,9 +127,10 @@ class BatchController extends Controller
                 'profit' => $profit,
                 'market_share' => $market_share
             ]);
+
+            broadcast(new UpdatePreparation($team->id, $profit, $market_share))->toOthers();
         }
 
-        event(new UpdateBatch($batch->batch, "preparation"));
 
         return response()->json(array(
             'status' => 'success',

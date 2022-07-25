@@ -6,6 +6,7 @@ use App\Team;
 use App\Batch;
 use App\MachineType;
 use App\Ingredient;
+use App\DefectiveProduct;
 use Auth;
 
 use Illuminate\Http\Request;
@@ -89,8 +90,8 @@ class ProductionController extends Controller
         $apple_need = [1=>0,2=>0,3=>0];
         $total_defact = 0.0;
         $sigma_produk = [];
-        $defact_array = array(450060, 200020, 140030, 8805, 3356, 134);
-        $defective_product = [];
+        $defact_array = array(450060, 200020, 140030, 8805, 3356, 134, 0);
+        $defective_product = 0;
 
         try {
             $ingredients_need = [];
@@ -195,18 +196,6 @@ class ProductionController extends Controller
                     // Perhitungan sigma produksi
                     $total_defact *= 1000000;
                     foreach($defact_array as $index => $dpmo) {
-                        // Start: Kalau acara sudah fix, modifikasi ini
-                        if ($total_defact > $defact_array[0]) {
-                            $sigma_produk[$id] = 0;
-                            break;
-                        }
-
-                        if ($total_defact <= $defact_array[5]) {
-                            $sigma_produk[$id] = 10;
-                            break;
-                        }
-                        // End
-                        
                         if ($total_defact <= $dpmo && $total_defact >= $defact_array[$index+1]) {
                             $defact_atas = $dpmo;
                             $defact_bawah = $defact_array[$index+1];
@@ -278,14 +267,28 @@ class ProductionController extends Controller
                     foreach($product_total_amount as $id => $amount) {
                         $remaining = ($productions_amount[$i]*10-$amount);
                         $message .= "- ".$amount." ".Product::find($id)->name." (".$remaining." gagal)\n";
-                        $defective_product[$id] = $remaining;
+                        $defective_product += $remaining;
                         $i++;
                     }
-
+                    $message .= "\n UMKM Pasar\n";
+                    
                     // Defective Product
                     var_dump($defective_product);
-                    
 
+                    $defective_batch = DefectiveProduct::find($batch);
+                    $defective_price = 0;
+
+                    foreach ($defective_product as $product_id => $defective) {
+                        $umkm_amount = (int)(round($defective_batch->sell_percentage * $defective));
+                        $denda_amount = $defective - $umkm_amount;
+                        $umkm_price = $umkm_amount * $defective_batch->sell_price;
+                        $denda_price = $denda_amount * $defective_batch->penalty_price;
+
+                        $defective_price += ($umkm_price - $denda_price);
+                    }
+
+                    $message .= "- Jual UMKM sebesar ".$umkm_price." TC (".$umkm_amount." pcs) dan bayar denda sebesar";
+                    
                     die();
                 } else {
                     $status = "failed";

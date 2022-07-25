@@ -12,17 +12,17 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body style="background-color: #FAF0DC;">
-    <div class="row align-items-center" style="background-color: #EA435E;">
+    <div class="row align-items-center bg-success" style="box-shadow: 5px 2px 5px rgba(0, 0, 0, 0.5)">
         <div class="col-md-1">
-            <button type="button" class=" btn btn-block btn-danger shadow-sm m-2" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="text-danger">Demand</button>
+            <button type="button" class=" btn btn-block btn-danger m-2" style="box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3)" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</button>
             <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
         </div>
         <div class="col-md-4 offset-md-3">
             <h3 class="text-center text-white fw-bolder m-2">REKAP PENILAIAN</h3>
         </div>
         <div class="col-md-1 offset-md-3">
-            <button type="button" class=" btn btn-block btn-danger shadow-sm m-2" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="text-danger">Logout</button>
-            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
+            <button type="button" class=" btn btn-block btn-warning m-2" style="box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3)" href="" onclick="">Demand</button>
+            <form id="demand-form" action="" method="POST" class="d-none">@csrf</form>
         </div>
     </div>
     @for ($i = 1; $i <= 5; $i++)
@@ -70,6 +70,28 @@
             </table>
         </div>
     @endfor
+
+    <div class="row justify-content-center">
+            <h2 class="text-center"><span class="badge bg-dark rounded mt-3"> HASIL AKHIR </span></h2>
+            <table class="table table-striped table-warning table-bordered mt-2 shadow-sm" style="width: 85%">
+                <thead>
+                    <tr class="text-center align-middle">
+                        <th scope="col">Nama Tim</th>
+                        <th scope="col">Balance</th>
+                        <th scope="col">TOTAL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach($teams as $team)
+                    <tr class="text-center align-middle">
+                        <td style="width: 40%;">Perusahaan {{ $team -> id }}</td>
+                        <td>0</td>
+                        <td>0</td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
        
 </body>
 </html>

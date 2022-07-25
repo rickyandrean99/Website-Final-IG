@@ -29,7 +29,7 @@
                     <div id="balance" class="ms-2">{{ $team->balance }} TC</div>
                 </div>
 
-                <div class="text-white rounded shadow p-3 border border-white">BATCH-{{ $batch }}</div>
+                <div class="text-white rounded shadow p-3 border border-white" id="batch">BATCH-{{ $batch }}</div>
 
                 <div class="bg-danger rounded shadow p-3 ms-4">
                     <span class="h5 text-capitalize fw-bold"><a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="text-white"> {{ __('Logout') }}</a></span>
@@ -54,7 +54,7 @@
                     <div class="col-12">
                         <div class="d-flex d-sm-block">
                             <h2 class="mb-0">Profit</h2>
-                            <h2 id="profit" class="mb-2 mt-1 fw-bold">{{$team->rounds()->where('rounds_id',$batch)->sum("profit")}} TC</h2>
+                            <h2 id="profit" class="mb-2 mt-1 fw-bold" id="profit">{{$team->rounds()->where('rounds_id',$batch)->sum("profit")}} TC</h2>
                         </div>
                     </div>
                 </div>
@@ -67,7 +67,7 @@
                     <div class="col-12 ">
                         <div class="d-flex d-sm-block">
                             <h2 class="mb-0">Pangsa Pasar</h2>
-                            <h1 class="fw-extrabold text-success mb-2"> {{round($team->rounds()->where('rounds_id',$batch)->sum("market_share")*100,2)}}%</h1>
+                            <h1 class="fw-extrabold text-success mb-2" id="market-share"> {{round($team->rounds()->where('rounds_id',$batch)->sum("market_share")*100,2)}}%</h1>
                         </div>
                     </div>
                 </div>
@@ -916,7 +916,14 @@
         }
 
         window.Echo.channel('update-batch').listen('.update', (e) => {
-            alert(`${e.type} ${e.batch}`)
+            alert(`Berhasil update ke batch ${e.batch}`)
+            $(`#batch`).text(`${e.batch}`)
+        })
+
+        window.Echo.private('update.' + {{ Auth::user()->team }}).listen('UpdatePreparation', (e) => {
+            alert(`Masuk ke sesi preparation`)
+            $(`profit`).text(`${e.profit}`)
+            $(`market-share`).text(`${e.market_share}`)
         })
     </script>
 </body>
