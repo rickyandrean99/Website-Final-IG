@@ -122,6 +122,7 @@
     @include("modal.history")
 
     <script src="{{ asset('vendor/bootstrap/dist/js/bootstrap.min.js') }}"></script>
+    <script src="../js/app.js"></script>
     <script type="text/javascript">
         $("#profit").ready(function(){
             var str = $("#profit").html();
@@ -913,6 +914,10 @@
 
             $('#modalProduksi').modal('show');
         }
+
+        window.Echo.channel('update-batch').listen('.update', (e) => {
+            alert(`${e.type} ${e.batch}`)
+        })
     </script>
 </body>
 

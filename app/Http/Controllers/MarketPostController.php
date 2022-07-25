@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Product;
 use App\Batch;
 use App\Team;
+use App\Demand;
 use App\Transaction;
 use App\Transportation;
 use Illuminate\Http\Request;
@@ -193,6 +194,12 @@ class MarketPostController extends Controller
                 -Hasil jual produk: $subtotal TC\n
                 -Ongkos kirim: $ongkir TC\n
                 -Denda: $denda TC\n\nSehingga tim mendapatkan koin sejumlah $total TC";
+
+        // Query untuk dapetin nama dan amount produk
+        $demand = (Demand::find($batch))->products()->get();
+
+        // Panggil event
+        event(new EventName($demand));
 
         return response()->json(array(
             'status' => $status,

@@ -9,7 +9,9 @@ use App\Transportation;
 use App\Transaction;
 use App\MachineType;
 use App\Ingredient;
+use App\Events\UpdateBatch;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Auth;
 
 class BatchController extends Controller
@@ -103,6 +105,8 @@ class BatchController extends Controller
             }
         }
 
+        event(new UpdateBatch($batch->batch, "batch"));
+
         return response()->json(array(
             'status' => 'success',
             'message' => "Batch berhasil di update!"
@@ -125,6 +129,8 @@ class BatchController extends Controller
             ]);
         }
 
+        event(new UpdateBatch($batch->batch, "preparation"));
+
         return response()->json(array(
             'status' => 'success',
             'message' => "Berhasil update preparation"
@@ -146,7 +152,6 @@ class BatchController extends Controller
         return ($hasil_penjualan - $harga_pokok_produksi);
     }
 
-
     public function calculatePangsaPasar($team, $batch) {
         //kalkulasi total penjualan semua tim
         $sales_total = Transaction::where("batch", $batch)->sum("subtotal");
@@ -155,6 +160,10 @@ class BatchController extends Controller
         $sales_team = $team->transactions()->where("batch", $batch)->sum("subtotal");
             
         //Market share = penjualan tim / penjualan keseluruhan tim
-        return ($sales_team/$sales_total);
+        if ($sales_total != 0) {
+            return ($sales_team/$sales_total);
+        }
+
+        return (0);
     }
 }

@@ -13,7 +13,11 @@
 </head>
 <body style="background-color: #FAF0DC;">
     <div class="row align-items-center" style="background-color: #EA435E;">
-        <div class="col-md-4 offset-md-4">
+        <div class="col-md-1">
+            <button type="button" class=" btn btn-block btn-danger shadow-sm m-2" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="text-danger">Demand</button>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
+        </div>
+        <div class="col-md-4 offset-md-3">
             <h3 class="text-center text-white fw-bolder m-2">REKAP PENILAIAN</h3>
         </div>
         <div class="col-md-1 offset-md-3">
