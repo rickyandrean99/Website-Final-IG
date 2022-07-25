@@ -20,10 +20,6 @@ class Product extends Model
         return $this->belongsToMany("App\Demand", "product_demand", "products_id", "demands_id")->withPivot("amount");
     }
 
-    public function defectiveProducts() {
-        return $this->hasMany("App\DefectiveProduct", "products_id");
-    }
-
     public function transactions() {
         return $this->belongsToMany("App\Transaction", "product_transaction", "products_id", "transactions_id")->withPivot("amount", "sigma_level");
     }

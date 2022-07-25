@@ -139,8 +139,8 @@ class BatchController extends Controller
         $ingredients_price = $team->histories()->where("batch", $batch)->where("kategori", "INGREDIENT")->sum("amount");
         $current_transportations = $team->transportations()->where("batch", $batch)->where("exist", 1)->sum("price");
         $current_machines = $team->machineTypes()->where("batch", $batch)->where("exist", 1)->sum("price");
-        $previously_transportation = $team->transportations()->where("batch", "<", $batch)->where("exist", 1)->sum("residual_price");
-        $previously_machines = $team->machineTypes()->where("batch", "<", $batch)->where("exist", 1)->sum("residual_price");
+        $previously_transportation = $team->transportations()->where("batch", "<", $batch)->where("exist", 1)->sum("residual_price"); // Edit ini
+        $previously_machines = $team->machineTypes()->where("batch", "<", $batch)->where("exist", 1)->sum("residual_price"); // Edit ini
         $harga_pokok_produksi = $ingredients_price + $current_transportations + $current_machines + $previously_transportation + $previously_machines;
 
         return ($hasil_penjualan - $harga_pokok_produksi);
