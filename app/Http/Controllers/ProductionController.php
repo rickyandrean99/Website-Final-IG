@@ -270,8 +270,6 @@ class ProductionController extends Controller
                         }
                     }
 
-                    // Defective Product
-
                     // Success Result
                     $status = "success";
                     $message = "Berhasil memproduksi dengan hasil: \n";
@@ -283,6 +281,12 @@ class ProductionController extends Controller
                         $defective_product[$id] = $remaining;
                         $i++;
                     }
+
+                    // Defective Product
+                    var_dump($defective_product);
+                    
+
+                    die();
                 } else {
                     $status = "failed";
                     $message = "Produk inventori tidak mencukupi";
