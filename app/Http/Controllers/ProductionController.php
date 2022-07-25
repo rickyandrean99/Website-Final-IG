@@ -87,11 +87,10 @@ class ProductionController extends Controller
         $productions_machine = $request->get('production_machine');
         $productions_team_machine = $request->get('production_team_machine');
         $apple_need = [1=>0,2=>0,3=>0];
-
-        // Sigma
         $total_defact = 0.0;
         $sigma_produk = [];
         $defact_array = array(450060, 200020, 140030, 8805, 3356, 134);
+        $defective_product = [];
 
         try {
             $ingredients_need = [];
@@ -184,8 +183,6 @@ class ProductionController extends Controller
                                     $machine["id"] = $mtt_id;
                                     $machine["capacity"] = $value["capacity"];
                                     $machine["defact"] = $value["defact"];
-
-                                    // Sigma
                                     $total_defact += $value["defact"];
 
                                     array_push($machine_process, $machine);
@@ -197,7 +194,6 @@ class ProductionController extends Controller
 
                     // Perhitungan sigma produksi
                     $total_defact *= 1000000;
-                    var_dump($total_defact);
                     foreach($defact_array as $index => $dpmo) {
                         // Start: Kalau acara sudah fix, modifikasi ini
                         if ($total_defact > $defact_array[0]) {
@@ -243,76 +239,50 @@ class ProductionController extends Controller
                 if ((array_sum($product_total_amount)+$inventory_amount) <= $team->product_inventory) {
                     // Tambah Produk Jadi ke Inventori
                     foreach ($product_total_amount as $product_id => $product_amount) {
-                        if (count($team->products()->wherePivot('products_id', $product_id)->wherePivot('batch', $batch)->wherePivot('sigma_level', $sigma_produk[$product_id])->get()) > 0) {
-                            $team->products()->wherePivot('products_id', $product_id)->wherePivot('batch', $batch)->increment('product_inventory.amount', $product_amount);
+                        $sigma = (int)($sigma_produk[$product_id]*100);
+
+                        if (count($team->products()->wherePivot('products_id', $product_id)->wherePivot('batch', $batch)->wherePivot('sigma_level', $sigma)->get()) > 0) {
+                            $team->products()->wherePivot('products_id', $product_id)->wherePivot('batch', $batch)->wherePivot('sigma_level', $sigma)->increment('product_inventory.amount', $product_amount);
                         } else {
-                            // Dapatkan Id Terbaru
-                            $latest_id = DB::table('product_inventory')->select('id')->where('teams_id', $team->id)->where('products_id', $product_id)->orderBy('id', 'desc')->get();
-                            var_dump($)
-                            $team->products()->attach($product_id, ['batch' => $batch, 'amount' => $product_amount]);
+                            $new_id = 1;
+                            $latest_id = $team->products()->wherePivot('products_id', $product_id)->orderBy('product_inventory.id', 'desc')->first();
+                            if($latest_id != null) $new_id = $latest_id->pivot->id + 1;
+
+                            $team->products()->attach($product_id, ['id'=> $new_id, 'batch' => $batch, 'amount' => $product_amount, 'sigma_level' => $sigma]);
                         }
                     }
-                    
-                    foreach ($product_total_amount as $product_id => $product_amount){
-                        //Kemungkinan 1: jika batch, products_id, dan sigma level sama -> tambah amount
-                        //Kemungkinan 2: jika berbeda -> tambah baris baru
-                        if(count($team->products()
-                            ->wherePivot('products_id', $product_id)
-                            ->wherePivot('batch', $batch)
-                            ->wherePivot('sigma_level', $sigma_produk)->get()) > 0){
-                                $team->products()
-                                    ->wherePivot('products_id', $product_id)
-                                    ->wherePivot('batch', $batch)
-                                    ->wherePivot('sigma_level', $sigma_produk)
-                                    ->increment('product_inventory.amount', $product_amount);
-
-                        } else{
-                            // ambil id terbaru
-                            $new_id = DB::table('product_inventory')->select('id')
-                            ->where('teams_id', $team->id)
-                            ->where('products_id', $product_id)
-                            ->orderBy('id', 'desc')->get();
-
-                            if (count($new_id) > 0) {
-                                $new_id = $new_id[0]->id + 1;
-                            } else {
-                                $new_id = 1;
-                            }
-
-                            //tambah baris baru
-                            $team->products()->attach($product_id, ['id' => $new_id, 'batch' => $batch, 
-                            'amount' => $product_amount, 'sigma_level' => $sigma_produk]);
-                        }
-                    }
-
-                    die();
 
                     // Kurangi jumlah bahan baku
-                    // foreach($ingredients_need as $id => $amount){
-                    //     $team->ingredients()->wherePivot('ingredients_id', $id)->decrement('ingredient_inventory.amount', $amount);
-                    // }
+                    foreach($ingredients_need as $id => $amount){
+                        $team->ingredients()->wherePivot('ingredients_id', $id)->decrement('ingredient_inventory.amount', $amount);
+                    }
 
                     // Tambahkan special occassion
-                    // foreach($apple_need as $product_id => $apple_amount) {
-                    //     $result = floor($apple_amount/10);
-                    //     $id_ingredient = 13;
-                    //     if ($product_id == 3) $id_ingredient = 14;
+                    foreach($apple_need as $product_id => $apple_amount) {
+                        $result = floor($apple_amount/10);
+                        $id_ingredient = 13;
+                        if ($product_id == 3) $id_ingredient = 14;
 
-                    //     if (count($team->ingredients()->wherePivot('ingredients_id', $id_ingredient)->get()) > 0) {
-                    //         $team->ingredients()->wherePivot('ingredients_id', $id_ingredient)->increment('ingredient_inventory.amount', $result);
-                    //     } else {
-                    //         $team->ingredients()->attach($id_ingredient, ['amount' => $result]);
-                    //     }
-                    // }
+                        if (count($team->ingredients()->wherePivot('ingredients_id', $id_ingredient)->get()) > 0) {
+                            $team->ingredients()->wherePivot('ingredients_id', $id_ingredient)->increment('ingredient_inventory.amount', $result);
+                        } else {
+                            $team->ingredients()->attach($id_ingredient, ['amount' => $result]);
+                        }
+                    }
 
+                    // Defective Product
+
+                    // Success Result
                     $status = "success";
                     $message = "Berhasil memproduksi dengan hasil: \n";
 
-                //     $i = 0;
-                //     foreach($product_total_amount as $id => $amount) {
-                //         $message .= "- ".$amount." ".Product::find($id)->name." (".($productions_amount[$i]*10-$amount)." gagal)\n";
-                //         $i++;
-                //     }
+                    $i = 0;
+                    foreach($product_total_amount as $id => $amount) {
+                        $remaining = ($productions_amount[$i]*10-$amount);
+                        $message .= "- ".$amount." ".Product::find($id)->name." (".$remaining." gagal)\n";
+                        $defective_product[$id] = $remaining;
+                        $i++;
+                    }
                 } else {
                     $status = "failed";
                     $message = "Produk inventori tidak mencukupi";
