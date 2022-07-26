@@ -82,7 +82,7 @@
                             <h2 class="mb-0">Sigma</h2>
                             <div class="d-flex">
                                 <h1 class="fw-extrabold fs-1 mb-2">Σ</h1>
-                                <h3 class="fs-1 mb-2">{{round($team->rounds()->where('rounds_id', $batch)->sum("six_sigma"),2)}}</h3>
+                                <h3 class="fs-1 mb-2" id="sigma-level">{{round($team->rounds()->where('rounds_id', $batch)->sum("six_sigma"),2)}}</h3>
                             </div>
                         </div>
                     </div>
@@ -920,12 +920,22 @@
             $(`#batch`).text(`${e.batch}`)
         })
 
-        window.Echo.private('update.' + {{ Auth::user()->team }}).listen('UpdatePreparation', (e) => {
+        window.Echo.private('update-preparation.' + {{ Auth::user()->team }}).listen('UpdatePreparation', (e) => {
             alert(`Masuk ke sesi preparation`)
             $(`profit`).text(`${e.profit}`)
             $(`market-share`).text(`${e.market_share}`)
         })
-    </script>
+
+        window.Echo.private('update-market.' + {{ Auth::user()->team }}).listen('UpdateMarket', (e) => {
+            alert(`Update sigma`)
+            $(`sigma-level`).text(`${e.sigma_level}`)
+        })
+
+        window.Echo.private('update-balance.' + {{ Auth::user()->team }}).listen('UpdateBalance', (e) => {
+            alert(`Update TC`)
+            $(`balance`).text(`${e.balance}`)
+        })
+        </script>
 </body>
 
 </html>

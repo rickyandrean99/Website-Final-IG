@@ -85,8 +85,14 @@
                     @foreach($teams as $team)
                     <tr class="text-center align-middle">
                         <td style="width: 40%;">Perusahaan {{ $team -> id }}</td>
-                        <td>0</td>
-                        <td>0</td>
+                        <td>{{ $team -> balance }}</td>
+                        <td>
+                            {{ 
+                                round($team ->rounds()->sum("six_sigma"),2) +
+                                round($team->rounds()->sum("market_share")*0.2*100) +
+                                $team->rounds()->sum("profit")*0.2
+                            }}
+                        </td>
                     </tr>
                     @endforeach
                 </tbody>

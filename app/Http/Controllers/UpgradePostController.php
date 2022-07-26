@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 use App\Team;
 use App\Batch;
+use App\Events\UpdateBalance;
 use Auth;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 
 class UpgradePostController extends Controller
@@ -166,6 +168,10 @@ class UpgradePostController extends Controller
                                 "amount" => $price,
                                 "keterangan" => "Berhasil upgrade ".$type[0]->name_type."". $mesin[0]->id." ke level ".$level." seharga ".$price." TC"
                             ]);
+
+                            //pusdher update balance tim
+                            $balance = Team::find($id)->balance;
+                            broadcast(new UpdateBalance($id, $balance))->toOthers();
 
                         }else{
                             $status = "failed";

@@ -5,9 +5,11 @@ use App\Product;
 use App\Batch;
 use App\Team;
 use App\Demand;
+use App\Events\UpdateMarket;
 use App\Transaction;
 use App\Transportation;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
@@ -200,6 +202,9 @@ class MarketPostController extends Controller
 
         // Panggil event
         event(new EventName($demand));
+
+        //pusher ke tim
+        broadcast(new UpdateMarket($team->id, $sigma_team))->toOthers();
 
         return response()->json(array(
             'status' => $status,
