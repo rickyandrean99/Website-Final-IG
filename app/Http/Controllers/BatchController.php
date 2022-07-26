@@ -109,7 +109,7 @@ class BatchController extends Controller
         }
 
         //pusher ke demand
-        $demands = (Demand::find($batch))->products()->wherePivot('amount', '!=', 0)->get();
+        $demands = DB::table('product_demand')->join('products', 'products.id', '=', 'product_demand.products_id')->where('demands_id', $batch)->where('amount', '!=', 0)->get();
         event(new UpdateDemand($demands));
 
 
@@ -136,7 +136,7 @@ class BatchController extends Controller
                 'market_share' => $market_share
             ]);
 
-            broadcast(new UpdatePreparation($team->id, $profit, $market_share))->toOthers();
+            event(new UpdatePreparation($team->id, $profit, $market_share));
         }
 
 

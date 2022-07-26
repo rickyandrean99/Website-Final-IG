@@ -249,6 +249,11 @@
                 success: function(data) {
                     alert(data.message)
                     updateMarket('no')
+                    $(`.product-amount`).val(0)
+                    $(`.transportation-amount`).val(0)
+                    $('#kapasitas-transportation').text(0)
+                    $('input[name="metode"][value="1"]').prop('checked', true);
+                    $(`#modalSell`).modal('hide')
                 },
                 error: function(error) {
                     alert("Gagal menjual produk")

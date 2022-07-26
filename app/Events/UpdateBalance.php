@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class UpdateBalance
+class UpdateBalance implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -36,7 +36,12 @@ class UpdateBalance
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('update-balance.'.$this->team);
+        return new Channel('update-balance.'.$this->team);
 
+    }
+
+    public function broadcastAs() 
+    {
+        return 'balance';
     }
 }

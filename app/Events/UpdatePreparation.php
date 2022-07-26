@@ -37,6 +37,10 @@ class UpdatePreparation implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('update-preparation.'.$this->team);
+        return new Channel('update-preparation.'.$this->team);
+    }
+
+    public function broadcastAs() {
+        return "preparation";
     }
 }

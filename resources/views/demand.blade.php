@@ -34,11 +34,11 @@
                     <th><h1>Demand Tersisa</h1></th>
                 </tr>
             </thead>
-            <tbody id="tbody-machine">
+            <tbody id="tbody-demand">
                 @foreach ($demands as $demand)
                     <tr class="text-center align-middle">
-                        <td class="border-0 text-center align-middle"><h2>{{ $demand->name }}<h2></td>
-                        <td class="border-0 text-center align-middle"><h2>{{ $demand->pivot->amount }}<h2></td>
+                        <td class="border-0 text-center align-middle"><h2>{{ $demand->name }}</h2></td>
+                        <td class="border-0 text-center align-middle"><h2>{{ $demand->pivot->amount }}</h2></td>
                     </tr>
                 @endforeach
             </tbody>
@@ -48,16 +48,16 @@
     <script src="../js/app.js"></script>
     <script type="text/javascript">
         window.Echo.channel('update-demand').listen('.update', (e) => {
-            alert(`Berhasil update ke batch ${e.batch}`)
-             //perbarui inventory machine
-             let table = document.getElementById("tbody-machine");
-            table.innerHTML = "";
+             //perbarui inventory demand
+            //  let table = document.getElementById("tbody-demand");
+            // table.innerHTML = "";
 
-            data.demands.forEach(demand => {
-                $(`#tbody-machine`).append(`
+            $(`#tbody-demand`).empty()
+            e.demands.forEach(demand => {
+                $(`#tbody-demand`).append(`
                     <tr>
-                        <td class="border-0 text-center align-middle"><h2>${ $demand->name }<h2></td>
-                        <td class="border-0 text-center align-middle"><h2>${ demand->pivot->amount }<h2></td>
+                        <td class="border-0 text-center align-middle"><h2>${ demand.name }</h2></td>
+                        <td class="border-0 text-center align-middle"><h2>${ demand.amount }</h2></td>
                     </tr>
                 `)
             })

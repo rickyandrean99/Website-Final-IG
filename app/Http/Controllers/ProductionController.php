@@ -262,34 +262,38 @@ class ProductionController extends Controller
                     // Success Result
                     $status = "success";
                     $message = "Berhasil memproduksi dengan hasil: \n";
+                    $history = "Berhasil memproduksi ";
 
                     $i = 0;
                     foreach($product_total_amount as $id => $amount) {
                         $remaining = ($productions_amount[$i]*10-$amount);
                         $message .= "- ".$amount." ".Product::find($id)->name." (".$remaining." gagal)\n";
+                        $history .= $amount." ".Product::find($id)->name.", ";
                         $defective_product += $remaining;
                         $i++;
                     }
-                    $message .= "\n UMKM Pasar\n";
                     
-                    // Defective Product
-                    var_dump($defective_product);
-
+                    // Defective Product (UMKM dan Denda)
                     $defective_batch = DefectiveProduct::find($batch);
-                    $defective_price = 0;
+                    $umkm_amount = (int)(round($defective_batch->sell_percentage * $defective_product));
+                    $denda_amount = $defective_product - $umkm_amount;
+                    $umkm_price = $umkm_amount * $defective_batch->sell_price;
+                    $denda_price = $denda_amount * $defective_batch->penalty_price;
 
-                    foreach ($defective_product as $product_id => $defective) {
-                        $umkm_amount = (int)(round($defective_batch->sell_percentage * $defective));
-                        $denda_amount = $defective - $umkm_amount;
-                        $umkm_price = $umkm_amount * $defective_batch->sell_price;
-                        $denda_price = $denda_amount * $defective_batch->penalty_price;
+                    $message .= "\nJual produk defact ke UMKM sebesar ".$umkm_price." TC (".$umkm_amount." pcs) dan bayar denda sebesar ".$denda_price." TC (".$denda_amount." pcs) ke pemerintah";
+                    $history .= "dengan tambahan biaya UMKM sebesar ".$umkm_price." TC (".$umkm_amount." pcs) dan bayar denda sebesar ".$denda_price." TC (".$denda_amount." pcs) ke pemerintah";
 
-                        $defective_price += ($umkm_price - $denda_price);
-                    }
+                    $team->increment("balance", ($umkm_price-$denda_price));
 
-                    $message .= "- Jual UMKM sebesar ".$umkm_price." TC (".$umkm_amount." pcs) dan bayar denda sebesar";
-                    
-                    die();
+                    // Menambahkan Histori Produksi
+                    DB::table('histories')->insert([
+                        "teams_id" => $team->id,
+                        "kategori" => "PRODUCTION",
+                        "batch" => $batch,
+                        "type" => null,
+                        "amount" => ($umkm_price-$denda_price),
+                        "keterangan" => $history
+                    ]);
                 } else {
                     $status = "failed";
                     $message = "Produk inventori tidak mencukupi";

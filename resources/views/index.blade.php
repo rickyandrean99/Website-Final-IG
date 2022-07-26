@@ -866,7 +866,7 @@
                     
                     data.histories.forEach(history => {
                         historyText += `
-                            <tr">
+                            <tr>
                                 <td class="border-0 text-center align-middle">${history.batch}</td>
                                 <td class="border-0 text-center align-middle">${history.keterangan}</td>
                             </tr>
@@ -917,23 +917,38 @@
 
         window.Echo.channel('update-batch').listen('.update', (e) => {
             alert(`Berhasil update ke batch ${e.batch}`)
-            $(`#batch`).text(`${e.batch}`)
+            $(`#batch`).text("BATCH-" +`${e.batch}`)
+            $(`#profit`).text("+0 TC") 
+            $(`#market-share`).text("0%")
+            $("#profit").addClass("text-success")
+            $("#profit").removeClass("text-danger")
         })
 
-        window.Echo.private('update-preparation.' + {{ Auth::user()->team }}).listen('UpdatePreparation', (e) => {
+        window.Echo.channel('update-preparation.' + {{ Auth::user()->team }}).listen('.preparation', (e) => {
             alert(`Masuk ke sesi preparation`)
-            $(`profit`).text(`${e.profit}`)
-            $(`market-share`).text(`${e.market_share}`)
+            
+            $(`#profit`).text(`${e.profit}` + " TC")
+            if(`${e.profit}` < 0){
+                $("#profit").addClass("text-danger")
+                $("#profit").removeClass("text-success")
+            }else{
+                $("#profit").addClass("text-success")
+                $("#profit").removeClass("text-danger")
+                $("#profit").prepend("+")            
+            }
+
+            let market_share = (`${e.market_share}` * 100).toFixed(2)
+            $(`#market-share`).text(market_share + "%")
         })
 
-        window.Echo.private('update-market.' + {{ Auth::user()->team }}).listen('UpdateMarket', (e) => {
+        window.Echo.channel('update-market.' + {{ Auth::user()->team }}).listen('.market', (e) => {
             alert(`Update sigma`)
-            $(`sigma-level`).text(`${e.sigma_level}`)
+            $(`#sigma-level`).text(`${e.sigma_level}`)
         })
 
-        window.Echo.private('update-balance.' + {{ Auth::user()->team }}).listen('UpdateBalance', (e) => {
+        window.Echo.channel('update-balance.' + {{ Auth::user()->team }}).listen('balance', (e) => {
             alert(`Update TC`)
-            $(`balance`).text(`${e.balance}`)
+            $(`#balance`).text(`${e.balance}` + " TC")
         })
         </script>
 </body>

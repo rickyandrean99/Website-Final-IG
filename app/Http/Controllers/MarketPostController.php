@@ -132,9 +132,9 @@ class MarketPostController extends Controller
             
             if($product_amount[$index] > 0){
                 //keluarkan sigma level
-                $sigma_level = $team->products()
+                $sigma_level = ($team->products()
                 ->wherePivot('products_id', $product)->where('amount', '>', 0)
-                ->first()->pivot->sigma_level;
+                ->first()->pivot->sigma_level) / 100;
 
                 //kurangi demand
                 DB::table('product_demand')
@@ -199,11 +199,12 @@ class MarketPostController extends Controller
                 -Denda: $denda TC\n\nSehingga tim mendapatkan koin sejumlah $total TC";
 
         //pusher ke demand
-        $demands = (Demand::find($batch))->products()->wherePivot('amount', '!=', 0)->get();
+        $demands = DB::table('product_demand')->join('products', 'products.id', '=', 'product_demand.products_id')->where('demands_id', $batch)->where('amount', '!=', 0)->get();
         event(new UpdateDemand($demands));
 
         //pusher ke tim
-        broadcast(new UpdateMarket($team->id, $sigma_team))->toOthers();
+        event(new UpdateMarket($team->id, $sigma_team));
+        // broadcast(new UpdateMarket($team->id, $sigma_team))->toOthers();
 
         return response()->json(array(
             'status' => $status,

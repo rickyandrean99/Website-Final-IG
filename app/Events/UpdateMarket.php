@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class UpdateMarket
+class UpdateMarket implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -36,6 +36,10 @@ class UpdateMarket
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('update-market.'.$this->team);
+        return new Channel('update-market.'.$this->team);
+    }
+
+    public function broadcastAs() {
+        return "market";
     }
 }
