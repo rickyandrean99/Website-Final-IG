@@ -51,6 +51,7 @@ Route::middleware(['auth'])->group(function() {
 
     // Rekap Skor
     Route::get('/score-recap', "AcaraController@index")->name('score-recap');
+    Route::get('/demand', "AcaraController@demand")->name('demand');
 
     // Routing khusus penilaian [Kalian sesuaiin aja, testnya mau pakai method get atau post]
     Route::get('/calculate-profit', "BatchController@calculateProfit")->name('calculate-profit');
@@ -66,6 +67,3 @@ Route::middleware(['auth'])->group(function() {
 Auth::routes(['register' => false]);
 Route::get('/home', 'HomeController@index')->name('home');
 
-Route::get('/demand', function() {
-    return view('demand');
-})->name('demand');

@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use DB;
 use App\Team;
 use App\Batch;
+use App\Demand;
 use App\Transportation;
 use App\Transaction;
 use App\MachineType;
 use App\Ingredient;
 use App\Events\UpdateBatch;
+use App\Events\UpdateDemand;
 use App\Events\UpdatePreparation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -105,6 +107,11 @@ class BatchController extends Controller
                 ->update(["amount" => 0]);
             }
         }
+
+        //pusher ke demand
+        $demands = (Demand::find($batch))->products()->wherePivot('amount', '!=', 0)->get();
+        event(new UpdateDemand($demands));
+
 
         event(new UpdateBatch($batch->batch));
 

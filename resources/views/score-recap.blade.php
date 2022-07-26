@@ -21,7 +21,7 @@
             <h3 class="text-center text-white fw-bolder m-2">REKAP PENILAIAN</h3>
         </div>
         <div class="col-md-1 offset-md-3">
-            <button type="button" class=" btn btn-block btn-warning m-2" style="box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3)" href="" onclick="">Demand</button>
+            <a href="{{ route('demand') }}"><button type="button" class=" btn btn-block btn-warning m-2" style="box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3)" href="" onclick="">Demand</button></a>
             <form id="demand-form" action="" method="POST" class="d-none">@csrf</form>
         </div>
     </div>

@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Batch;
+use App\Demand;
 use App\Team;
+use App\Product;
 use DB;
 use Illuminate\Http\Request;
 use Auth;
@@ -25,5 +28,9 @@ class AcaraController extends Controller
     }
     
 
-    //
+    public function demand(){
+        $batch = Batch::find(1)->batch;
+        $demands = (Demand::find($batch))->products()->wherePivot('amount', '!=', 0)->get();
+        return view('demand', compact('batch', 'demands'));
+    }
 }

@@ -5,6 +5,7 @@ use App\Product;
 use App\Batch;
 use App\Team;
 use App\Demand;
+use App\Events\UpdateDemand;
 use App\Events\UpdateMarket;
 use App\Transaction;
 use App\Transportation;
@@ -197,11 +198,9 @@ class MarketPostController extends Controller
                 -Ongkos kirim: $ongkir TC\n
                 -Denda: $denda TC\n\nSehingga tim mendapatkan koin sejumlah $total TC";
 
-        // Query untuk dapetin nama dan amount produk
-        $demand = (Demand::find($batch))->products()->get();
-
-        // Panggil event
-        event(new EventName($demand));
+        //pusher ke demand
+        $demands = (Demand::find($batch))->products()->wherePivot('amount', '!=', 0)->get();
+        event(new UpdateDemand($demands));
 
         //pusher ke tim
         broadcast(new UpdateMarket($team->id, $sigma_team))->toOthers();

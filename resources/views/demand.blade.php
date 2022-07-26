@@ -21,26 +21,47 @@
             <h3 class="text-center fw-bolder m-2">DEMAND</h3>
         </div>
         <div class="col-md-1 offset-md-3">
-            <button type="button" class=" btn btn-block btn-success m-2" style="box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3)" href="" onclick="">Recap</button>
+            <a href="{{ route('score-recap') }}"><button type="button" class=" btn btn-block btn-success m-2" style="box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3)" href="" onclick="">Recap</button></a>
             <form id="demand-form" action="" method="POST" class="d-none">@csrf</form>
         </div>
     </div>
     <div class="row justify-content-center">
-        <h2 class="text-center"><span class="badge bg-dark rounded mt-3">BATCH 1</span></h2>
+        <h2 class="text-center"><span class="badge bg-dark rounded mt-3">BATCH {{ $batch }}</span></h2>
         <table class="table table-warning table-bordered shadow-sm" style="width: 70%">
             <thead>
                 <tr class="text-center align-middle">
-                    <th style="width : 50%;">Produk</th>
-                    <th>Demand</th>
+                    <th style="width : 50%;"><h1>Produk</h1></th>
+                    <th><h1>Demand Tersisa</h1></th>
                 </tr>
             </thead>
-            <tbody>
-                <tr class="text-center align-middle">
-                    <td>Keripik Apel</td>
-                    <td>500</td>
-                </tr>
+            <tbody id="tbody-machine">
+                @foreach ($demands as $demand)
+                    <tr class="text-center align-middle">
+                        <td class="border-0 text-center align-middle"><h2>{{ $demand->name }}<h2></td>
+                        <td class="border-0 text-center align-middle"><h2>{{ $demand->pivot->amount }}<h2></td>
+                    </tr>
+                @endforeach
             </tbody>
         </table>
     </div>
+
+    <script src="../js/app.js"></script>
+    <script type="text/javascript">
+        window.Echo.channel('update-demand').listen('.update', (e) => {
+            alert(`Berhasil update ke batch ${e.batch}`)
+             //perbarui inventory machine
+             let table = document.getElementById("tbody-machine");
+            table.innerHTML = "";
+
+            data.demands.forEach(demand => {
+                $(`#tbody-machine`).append(`
+                    <tr>
+                        <td class="border-0 text-center align-middle"><h2>${ $demand->name }<h2></td>
+                        <td class="border-0 text-center align-middle"><h2>${ demand->pivot->amount }<h2></td>
+                    </tr>
+                `)
+            })
+        })
+    </script>
 </body>
 </html>
