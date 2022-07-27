@@ -33,8 +33,8 @@
                     <tr class="text-center align-middle">
                         <th scope="col">Nama Tim</th>
                         <th scope="col">Six Sigma</th>
-                        <th scope="col">Profit</th>
                         <th scope="col">Pangsa</th>
+                        <th scope="col">Profit</th>
                         <th scope="col">TOTAL</th>
                     </tr>
                 </thead>

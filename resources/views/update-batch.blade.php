@@ -22,11 +22,11 @@
 </head>
 <body>
     <div class="d-flex justify-content-center p-5">
-        <div class="card " style="width: 20rem;">
+        <div class="card " style="width: 400px;">
             <img src="https://c.tenor.com/MgVKRHA7lUcAAAAd/tentara-itu-harus-hitam-meme-tentara.gif" class="card-img-top" alt="updet">
-            <div class="card-body shadow">
+            <div class="card-body">
                 <h5 class="card-title text-center">UPDATE BATCH</h5>
-                <p class="card-text text-center">Tombol dibawah kalo dipencet nanti bakal ganti batch oke, cek dulu kesesuaian batchnya sebelum tekan tombol ! >:D</p>
+                <p class="card-text text-center">Tombol dibawah untuk ganti-ganti batch</p>
                 <div class="d-flex justify-content-center">
                     <button type="button" class="btn btn-block btn-outline-success m-2" onclick="updateBatch()">Update</button>
                     <button type="button" class="btn btn-block btn-outline-warning m-2" onclick="updatePreperation()">Preparation</button>
@@ -34,9 +34,26 @@
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
                 </div>
             </div>
+            <div class="row g-2 ps-3 py-3">
+                <div class="col-6">
+                    <select name="selectProduct" id="selectProduct" class="form-select w-45 mb-3">
+                        <option value="1">Keripik Apel</option>
+                        <option value="2">Dodol Apel</option>
+                        <option value="3">Sari Buah Apel</option>
+                        <option value="4">Selai Kulit Apel</option>
+                        <option value="5">Cuka Apel</option>
+                    </select>
+                </div>
+                <div class="col-3">
+                    <input type="number" class="form-control product-amount w-" id="demand" placeholder=0 min=0>
+                </div>
+                <div class="col-2">
+                    <button type="submit" class="btn btn-block btn-outline-primary mb-3" onclick="updateDemand()">Update</button>
+                </div>
+            </div>
         </div>
     </div>
-
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
     <script type="text/javascript">
         //update preperation
@@ -69,6 +86,29 @@
                 },
                 success: function(data) {
                     alert(data.message)
+                },
+                error: function(error){
+                    showError(error)
+                }
+            })
+        }
+
+        const updateDemand = () => {
+            if (!confirm("Are you sure?")) return
+            let id = $(`#selectProduct`).val()
+            let demand = $(`#demand`).val()
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("update-demand") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                    'id': id,
+                    'demand': demand
+                },
+                success: function(data) {
+                    alert(data.message)
+                    $(`#demand`).val(0)
                 },
                 error: function(error){
                     showError(error)

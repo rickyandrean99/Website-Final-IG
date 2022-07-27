@@ -48,15 +48,16 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/batch', "BatchController@index")->name('batch');
     Route::post('/update-batch', "BatchController@updateBatch")->name('update-batch');
     Route::post('/update-preparation', "BatchController@updatePreparation")->name('update-preparation');
+    Route::post('/update-demand', "AcaraController@updateDemand")->name('update-demand');
 
     // Rekap Skor
     Route::get('/score-recap', "AcaraController@index")->name('score-recap');
     Route::get('/demand', "AcaraController@demand")->name('demand');
 
     // Routing khusus penilaian [Kalian sesuaiin aja, testnya mau pakai method get atau post]
-    Route::get('/calculate-profit', "BatchController@calculateProfit")->name('calculate-profit');
-    Route::get('/calculate-pangsa', "BatchController@calculatePangsa")->name('calculate-pangsa');
-    Route::post('/calculate-sigma', "BatchController@calculateSigma")->name('calculate-sigma');
+    // Route::get('/calculate-profit', "BatchController@calculateProfit")->name('calculate-profit');
+    // Route::get('/calculate-pangsa', "BatchController@calculatePangsa")->name('calculate-pangsa');
+    // Route::post('/calculate-sigma', "BatchController@calculateSigma")->name('calculate-sigma');
 
     // Realtime Modal
     Route::post('/load-transportation', "ToPostController@loadTransportation")->name('load-transportation');

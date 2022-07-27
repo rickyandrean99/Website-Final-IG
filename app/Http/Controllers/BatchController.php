@@ -139,7 +139,6 @@ class BatchController extends Controller
             event(new UpdatePreparation($team->id, $profit, $market_share));
         }
 
-
         return response()->json(array(
             'status' => 'success',
             'message' => "Berhasil update preparation"
@@ -148,15 +147,16 @@ class BatchController extends Controller
     
     public function calculateProfit($team, $batch) {
         // Hitung hasil penjualan
-        $hasil_penjualan = $team->transactions()->where("batch", $batch)->sum("subtotal");
+        $hasil_penjualan = (int)($team->transactions()->where("batch", $batch)->sum("subtotal"));
         
         // Hitung harga pokok produksi
         $ingredients_price = $team->histories()->where("batch", $batch)->where("kategori", "INGREDIENT")->sum("amount");
         $current_transportations = $team->transportations()->where("batch", $batch)->where("exist", 1)->sum("price");
         $current_machines = $team->machineTypes()->where("batch", $batch)->where("exist", 1)->sum("price");
-        $previously_transportation = $team->transportations()->where("batch", "<", $batch)->where("exist", 1)->sum("residual_price"); // Edit ini
-        $previously_machines = $team->machineTypes()->where("batch", "<", $batch)->where("exist", 1)->sum("residual_price"); // Edit ini
-        $harga_pokok_produksi = $ingredients_price + $current_transportations + $current_machines + $previously_transportation + $previously_machines;
+        $previously_transportation = DB::table("team_transportation")->join("transportations", "transportations.id", "=", "team_transportation.transportations_id")->where('teams_id', $team->id)->where("batch", "<", $batch)->where("exist", 1)->select(DB::raw('sum((price - residual_price)/5) AS total'))->first();
+        $previously_machines = DB::table("team_machine")->join("machine_types", "machine_types.id", "=", "team_machine.machine_types_id")->where('teams_id', $team->id)->where("batch", "<", $batch)->where("exist", 1)->select(DB::raw('sum((price - residual_price)/5) AS total'))->first();
+        
+        $harga_pokok_produksi = (int)($ingredients_price + $current_transportations + $current_machines + $previously_transportation->total + $previously_machines->total);
 
         return ($hasil_penjualan - $harga_pokok_produksi);
     }
