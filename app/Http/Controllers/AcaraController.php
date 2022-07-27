@@ -28,9 +28,18 @@ class AcaraController extends Controller
         $teams = Team::all();
         return view('score-recap', compact('teams'));
     }
-    
 
     public function demand(){
+        if (Auth::user()->role == "peserta"){
+            return redirect()->route('peserta');
+        } else if (Auth::user()->role == "upgrade") {
+            return redirect()->route('upgrade');
+        } else if (Auth::user()->role == "pasar") {
+            return redirect()->route('market');
+        } else if (Auth::user()->role == "administrator"){
+            return redirect()->route('batch');
+        }
+        
         $batch = Batch::find(1)->batch;
         $demands = (Demand::find($batch))->products()->wherePivot('amount', '!=', 0)->get();
         return view('demand', compact('batch', 'demands'));

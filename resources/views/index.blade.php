@@ -29,7 +29,13 @@
                     <div id="balance" class="ms-2">{{ $team->balance }} TC</div>
                 </div>
 
-                <div class="text-white rounded shadow p-3 border border-white" id="batch">BATCH-{{ $batch }}</div>
+                <div class="text-white rounded shadow p-3 border border-white" id="batch">
+                    @if($preparation)
+                        Preparation
+                    @else
+                        BATCH-{{ $batch }}
+                    @endif
+                </div>
 
                 <div class="bg-danger rounded shadow p-3 ms-4">
                     <span class="h5 text-capitalize fw-bold"><a href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="text-white"> {{ __('Logout') }}</a></span>
@@ -294,6 +300,9 @@
                             },
                             success: function(data) {
                                 alert(data.message)
+                                if (data.status == "success") {
+                                    $(`#balance`).text(`${data.balance}` + " TC")
+                                }
                             },
                             error: function(error) {
                                 showError(error)
@@ -687,21 +696,19 @@
                     let transportationText = ""
                     
                     data.transportations.forEach(transportation => {
-                        if (transportation.pivot.exist) {
-                            transportationText += `
-                                <tr id="transport-${transportation.pivot.id}">
-                                    <td class="border-0 text-center align-middle">${transportation.name}</td>
-                                    <td class="border-0 text-center align-middle">${transportation.capacity}</td>
-                                    <td class="border-0 text-center align-middle">${transportation.self_duration}</td>
-                                    <td class="border-0 text-center align-middle">${transportation.delivery_duration}</td>
-                                    <td class="border-0 text-center align-middle">${data.batch - transportation.pivot.batch + 1}</td>
+                        transportationText += `
+                            <tr id="transport-${transportation.pivot.id}">
+                                <td class="border-0 text-center align-middle">${transportation.name}</td>
+                                <td class="border-0 text-center align-middle">${transportation.capacity}</td>
+                                <td class="border-0 text-center align-middle">${transportation.self_duration}</td>
+                                <td class="border-0 text-center align-middle">${transportation.delivery_duration}</td>
+                                <td class="border-0 text-center align-middle">${data.batch - transportation.pivot.batch + 1}</td>
 
-                                    <td class="border-0 text-center align-middle">
-                                        <button type="button" class="btn btn-danger" data-bs-target="#modalJualTransport" data-bs-toggle="modal" onclick="showTransportSell(${transportation.pivot.id})">Jual</button>
-                                    </td>
-                                </tr>
-                            `
-                        }
+                                <td class="border-0 text-center align-middle">
+                                    <button type="button" class="btn btn-danger" data-bs-target="#modalJualTransport" data-bs-toggle="modal" onclick="showTransportSell(${transportation.pivot.id})">Jual</button>
+                                </td>
+                            </tr>
+                        `
                     })
                     
                     $(`#modal-body-transport`).html(`
@@ -735,12 +742,12 @@
                     '_token': '<?php echo csrf_token() ?>'
                 },
                 success: function(data) {
-                
                     let counter1 = 1
                     let counter2 = 1
                     let ingredientText = ""
                     let machineText = ""
                     let productText = ""
+                    let fridge = ""
 
                     data.ingredients.forEach(ingredient => {
                         ingredientText += `
@@ -753,19 +760,17 @@
                     })
 
                     data.machines.forEach(machine => {
-                        if (machine.pivot.exist) {
-                            machineText += `
-                                <tr id="machine-${machine.pivot.machine_types_id}-${machine.pivot.id}">
-                                    <td class="border-0 text-center align-middle">${ machine.name_type } ${machine.pivot.id}</td>
-                                    <td class="border-0 text-center align-middle">${ machine.pivot.level}</td>
-                                    <td class="border-0 text-center align-middle">
-                                        <button type="button" class="btn btn-danger" data-bs-target="#modalJualMesin"
-                                            data-bs-toggle="modal"
-                                            onclick="showMachineSell(${ machine.pivot.id }, ${ machine.pivot.machine_types_id })">Jual</button>
-                                    </td>
-                                </tr>
-                            `
-                        }
+                        machineText += `
+                            <tr id="machine-${machine.pivot.machine_types_id}-${machine.pivot.id}">
+                                <td class="border-0 text-center align-middle">${ machine.name_type } ${machine.pivot.id}</td>
+                                <td class="border-0 text-center align-middle">${ machine.pivot.level}</td>
+                                <td class="border-0 text-center align-middle">
+                                    <button type="button" class="btn btn-danger" data-bs-target="#modalJualMesin"
+                                        data-bs-toggle="modal"
+                                        onclick="showMachineSell(${ machine.pivot.id }, ${ machine.pivot.machine_types_id })">Jual</button>
+                                </td>
+                            </tr>
+                        `
                     })
 
                     data.products.forEach(product => {
@@ -778,9 +783,14 @@
                         `
                     })
                     
+                    if (data.fridge) {
+                        fridge = "Ada kulkas"
+                    } else {
+                        fridge = "Tidak ada kulkas"
+                    }
+
                     $(`#modal-body-inventory`).html(`
                         <div class="row">
-                            {{-- BAHAN BAKU --}}
                             <div class="col-4">
                                 <div class="bg-info rounded">
                                     <h3 class="text-center text-gray-100">BAHAN BAKU</h3>
@@ -802,12 +812,11 @@
                                 </table>
                             </div>
 
-                            {{-- MESIN --}}
                             <div class="col-4">
                                 <div class="bg-info rounded">
                                     <h3 class="text-center text-gray-100">MESIN</h3>
                                     <div class="d-flex justify-content-center text-gray-100">
-                                        <h5>-------</h5>
+                                        <h5>${fridge}</h5>
                                     </div>
 
                                 </div>
@@ -822,7 +831,6 @@
                                 </table>
                             </div>
 
-                            {{-- PRODUK --}}
                             <div class="col-4">
                                 <div class="bg-info rounded">
                                     <h3 class="text-center text-gray-100">PRODUK</h3>
@@ -867,18 +875,18 @@
                     data.histories.forEach(history => {
                         historyText += `
                             <tr>
-                                <td class="border-0 text-center align-middle">${history.batch}</td>
-                                <td class="border-0 text-center align-middle">${history.keterangan}</td>
+                                <td class="border-0 text-center align-middle" style="min-width: 10%; max-width: 10%">${history.batch}</td>
+                                <td class="border-0 text-center align-middle" style="word-wrap: break-word; min-width: 90%; max-width: 90%">${history.keterangan}</td>
                             </tr>
                         `
                     })
                     
                     $(`#modal-body-history`).html(`
-                        <table class="table table-bordered table-secondary shadow">
+                        <table class="table table-bordered table-secondary shadow w-100">
                             <thead>
                                 <tr>
-                                    <th scope="col" class="text-center">Batch</th>
-                                    <th scope="col" class="text-center">Keterangan Transaksi</th>
+                                    <th scope="col" class="text-center" style="min-width: 10%; max-width: 10%">Batch</th>
+                                    <th scope="col" class="text-center" style="min-width: 90%; max-width: 90%">Keterangan Transaksi</th>
                                 </tr>
                             </thead>
                             <tbody>${historyText}</tbody>
@@ -915,17 +923,20 @@
             $('#modalProduksi').modal('show');
         }
 
-        window.Echo.channel('update-batch').listen('.update', (e) => {
+        window.Echo.channel('update-batch' + {{ Auth::user()->team }}).listen('.update', (e) => {
             alert(`Berhasil update ke batch ${e.batch}`)
+            $(`#balance`).text(`${e.balance}` + " TC")
             $(`#batch`).text("BATCH-" +`${e.batch}`)
             $(`#profit`).text("+0 TC") 
             $(`#market-share`).text("0%")
+            $(`#sigma-level`).text("0")
             $("#profit").addClass("text-success")
             $("#profit").removeClass("text-danger")
         })
 
         window.Echo.channel('update-preparation.' + {{ Auth::user()->team }}).listen('.preparation', (e) => {
             alert(`Masuk ke sesi preparation`)
+            $(`#batch`).text("Preparation")
             
             $(`#profit`).text(`${e.profit}` + " TC")
             if(`${e.profit}` < 0){

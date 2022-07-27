@@ -21,12 +21,12 @@ class UpdateBalance implements ShouldBroadcast
      */
 
     public $team;
-    public $sigma_level;
+    public $balance;
 
-    public function __construct($team, $sigma_level)
+    public function __construct($team, $balance)
     {
         $this->team = $team;
-        $this->sigma_level = $sigma_level;
+        $this->balance = $balance;
     }
 
     /**

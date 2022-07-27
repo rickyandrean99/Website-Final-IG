@@ -26,12 +26,12 @@ class ToPostController extends Controller
         }
 
         $batch = Batch::find(1)->batch;
+        $preparation = Batch::find(1)->preparation;
         $team = Team::find(Auth::user()->team);
         $ingredient = Ingredient::where('id', '<=', '12')->get();
         $machines = MachineType::all();
         $transportations = Transportation::all();
         $products = Product::all();
-        // $histories = History::all();
         $limit = $team->packages()->wherePivot('packages_id', $batch)->first()->pivot->remaining;
         $product_name = ['Keripik Apel', 'Dodol Apel', 'Sari Buah Apel', 'Selai Kulit Apel', 'Cuka Apel'];
         $product_amount = [];
@@ -44,7 +44,7 @@ class ToPostController extends Controller
         $inventory2 = DB::table('inventory_pricelists')->where('inventory_type_id', 2)->get();
 
         return view('index', compact(
-            'batch', 'team', 'ingredient', 'machines', 
+            'batch', 'preparation', 'team', 'ingredient', 'machines', 
             'transportations', 'limit', 'products',
             'product_name', 'product_amount', 'inventory1', 'inventory2'));
     }
@@ -180,7 +180,7 @@ class ToPostController extends Controller
     public function loadTransportation() {
         $batch = Batch::find(1)->batch;
         $team = Team::find(Auth::user()->team);
-        $transportation_list = $team->transportations()->get();
+        $transportation_list = $team->transportations()->wherePivot('exist', 1)->get();
         
         return response()->json(array(
             'transportations' => $transportation_list,
@@ -195,7 +195,7 @@ class ToPostController extends Controller
         $team_prod = $team->products->sum('pivot.amount');
         $inventory_prod = $team->product_inventory;
         $ingredient_list = $team->ingredients()->get();
-        $machine_list = $team->machineTypes()->get();
+        $machine_list = $team->machineTypes()->wherePivot('exist', 1)->get();
         $product_list = $team->products()->get();
 
         return response()->json(array(
@@ -206,6 +206,7 @@ class ToPostController extends Controller
             'ingredients' => $ingredient_list,
             'machines' => $machine_list,
             'products' => $product_list,
+            'fridge' => $team-> fridge
         ), 200); 
     }
 

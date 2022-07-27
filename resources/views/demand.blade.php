@@ -26,7 +26,7 @@
         </div>
     </div>
     <div class="row justify-content-center">
-        <h2 class="text-center"><span class="badge bg-dark rounded mt-3">BATCH {{ $batch }}</span></h2>
+        <h2 class="text-center"><span class="badge bg-dark rounded mt-3" id="batch">BATCH {{ $batch }}</span></h2>
         <table class="table table-warning table-bordered shadow-sm" style="width: 70%">
             <thead>
                 <tr class="text-center align-middle">
@@ -48,9 +48,7 @@
     <script src="../js/app.js"></script>
     <script type="text/javascript">
         window.Echo.channel('update-demand').listen('.update', (e) => {
-             //perbarui inventory demand
-            //  let table = document.getElementById("tbody-demand");
-            // table.innerHTML = "";
+            $(`#batch`).text("BATCH " + e.batch)
 
             $(`#tbody-demand`).empty()
             e.demands.forEach(demand => {

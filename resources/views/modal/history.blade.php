@@ -1,5 +1,5 @@
-<div class="modal fade" id="modalHistory" aria-hidden="true" aria-labelledby="modalHistoryLabel" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade p-3" id="modalHistory" aria-hidden="true" aria-labelledby="modalHistoryLabel" tabindex="-1">
+    <div class="modal-dialog modal-fullscreen w-100">
         <div class="modal-content rounded">
             <div class="modal-header text-center">
                 <h5 class="modal-title w-100">Histori</h5>

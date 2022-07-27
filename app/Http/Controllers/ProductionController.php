@@ -248,7 +248,7 @@ class ProductionController extends Controller
 
                     // Tambahkan special occassion
                     foreach($apple_need as $product_id => $apple_amount) {
-                        $result = floor($apple_amount/10);
+                        $result = floor($apple_amount/2);
                         $id_ingredient = 13;
                         if ($product_id == 3) $id_ingredient = 14;
 
@@ -305,7 +305,8 @@ class ProductionController extends Controller
 
             return response()->json(array(
                 'status' => $status,
-                'message' => $message
+                'message' => $message,
+                'balance' => $team->balance
             ), 200);
         } catch(Exception $e) {
             return response()->json(array(

@@ -38,18 +38,6 @@ class BatchController extends Controller
         $batch->preparation = 0;
         $batch->save();
 
-        // Jika Batch 6 (selesai game), Potong saldonya yang belum bayar
-        if ($batch->batch == 6) {
-            $teams = Team::all();
-            foreach($teams as $team) {
-                if ($team->debt > 0) {
-                    $team->decrement('balance', $team->debt);
-                    $team->debt = 0;
-                    $team->save();
-                }
-            }
-        }
-        
         // Reset Limit
         DB::table('teams')->update([
             'upgrade_machine_limit' => 5,
@@ -77,6 +65,9 @@ class BatchController extends Controller
                 "amount" => $rent_price,
                 "keterangan" => "Biaya simpan inventory bahan baku & produk sejumlah ".$rent_price." TC"
             ]);
+
+            //pusher update batch
+            event(new UpdateBatch($batch->batch, $team->balance));
         }
 
 
@@ -109,11 +100,8 @@ class BatchController extends Controller
         }
 
         //pusher ke demand
-        $demands = DB::table('product_demand')->join('products', 'products.id', '=', 'product_demand.products_id')->where('demands_id', $batch)->where('amount', '!=', 0)->get();
-        event(new UpdateDemand($demands));
-
-
-        event(new UpdateBatch($batch->batch));
+        $demands = DB::table('product_demand')->join('products', 'products.id', '=', 'product_demand.products_id')->where('demands_id', $batch->batch)->where('amount', '!=', 0)->get();
+        event(new UpdateDemand($demands, $batch->batch));
 
         return response()->json(array(
             'status' => 'success',
@@ -126,6 +114,19 @@ class BatchController extends Controller
         $batch->preparation = 1;
         $batch->save();
         
+        // Jika Batch 5 (selesai game), Potong saldonya yang belum bayar
+        if ($batch->batch == 5) {
+            $teams = Team::all();
+            foreach($teams as $team) {
+                if ($team->debt > 0) {
+                    $team->decrement('balance', $team->debt);
+                    $team->debt = 0;
+                    $team->save();
+                }
+            }
+        }
+        
+
         $teams = Team::all();
         foreach ($teams as $team) {
             $profit = self::calculateProfit($team, $batch->batch);

@@ -20,10 +20,12 @@ class UpdateBatch implements ShouldBroadcast
      * @return void
      */
     public $batch;
+    public $balance;
 
-    public function __construct($batch)
+    public function __construct($batch, $balance)
     {
         $this->batch = $batch;
+        $this->balance = $balance;
     }
 
     /**

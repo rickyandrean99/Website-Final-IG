@@ -44,6 +44,10 @@ class UpgradePostController extends Controller
                     "amount" => 1000,
                     "keterangan" => "Berhasil membeli kulkas seharga 1000 TC"
                 ]);
+
+                //pusdher update balance tim
+                $balance = Team::find($id)->balance;
+                event(new UpdateBalance($id, $balance));
             } else {
                 $message = "Saldo TC tidak mencukupi";
             }
@@ -171,7 +175,7 @@ class UpgradePostController extends Controller
 
                             //pusdher update balance tim
                             $balance = Team::find($id)->balance;
-                            broadcast(new UpdateBalance($id, $balance))->toOthers();
+                            event(new UpdateBalance($id, $balance));
 
                         }else{
                             $status = "failed";
