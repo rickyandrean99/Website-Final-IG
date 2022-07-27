@@ -21,9 +21,11 @@ class UpdateBatch implements ShouldBroadcast
      */
     public $batch;
     public $balance;
+    public $team;
 
-    public function __construct($batch, $balance)
+    public function __construct($team,$batch, $balance)
     {
+        $this->team = $team;
         $this->batch = $batch;
         $this->balance = $balance;
     }

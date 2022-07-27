@@ -67,7 +67,7 @@ class BatchController extends Controller
             ]);
 
             //pusher update batch
-            event(new UpdateBatch($batch->batch, $team->balance));
+            event(new UpdateBatch($team->id, $batch->batch, $team->balance));
         }
 
 
@@ -132,8 +132,6 @@ class BatchController extends Controller
                     $team->decrement('balance', $team->debt);
                     $team->debt = 0;
                     $team->save();
-
-
                 }
             }
         }
