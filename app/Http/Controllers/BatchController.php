@@ -123,7 +123,7 @@ class BatchController extends Controller
                     DB::table('histories')->insert([
                         "teams_id" => $team->id,
                         "kategori" => "DEBT",
-                        "batch" => $batch,
+                        "batch" => $batch->batch,
                         "type" => "OUT",
                         "amount" => $team->debt,
                         "keterangan" => "Membayar hutang sejumlah ".$team->debt." TC"
