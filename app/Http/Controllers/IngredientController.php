@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Team;
 use App\Batch;
 use App\Ingredient;
+use App\Events\UpdateImport;
 use DB;
 
 class IngredientController extends Controller
@@ -105,6 +106,10 @@ class IngredientController extends Controller
                         "amount" => (array_sum($prices)+$ongkir),
                         "keterangan" => "Berhasil membeli bahan baku seharga ".(array_sum($prices)+$ongkir)." TC"
                     ]);
+
+                    // Realtime Ingredient
+                    $ingredients = DB::table("ingredients")->join("import_ingredient", "import_ingredient.ingredients_id", "=", "ingredients.id")->select("ingredients.id AS id", "import_ingredient.amount AS amount",)->where("import_ingredient.rounds_id", $batch)->get();
+                    event(new UpdateImport($ingredients));
 
                     $status = "success";
                     $message = "Berhasil membeli ingredient";

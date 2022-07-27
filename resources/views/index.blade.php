@@ -942,15 +942,19 @@
         })
 
         window.Echo.channel('update-market.' + {{ Auth::user()->team }}).listen('.market', (e) => {
-            alert(`Update sigma`)
             $(`#sigma-level`).text(`${e.sigma_level}`)
         })
 
-        window.Echo.channel('update-balance.' + {{ Auth::user()->team }}).listen('balance', (e) => {
-            alert(`Update TC`)
+        window.Echo.channel('update-balance.' + {{ Auth::user()->team }}).listen('.balance', (e) => {
             $(`#balance`).text(`${e.balance}` + " TC")
         })
-        </script>
+
+        window.Echo.channel('update-import').listen('.import', (e) => {
+            e.imports.forEach(ingredient => {
+                $(`#ingredient-import-${ingredient.id}`).text(`${ingredient.amount} Paket`)
+            })
+        })
+    </script>
 </body>
 
 </html>
