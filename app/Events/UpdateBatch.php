@@ -35,7 +35,7 @@ class UpdateBatch implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('update-batch');
+        return new Channel('update-batch'.$this->team);
     }
 
     public function broadcastAs() 

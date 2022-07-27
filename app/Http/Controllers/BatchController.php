@@ -119,9 +119,21 @@ class BatchController extends Controller
             $teams = Team::all();
             foreach($teams as $team) {
                 if ($team->debt > 0) {
+                    //tambah history fee
+                    DB::table('histories')->insert([
+                        "teams_id" => $team->id,
+                        "kategori" => "DEBT",
+                        "batch" => $batch,
+                        "type" => "OUT",
+                        "amount" => $team->debt,
+                        "keterangan" => "Membayar hutang sejumlah ".$team->debt." TC"
+                    ]);
+
                     $team->decrement('balance', $team->debt);
                     $team->debt = 0;
                     $team->save();
+
+
                 }
             }
         }

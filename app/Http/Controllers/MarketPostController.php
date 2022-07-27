@@ -200,7 +200,7 @@ class MarketPostController extends Controller
 
         //pusher ke demand
         $demands = DB::table('product_demand')->join('products', 'products.id', '=', 'product_demand.products_id')->where('demands_id', $batch)->where('amount', '!=', 0)->get();
-        event(new UpdateDemand($demands));
+        event(new UpdateDemand($demands, $batch));
 
         //pusher ke tim
         event(new UpdateMarket($team->id, $sigma_team));
