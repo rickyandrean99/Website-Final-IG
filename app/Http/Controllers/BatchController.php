@@ -10,8 +10,10 @@ use App\Transportation;
 use App\Transaction;
 use App\MachineType;
 use App\Ingredient;
+use App\Package;
 use App\Events\UpdateBatch;
 use App\Events\UpdateDemand;
+use App\Events\UpdateImport;
 use App\Events\UpdatePreparation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -50,6 +52,8 @@ class BatchController extends Controller
         // Bayar Sewa Inventory & Tambah bunga hutang
         $teams = Team::all();
         $batch1 = Batch::find(1)->batch;
+        $ongkir = Package::find($batch1)->fee;
+
         foreach($teams as $team) {
             $rent_price = $team->inventory_ingredient_rent + $team->inventory_product_rent;
             $interest = 0.05 * $team->debt;
@@ -67,9 +71,13 @@ class BatchController extends Controller
             ]);
 
             //pusher update batch
-            event(new UpdateBatch($team->id, $batch->batch, $team->balance));
+            $limit = ($team->packages()->wherePivot('packages_id', $batch->batch)->select('remaining')->first())->remaining;
+            event(new UpdateBatch($team->id, $batch->batch, $team->balance, $limit, $ongkir));
         }
 
+        // Realtime Ingredient
+        $ingredients = DB::table("ingredients")->join("import_ingredient", "import_ingredient.ingredients_id", "=", "ingredients.id")->select("ingredients.id AS id", "import_ingredient.amount AS amount",)->where("import_ingredient.rounds_id", $batch->batch)->get();
+        event(new UpdateImport($ingredients));
 
         // Buang bahan milik tim yang tidak memiliki kulkas
         $teams = Team::all();

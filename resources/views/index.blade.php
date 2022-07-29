@@ -246,6 +246,12 @@
             let productionsTeamMachines = []
             let machineUnique = true
             let productUnique = true
+
+            // Pengecekan jika tidak ada produksi
+            if (productionsId.length == 0) {
+                alert("Pilih Produksi!")
+                return
+            }
             
             // Check tidak boleh memproduksi produk yang sama bersamaan dalam satu produksi
             productionsId.forEach((id1, index1) => {
@@ -339,18 +345,20 @@
 
             // Update limit dan Ongkir
             let limit = parseInt($(`#package-limit-hidden`).val())
+            let ongkir = parseInt($(`#package-ongkir`).val())
             let quantity = 0
-            let ongkir = 0
+            
             ingredientsAmount.forEach(amount => {
                 quantity += parseInt(amount)
             })
+
             let remaining = limit - quantity
             if (remaining < 0) { 
                 remaining = 0
-                ongkir = limit + ((quantity-limit)*3)
-            } else {
-                ongkir = quantity
+                ongkir += ((quantity-limit)*3)
             }
+
+            if (quantity == 0) ongkir = 0
 
             $(`#total-ingredient`).text(`${totalPrice} TC`)
             $(`#package-limit`).text(remaining)
@@ -932,6 +940,16 @@
             $(`#sigma-level`).text("0")
             $("#profit").addClass("text-success")
             $("#profit").removeClass("text-danger")
+
+            // Reset Ingredient Market
+            $(`.ingredient-amount`).val(0)
+            $('.ingredient-type').prop('checked', false);
+            $(`#total-ingredient`).text("0 TC")
+            $(`#ongkir-ingredient`).text("0 TC")
+            $(`#subtotal-ingredient`).text("0 TC")
+            $(`#package-limit-hidden`).val(e.limit)
+            $(`#package-limit`).text(e.limit)
+            $(`#package-ongkir`).val(e.ongkir)
         })
 
         window.Echo.channel('update-preparation.' + {{ Auth::user()->team }}).listen('.preparation', (e) => {

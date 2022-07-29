@@ -8,6 +8,7 @@ use App\Ingredient;
 use App\MachineType;
 use App\Transportation;
 use App\Product;
+use App\Package;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +27,7 @@ class ToPostController extends Controller
         }
 
         $batch = Batch::find(1)->batch;
+        $ongkir = Package::find($batch)->fee;
         $preparation = Batch::find(1)->preparation;
         $team = Team::find(Auth::user()->team);
         $ingredient = Ingredient::where('id', '<=', '12')->get();
@@ -46,7 +48,7 @@ class ToPostController extends Controller
         return view('index', compact(
             'batch', 'preparation', 'team', 'ingredient', 'machines', 
             'transportations', 'limit', 'products',
-            'product_name', 'product_amount', 'inventory1', 'inventory2'));
+            'product_name', 'product_amount', 'inventory1', 'inventory2', 'ongkir'));
     }
 
     public function addCoin(Request $request){
@@ -206,7 +208,7 @@ class ToPostController extends Controller
             'ingredients' => $ingredient_list,
             'machines' => $machine_list,
             'products' => $product_list,
-            'fridge' => $team-> fridge
+            'fridge' => $team->fridge
         ), 200); 
     }
 

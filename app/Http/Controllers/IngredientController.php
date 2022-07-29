@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Team;
 use App\Batch;
+use App\Package;
 use App\Ingredient;
 use App\Events\UpdateImport;
 use DB;
@@ -22,7 +23,7 @@ class IngredientController extends Controller
         $batch = Batch::find(1)->batch;
         $prices = [];
         $amounts = [];
-        $ongkir = 0;
+        $ongkir = Package::find($batch)->fee;
         $limit = $team->packages()->wherePivot('packages_id', $batch)->first()->pivot->remaining;
 
         // Cek harga pembelian
@@ -38,10 +39,8 @@ class IngredientController extends Controller
         $quantity = array_sum($ingredient_amount);
         $remaining = $limit - $quantity;
         if ($remaining < 0) {
-            $ongkir = $limit + (($quantity-$limit)*3);
-        } else {
-            $ongkir = $quantity;
-        }
+            $ongkir += (($quantity-$limit)*3);
+        } 
 
         // Cek apakah saldo cukup
         if ($team->balance >= (array_sum($prices) + $ongkir)) {

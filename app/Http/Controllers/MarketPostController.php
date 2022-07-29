@@ -169,14 +169,14 @@ class MarketPostController extends Controller
         $total_product = 0;
         foreach($get as $trans){
             $amount = DB::table('product_transaction')
-                ->where('transactions_id', $trans->id)->sum('amount');
+                ->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->sum('amount');
             $total_product += $amount;
         }
 
         $sigma_team = 0;
         foreach($get as $trans){
             $get2 = DB::table('product_transaction')
-                ->where('transactions_id', $trans->id)->get();
+                ->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->get();
             foreach($get2 as $detail){
                 $amount = $detail->amount;
                 $sigma = $detail->sigma_level;

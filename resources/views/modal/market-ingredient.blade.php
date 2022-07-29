@@ -64,6 +64,7 @@
                         <div class="row mt-3">
                             <div class="col-6 bg-info text-white text-center fw-bold p-3 rounded-start">Ongkir</div>
                             <div class="col-6 bg-primary text-white text-center fw-bold p-3 rounded-end" id="ongkir-ingredient">0 TC</div>
+                            <input type="hidden" id="package-ongkir" value="{{ $ongkir }}">
                         </div>
 
                         <div class="row mt-3">

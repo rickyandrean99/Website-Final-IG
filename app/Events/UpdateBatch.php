@@ -22,12 +22,16 @@ class UpdateBatch implements ShouldBroadcast
     public $batch;
     public $balance;
     public $team;
+    public $limit;
+    public $ongkir;
 
-    public function __construct($team,$batch, $balance)
+    public function __construct($team,$batch, $balance, $limit, $ongkir)
     {
         $this->team = $team;
         $this->batch = $batch;
         $this->balance = $balance;
+        $this->limit = $limit;
+        $this->ongkir = $ongkir;
     }
 
     /**
