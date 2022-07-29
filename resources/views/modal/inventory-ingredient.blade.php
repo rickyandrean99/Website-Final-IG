@@ -6,7 +6,7 @@
                 <h5 class="modal-title" id="exampleModalToggleLabel2">Upgrade Kapasitas Bahan Baku</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body px-1">
                 <table class="table table-hover bg-white rounded my-1 w-75">
                     <thead>
                         <tr class="text-center align-middle">

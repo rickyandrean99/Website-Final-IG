@@ -14,12 +14,22 @@ class InventoryController extends Controller
         $id = $request->get('id');
         $up_id = $request->get('up_id');
         $batch = Batch::find(1)->batch;
+        $team = Team::find(Auth::user()->team);
+        $balance = $team->balance;
 
         $pilih = DB::table('inventory_pricelists')->where('inventory_type_id', $id)->where('id', $up_id)->get();
 
-        $team = Team::find(Auth::user()->team);
+
         if($id == 1){
             if($team->upgrade_ingredient_limit == 1){
+                if($team->ingredient_inventory >= $pilih[0]->upgrade_capacity){
+                    return response()->json(array(
+                        'balance' => $balance,
+                        'status' => 'failed',
+                        'message' => 'Tidak dapat melakukan downgrade pada inventory'
+                    ), 200);
+                }
+
                 $team->inventory_ingredient_rent = $pilih[0]->rent_price;
                 $team->ingredient_inventory = $pilih[0]->upgrade_capacity;
                 $team->balance -= $pilih[0]->upgrade_price;
@@ -47,6 +57,14 @@ class InventoryController extends Controller
         }
         else{
             if($team->upgrade_product_limit == 1){
+                if($team->product_inventory >= $pilih[0]->upgrade_capacity){
+                    return response()->json(array(
+                        'balance' => $balance,
+                        'status' => 'failed',
+                        'message' => 'Tidak dapat melakukan downgrade pada inventory'
+                    ), 200);
+                }
+
                 $team->inventory_product_rent = $pilih[0]->rent_price;
                 $team->product_inventory = $pilih[0]->upgrade_capacity;
                 $team->balance -= $pilih[0]->upgrade_price;
