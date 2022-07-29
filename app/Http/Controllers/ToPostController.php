@@ -208,7 +208,7 @@ class ToPostController extends Controller
             'ingredients' => $ingredient_list,
             'machines' => $machine_list,
             'products' => $product_list,
-            'fridge' => $team->fridge
+            'fridge' => (int)$team->fridge
         ), 200); 
     }
 
