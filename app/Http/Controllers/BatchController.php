@@ -34,6 +34,13 @@ class BatchController extends Controller
     }
 
     public function updateBatch() {
+        if (Auth::user()->role == "peserta"){
+            return redirect()->route('peserta');
+        } else if (Auth::user()->role == "upgrade") {
+            return redirect()->route('upgrade');
+        } else if (Auth::user()->role == "pasar") {
+            return redirect()->route('market');
+        }
         // Update batch dan preparation
         $batch = Batch::find(1);
         $batch->batch = $batch->batch + 1;
@@ -118,6 +125,14 @@ class BatchController extends Controller
     }
 
     public function updatePreparation() {
+        if (Auth::user()->role == "peserta"){
+            return redirect()->route('peserta');
+        } else if (Auth::user()->role == "upgrade") {
+            return redirect()->route('upgrade');
+        } else if (Auth::user()->role == "pasar") {
+            return redirect()->route('market');
+        }
+        
         $batch = Batch::find(1);
         $batch->preparation = 1;
         $batch->save();
