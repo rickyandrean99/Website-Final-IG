@@ -17,6 +17,6 @@ class Ingredient extends Model
     }
 
     public function rounds() {
-        return $this->belongsToMany("App\Round", "import_ingredient", "ingredients_id", "rounds_id")->withPivot("amount");
+        return $this->belongsToMany("App\Round", "local_ingredient", "ingredients_id", "rounds_id")->withPivot("amount");
     }
 }

@@ -13,6 +13,6 @@ class Round extends Model
     }
 
     public function ingredients() {
-        return $this->belongsToMany("App\Ingredient", "import_ingredient", "rounds_id", "ingredients_id")->withPivot("amount");
+        return $this->belongsToMany("App\Ingredient", "local_ingredient", "rounds_id", "ingredients_id")->withPivot("amount");
     }
 }

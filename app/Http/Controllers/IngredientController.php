@@ -107,7 +107,7 @@ class IngredientController extends Controller
                     ]);
 
                     // Realtime Ingredient
-                    $ingredients = DB::table("ingredients")->join("import_ingredient", "import_ingredient.ingredients_id", "=", "ingredients.id")->select("ingredients.id AS id", "import_ingredient.amount AS amount",)->where("import_ingredient.rounds_id", $batch)->get();
+                    $ingredients = DB::table("ingredients")->join("local_ingredient", "local_ingredient.ingredients_id", "=", "ingredients.id")->select("ingredients.id AS id", "local_ingredient.amount AS amount",)->where("local_ingredient.rounds_id", $batch)->get();
                     event(new UpdateImport($ingredients));
 
                     $status = "success";

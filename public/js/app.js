@@ -17170,6 +17170,16 @@ return jQuery;
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "Channel", function() { return Channel; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Echo; });
+function _typeof(obj) {
+  "@babel/helpers - typeof";
+
+  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
+    return typeof obj;
+  } : function (obj) {
+    return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+  }, _typeof(obj);
+}
+
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -18268,7 +18278,7 @@ var PusherConnector = /*#__PURE__*/function (_Connector) {
     value: function leave(name) {
       var _this2 = this;
 
-      var channels = [name, 'private-' + name, 'presence-' + name];
+      var channels = [name, 'private-' + name, 'private-encrypted-' + name, 'presence-' + name];
       channels.forEach(function (name, index) {
         _this2.leaveChannel(name);
       });
@@ -18704,6 +18714,10 @@ var Echo = /*#__PURE__*/function () {
       if (typeof jQuery === 'function') {
         this.registerjQueryAjaxSetup();
       }
+
+      if ((typeof Turbo === "undefined" ? "undefined" : _typeof(Turbo)) === 'object') {
+        this.registerTurboRequestInterceptor();
+      }
     }
     /**
      * Register a Vue HTTP interceptor to add the X-Socket-ID header.
@@ -18755,6 +18769,19 @@ var Echo = /*#__PURE__*/function () {
           }
         });
       }
+    }
+    /**
+     * Register the Turbo Request interceptor to add the X-Socket-ID header.
+     */
+
+  }, {
+    key: "registerTurboRequestInterceptor",
+    value: function registerTurboRequestInterceptor() {
+      var _this4 = this;
+
+      document.addEventListener('turbo:before-fetch-request', function (event) {
+        event.detail.fetchOptions.headers['X-Socket-Id'] = _this4.socketId();
+      });
     }
   }]);
 
@@ -43771,8 +43798,8 @@ window.Echo = new laravel_echo__WEBPACK_IMPORTED_MODULE_0__["default"]({
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! E:\Ricky\Kepanitiaan Lepas\SI IG 2022\Web Final\Website Final IG\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! E:\Ricky\Kepanitiaan Lepas\SI IG 2022\Web Final\Website Final IG\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\Users\David Bryan C\Documents\GitHub\Website-Final-IG\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\Users\David Bryan C\Documents\GitHub\Website-Final-IG\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
