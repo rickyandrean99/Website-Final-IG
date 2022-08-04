@@ -104,7 +104,7 @@ class MarketPostController extends Controller
                 }else{
                     return response()->json(array(
                         'status' =>  "failed",
-                        'message' => "Gagal, harus produk ID terkecil yang bisa dijual",
+                        'message' => "Gagal. Jenis produk dengan sigma terkecil harus dihabiskan terlebih dahulu",
                     ), 200);
                 }
             }

@@ -230,8 +230,8 @@ class ProductionController extends Controller
                     foreach ($product_total_amount as $product_id => $product_amount) {
                         $sigma = (int)($sigma_produk[$product_id]*100);
 
-                        if (count($team->products()->wherePivot('products_id', $product_id)->wherePivot('batch', $batch)->wherePivot('sigma_level', $sigma)->get()) > 0) {
-                            $team->products()->wherePivot('products_id', $product_id)->wherePivot('batch', $batch)->wherePivot('sigma_level', $sigma)->increment('product_inventory.amount', $product_amount);
+                        if (count($team->products()->wherePivot('products_id', $product_id)->wherePivot('sigma_level', $sigma)->get()) > 0) {
+                            $team->products()->wherePivot('products_id', $product_id)->wherePivot('sigma_level', $sigma)->increment('product_inventory.amount', $product_amount);
                         } else {
                             $new_id = 1;
                             $latest_id = $team->products()->wherePivot('products_id', $product_id)->orderBy('product_inventory.id', 'desc')->first();

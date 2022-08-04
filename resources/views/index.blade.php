@@ -785,7 +785,7 @@
                         productText += `
                             <tr>
                                 <td class="border-0 text-center align-middle">${ counter2++ }</td>
-                                <td class="border-0 text-center align-middle">${ product.name } ${product.pivot.id}</td>
+                                <td class="border-0 text-center align-middle">${ product.name } ${product.pivot.id} (Sigma: ${product.pivot.sigma_level/100})</td>
                                 <td class="border-0 text-center align-middle">${ product.pivot.amount}</td>
                             </tr>
                         `
