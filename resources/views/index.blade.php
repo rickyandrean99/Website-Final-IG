@@ -105,7 +105,7 @@
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" onclick="loadTransportation()"><i class="bi-truck"></i> Transportation</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalTambahTC"><i class="bi-coin"></i> Tambah TC</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalInfoHutang" onclick="infoHutang()"><i class="bi-cash-coin"></i> Info Hutang</button>
-            <button type="button" class="btn btn-block btn-outline-primary shadow m-2" onclick="infoHutang()"><i class="bi-cash-coin"></i> Beli Sertifikat</button>
+            <button type="button" class="btn btn-block btn-outline-primary shadow m-2 disabled" onclick="buySertificate()" id="sert"><i class="bi-postcard"></i> Beli Sertifikat</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" onclick="loadHistory()"><i class="bi-list-task"></i> Histori Transaksi</button>
         </div>
     </footer>
@@ -688,6 +688,27 @@
             })
         }
 
+        const buySertificate = () =>{
+            if (!confirm("Are you sure?")) return
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("buy-certificate") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>'
+                },
+                success: function(data) {
+                    alert(data.message)
+                    if(data.status == "success"){
+                        $(`#balance`).text(data.balance + " TC")
+                    }
+                },
+                error: function(error) {
+                    showError(error)
+                }
+            })
+        }
+
         const showError = (error) => {
             let errorMessage = JSON.parse(error.responseText).message
             alert(`Error: ${errorMessage}`)
@@ -951,6 +972,15 @@
             $(`#package-limit-hidden`).val(e.limit)
             $(`#package-limit`).text(e.limit)
             $(`#package-ongkir`).val(e.ongkir)
+
+            // Enabled beli sertifikat pada batch 3
+            if(`${e.batch}`== 3){
+                $("#sert").addClass("enabled")
+                $("#sert").removeClass("disabled")
+            }else{
+                $("#sert").addClass("disabled")
+                $("#sert").removeClass("enabled")
+            }
         })
 
         window.Echo.channel('update-preparation.' + {{ Auth::user()->team }}).listen('.preparation', (e) => {

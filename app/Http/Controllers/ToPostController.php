@@ -183,6 +183,38 @@ class ToPostController extends Controller
         ), 200);
     }
 
+    public function buyCertificate(){
+        $team = Team::find(Auth::user()->team);
+        $batch = Batch::find(1)->batch;
+
+        if($team->balance < 5000 || $team->certification_maintenance == 1){
+            return response()->json(array(
+                'message' => "Gagal membeli sertifikasi maintenance",
+                'status' => "failed",
+            ), 200);
+        }else{
+            $team->decrement('balance', 5000);
+            $team->increment('certification_maintenance');
+            $team->save();
+
+            //tambah history beli sertifikasi
+            DB::table('histories')->insert([
+                "teams_id" => $team->id,
+                "kategori" => "UPGRADE",
+                "batch" => $batch,
+                "type" => "OUT",
+                "amount" => 5000,
+                "keterangan" => "Berhasil membeli sertifikasi maintenance seharga 5000 TC"
+            ]);
+
+            return response()->json(array(
+                'message' => "Berhasil membeli sertifikasi maintenance",
+                'status' => "success",
+                'balance' => $team->balance,
+            ), 200);
+        }
+    }
+
     public function loadTransportation() {
         $batch = Batch::find(1)->batch;
         $team = Team::find(Auth::user()->team);

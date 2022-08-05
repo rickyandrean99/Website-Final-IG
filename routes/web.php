@@ -20,6 +20,7 @@ Route::middleware(['auth'])->group(function() {
     Route::post('/add-coin', 'ToPostController@addCoin')->name('add-coin');
     Route::post('/info-hutang', 'ToPostController@infoHutang')->name('info-hutang');
     Route::post('/bayar-hutang', 'ToPostController@bayarHutang')->name('bayar-hutang');
+    Route::post('/buy-certificate', 'ToPostController@buyCertificate')->name('buy-certificate');
     Route::post('/upgrade-inventory', 'InventoryController@upgradeInventory')->name('upgrade-inventory');
     
     Route::post('/machine', 'MachineController@getMachineById')->name('machine.getbyid');
