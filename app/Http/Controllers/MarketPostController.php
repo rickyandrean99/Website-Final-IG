@@ -7,6 +7,7 @@ use App\Team;
 use App\Demand;
 use App\Events\UpdateDemand;
 use App\Events\UpdateMarket;
+use App\Events\UpdateLeaderboard;
 use App\Transaction;
 use App\Transportation;
 use Illuminate\Http\Request;
@@ -121,7 +122,6 @@ class MarketPostController extends Controller
             'subtotal' => $subtotal,
             'total' => $total
         ]);
-
         
         $transaction_id = DB::table('transactions')->select('id')->orderBy('id', 'desc')->get();
         $transaction_id = $transaction_id[0]->id;
@@ -162,8 +162,6 @@ class MarketPostController extends Controller
             }
         }
 
-
-        //Hitung sigma level
         $get = DB::table('transactions')->where('teams_id', $id)->where('batch', $batch)->get();
 
         $total_product = 0;
@@ -191,7 +189,6 @@ class MarketPostController extends Controller
         //update sigma level
         DB::table('team_round')->where('teams_id', $id)->where('rounds_id', $batch)->update(['six_sigma'=>$sigma_team]);
 
-
         $status = "success";
         $message = "Berhasil menjual produk, detail transaksi:\n
                 -Hasil jual produk: $subtotal TC\n
@@ -200,11 +197,19 @@ class MarketPostController extends Controller
 
         //pusher ke demand
         $demands = DB::table('product_demand')->join('products', 'products.id', '=', 'product_demand.products_id')->where('demands_id', $batch)->where('amount', '!=', 0)->get();
-        event(new UpdateDemand($demands, $batch));
+        $price = [];
+        foreach($demands as $demand){
+            $p = DB::table('product_batchs')->where('id', $batch)->where('products_id',$demand->id)->sum('price');
+            array_push($price, $p);
+        }
+        event(new UpdateDemand($demands, $batch, $price));
+        
+        //update leaderboard
+        $leaderboard = self::calculateSigma();
+        event(new UpdateLeaderboard($leaderboard));
 
         //pusher ke tim
         event(new UpdateMarket($team->id, $sigma_team));
-        // broadcast(new UpdateMarket($team->id, $sigma_team))->toOthers();
 
         return response()->json(array(
             'status' => $status,
@@ -314,5 +319,41 @@ class MarketPostController extends Controller
             'jumlah' => $jumlah,
             'subtotal' => $subtotal
         ), 200);
+    }
+
+    public function calculateSigma(){
+        $teams = Team::all();
+        $leaderboard = [];
+
+        foreach($teams as $team) {
+            $get = DB::table('transactions')->where('teams_id', $team->id)->get();
+
+            $total_product = 0;
+            foreach($get as $trans){
+                $amount = DB::table('product_transaction')
+                    ->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->sum('amount');
+                $total_product += $amount;
+            }
+
+            $sigma_team = 0;
+            foreach($get as $trans){
+                $get2 = DB::table('product_transaction')
+                    ->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->get();
+                foreach($get2 as $detail){
+                    $amount = $detail->amount;
+                    $sigma = $detail->sigma_level;
+                    
+                    $calculate = $amount / $total_product * $sigma;
+                    $sigma_team += $calculate;
+                }
+            }
+
+            $leaderboard[$team->name] = round($sigma_team,2);
+        }
+
+        // sorting
+        arsort($leaderboard);
+
+        return($leaderboard);
     }
 }

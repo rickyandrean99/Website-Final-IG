@@ -105,6 +105,7 @@
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" onclick="loadTransportation()"><i class="bi-truck"></i> Transportation</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalTambahTC"><i class="bi-coin"></i> Tambah TC</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalInfoHutang" onclick="infoHutang()"><i class="bi-cash-coin"></i> Info Hutang</button>
+            <button type="button" class="btn btn-block btn-outline-primary shadow m-2" onclick="infoHutang()"><i class="bi-cash-coin"></i> Beli Sertifikat</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" onclick="loadHistory()"><i class="bi-list-task"></i> Histori Transaksi</button>
         </div>
     </footer>

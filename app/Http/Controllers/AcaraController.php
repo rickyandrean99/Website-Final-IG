@@ -39,22 +39,66 @@ class AcaraController extends Controller
         } else if (Auth::user()->role == "administrator"){
             return redirect()->route('batch');
         }
+
+        //leaderboard
+        $teams = Team::all();
+        $leaderboard = [];
+
+        foreach($teams as $team) {
+            $get = DB::table('transactions')->where('teams_id', $team->id)->get();
+
+            $total_product = 0;
+            foreach($get as $trans){
+                $amount = DB::table('product_transaction')
+                    ->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->sum('amount');
+                $total_product += $amount;
+            }
+
+            $sigma_team = 0;
+            foreach($get as $trans){
+                $get2 = DB::table('product_transaction')
+                    ->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->get();
+                foreach($get2 as $detail){
+                    $amount = $detail->amount;
+                    $sigma = $detail->sigma_level;
+                    
+                    $calculate = $amount / $total_product * $sigma;
+                    $sigma_team += $calculate;
+                }
+            }
+
+            $leaderboard[$team->name] = round($sigma_team,2);
+        }
+
+        // sorting
+        arsort($leaderboard);
         
         $batch = Batch::find(1)->batch;
         $demands = (Demand::find($batch))->products()->wherePivot('amount', '!=', 0)->get();
-        return view('demand', compact('batch', 'demands'));
+        $price = [];
+        foreach($demands as $demand){
+            $p = DB::table('product_batchs')->where('id', $batch)->where('products_id',$demand->id)->sum('price');
+            array_push($price, $p);
+        }
+        return view('demand', compact('batch', 'demands', 'price', 'leaderboard'));
     }
 
     public function updateDemand(Request $request){
         $batch = Batch::find(1)->batch;
         $id = $request->get('id');
         $demand = (int)$request->get('demand');
+
         
         DB::table('product_demand')->where('products_id', $id)->where('demands_id', $batch)->update(["amount" => $demand]);
-
+        
         //pusher ke demand
         $demands = DB::table('product_demand')->join('products', 'products.id', '=', 'product_demand.products_id')->where('demands_id', $batch)->where('amount', '!=', 0)->get();
-        event(new UpdateDemand($demands, $batch));
+        $price = [];
+        foreach($demands as $demand){
+            $p = DB::table('product_batchs')->where('id', $batch)->where('products_id',$demand->id)->sum('price');
+            array_push($price, $p);
+        }
+        event(new UpdateDemand($demands, $batch, $price));
 
         return response()->json(array(
             'status' => 'success',

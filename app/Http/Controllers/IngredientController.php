@@ -134,4 +134,20 @@ class IngredientController extends Controller
             'limit' => $limit
         ), 200);
     }
+
+    public function localIngredient() {
+        $ingredient = Ingredient::all();
+
+        return view('ingredient-lokal', compact('ingredient'));
+    }
+
+    public function importIngredient() {
+        $ingredient = Ingredient::all();
+        // $limit = $team->packages()->wherePivot('packages_id', $batch)->first()->pivot->remaining;
+        $limit = 0;
+        $batch = Batch::find(1)->batch;
+        $ongkir = Package::find($batch)->fee;
+
+        return view('ingredient-import', compact('ingredient', 'limit', 'ongkir'));
+    }
 }

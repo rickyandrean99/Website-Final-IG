@@ -10,7 +10,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class UpdateDemand implements ShouldBroadcast
+class UpdateLeaderboard implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -19,15 +19,10 @@ class UpdateDemand implements ShouldBroadcast
      *
      * @return void
      */
-
-    public $demands;
-    public $price;
-    public $batch;
-    public function __construct($demands, $batch, $price)
+    public $leaderboard;
+    public function __construct($leaderboard)
     {
-        $this->demands = $demands;
-        $this->batch = $batch;
-        $this->price = $price;
+        $this->leaderboard = $leaderboard;
     }
 
     /**
@@ -37,7 +32,7 @@ class UpdateDemand implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        return new Channel('update-demand');
+        return new Channel('update-leaderboard');
     }
 
     public function broadcastAs() 

@@ -120,7 +120,12 @@ class BatchController extends Controller
 
         //pusher ke demand
         $demands = DB::table('product_demand')->join('products', 'products.id', '=', 'product_demand.products_id')->where('demands_id', $batch->batch)->where('amount', '!=', 0)->get();
-        event(new UpdateDemand($demands, $batch->batch));
+        $price = [];
+        foreach($demands as $demand){
+            $p = DB::table('product_batchs')->where('id', $batch1)->where('products_id',$demand->id)->sum('price');
+            array_push($price, $p);
+        }
+        event(new UpdateDemand($demands, $batch->batch, $price));
 
         return response()->json(array(
             'status' => 'success',
@@ -210,10 +215,10 @@ class BatchController extends Controller
         $machines_price = $team->machineTypes()->where("batch", $batch)->where("exist", 1)->sum("price");
         $total_pengeluaran = (int)($ingredients_price + $transportations_price + $machines_price);
         // 2. Upgrade (mesin + kulkas + inventory + sertifikasi)
-        $total_pengeluaran2 = (int)$team->histories()->where("batch", $batch)->where("kategori", "UPGRADE")->sum("amount");
+        $total_pengeluaran2 = (int)($team->histories()->where("batch", $batch)->where("kategori", "UPGRADE")->sum("amount"));
 
         // 3. Hasil jual produk - Denda ruang kosong - Biaya kirim
-        $hasil_penjualan = (int)($team->transactions()->where("batch", $batch)->sum("subtotal"));
+        $hasil_penjualan = (int)($team->transactions()->where("batch", $batch)->sum("total"));
         // 4. Hasil jual UMKM - Denda pemerintah
         $hasil_penjualan2 = (int)($team->histories()->where("batch",$batch)->where("kategori","PRODUCTION")->sum("amount"));
 

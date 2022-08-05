@@ -24,6 +24,10 @@ class ToPostController extends Controller
             return redirect()->route('market');
         } else if (Auth::user()->role == "acara") {
             return redirect()->route('score-recap');
+        } else if (Auth::user()->role == "lokal") {
+            return redirect()->route('ingredient-lokal');
+        } else if (Auth::user()->role == "impor") {
+            return redirect()->route('ingredient-import');
         }
 
         $batch = Batch::find(1)->batch;

@@ -21,7 +21,7 @@ Route::middleware(['auth'])->group(function() {
     Route::post('/info-hutang', 'ToPostController@infoHutang')->name('info-hutang');
     Route::post('/bayar-hutang', 'ToPostController@bayarHutang')->name('bayar-hutang');
     Route::post('/upgrade-inventory', 'InventoryController@upgradeInventory')->name('upgrade-inventory');
-    Route::post('/buy-ingredient', 'IngredientController@buyIngredient')->name('buy-ingredient');
+    
     Route::post('/machine', 'MachineController@getMachineById')->name('machine.getbyid');
     Route::post('/buy-machine', 'MachineController@buyMachine')->name('buy-machine');
     Route::post('/sell-machine', 'MachineController@sellMachine')->name('machine.sell');
@@ -43,6 +43,11 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/market', 'MarketPostController@dashboard')->name('market');
     Route::post('/sell-produk', 'MarketPostController@sellProduct')->name('product.sell');
     Route::post('/update-market', 'MarketPostController@updateMarket')->name('update-market');
+
+    // Pos Ingredient 
+    Route::get('/ingredient-lokal', 'IngredientController@localIngredient')->name('ingredient-lokal');
+    Route::get('/ingredient-import', 'IngredientController@importIngredient')->name('ingredient-import');
+    Route::post('/buy-ingredient', 'IngredientController@buyIngredient')->name('buy-ingredient');
 
     // Superadmin
     Route::get('/batch', "BatchController@index")->name('batch');

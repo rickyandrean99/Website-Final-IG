@@ -45,17 +45,17 @@
                 <div class="card-body">
                     <h2 class="card-title text-center text-white">LEADERBOARD</h2>
                     <h4 class="card-title text-center text-white">LEVEL SIGMA</h4>
-                    <ul class="list-group">
-                        @for ($i = 1; $i <= 10; $i++)
-                            <li class="list-group-item text-center fw-bold"><h4>Perusahaan {{$i}}</h4></li>
-                        @endfor
-                    </ul>
+                    <ul class="list-group" id="leaderboard">
+                        @foreach($leaderboard as $key=>$value)
+                            <li class="list-group-item text-center fw-bold"><h4>{{ $key }}</h4></li>
+                        @endforeach
+                    </ul>   
                 </div>
             </div>
         </div>
         <div class="col">
             <div class="row mb-2">
-                <div class="col rounded-start bg-dark ms-2"><h2 class="text-center text-white py-2">BATCH  {{ $batch }}</h2></div>
+                <div class="col rounded-start bg-dark ms-2"><h2 class="text-center text-white py-2" id="batch">BATCH {{ $batch }}</h2></div>
                 <div class="col rounded-end bg-dark me-2"><h2 class="text-center text-white py-2">00:00</h2></div>
             </div>
          
@@ -82,11 +82,11 @@
                         <th><h2 class="fw-bold" >Harga</h2></th>
                     </tr>
                 </thead>
-                <tbody id="tbody-demand">
-                    @foreach ($demands as $demand)
+                <tbody id="tbody-price">
+                    @foreach ($demands as $index=>$demand)
                         <tr class="text-center align-middle">
                             <td class="border-0 text-center align-middle"><h3>{{ $demand->name }}</h3></td>
-                            <td class="border-0 text-center align-middle"><h3>0 TC</h3></td>
+                            <td class="border-0 text-center align-middle"><h3>{{ $price[$index] }} TC</h3></td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -100,13 +100,32 @@
             $(`#batch`).text("BATCH " + e.batch)
 
             $(`#tbody-demand`).empty()
-            e.demands.forEach(demand => {
+            $(`#tbody-price`).empty()
+            e.demands.forEach((demand,index) => {
                 $(`#tbody-demand`).append(`
                     <tr>
-                        <td class="border-0 text-center align-middle"><h2>${ demand.name }</h2></td>
-                        <td class="border-0 text-center align-middle"><h2>${ demand.amount }</h2></td>
+                        <td class="border-0 text-center align-middle"><h3>${ demand.name }</h3></td>
+                        <td class="border-0 text-center align-middle"><h3>${ demand.amount }</h3></td>
                     </tr>
                 `)
+
+                $(`#tbody-price`).append(`
+                    <tr>
+                        <td class="border-0 text-center align-middle"><h3>${ demand.name }</h3></td>
+                        <td class="border-0 text-center align-middle"><h3>${ e.price[index] } TC</h3></td>
+                    </tr>
+                `)
+            })
+        })
+
+        //update leaderboard
+        window.Echo.channel('update-leaderboard').listen('.update', (e) => {
+            $(`#leaderboard`).empty()
+            // e.leaderboard.forEach(key =>{
+            //     $(`<li class="list-group-item text-center fw-bold"><h4>${key}</h4></li>`).appendTo(leaderboard)
+            // })
+            $.each( e.leaderboard, function( key, value ){
+                $(`<li class="list-group-item text-center fw-bold"><h4>${key}</h4></li>`).appendTo(leaderboard)
             })
         })
     </script>

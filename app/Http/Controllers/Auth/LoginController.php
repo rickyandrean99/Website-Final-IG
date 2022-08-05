@@ -32,6 +32,10 @@ class LoginController extends Controller
             return route('market');
         } else if (Auth::user()->role == "acara") {
             return route('score-recap');
+        } else if (Auth::user()->role == "lokal") {
+            return route('ingredient-lokal');
+        } else if (Auth::user()->role == "impor") {
+            return route('ingredient-import');
         } else if (Auth::user()->role == "administrator") {
             return route('batch');
         }
