@@ -202,7 +202,8 @@ class MarketPostController extends Controller
             $p = DB::table('product_batchs')->where('id', $batch)->where('products_id',$demand->id)->sum('price');
             array_push($price, $p);
         }
-        event(new UpdateDemand($demands, $batch, $price));
+        $new_timer = Batch::find(1)->time;
+        event(new UpdateDemand($demands, $batch, $price, $new_timer));
         
         //update leaderboard
         $leaderboard = self::calculateSigma();

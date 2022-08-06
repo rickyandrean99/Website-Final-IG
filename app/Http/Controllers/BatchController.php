@@ -18,6 +18,7 @@ use App\Events\UpdatePreparation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Auth;
+use Carbon\Carbon;
 
 class BatchController extends Controller
 {
@@ -49,6 +50,11 @@ class BatchController extends Controller
         $batch = Batch::find(1);
         $batch->batch = $batch->batch + 1;
         $batch->preparation = 0;
+
+        //update timer
+        $time = Carbon::now()->format('Y-m-d H:i:s');
+        $new_timer = Carbon::parse($time)->addMinutes(20)->addSeconds(3)->format('Y-m-d H:i:s');
+        $batch->time = $new_timer;
         $batch->save();
 
         // Reset Limit
@@ -125,7 +131,7 @@ class BatchController extends Controller
             $p = DB::table('product_batchs')->where('id', $batch1)->where('products_id',$demand->id)->sum('price');
             array_push($price, $p);
         }
-        event(new UpdateDemand($demands, $batch->batch, $price));
+        event(new UpdateDemand($demands, $batch->batch, $price, $new_timer));
 
         return response()->json(array(
             'status' => 'success',

@@ -80,7 +80,9 @@ class AcaraController extends Controller
             $p = DB::table('product_batchs')->where('id', $batch)->where('products_id',$demand->id)->sum('price');
             array_push($price, $p);
         }
-        return view('demand', compact('batch', 'demands', 'price', 'leaderboard'));
+
+        $time = Batch::find(1)->time;
+        return view('demand', compact('batch', 'demands', 'price', 'leaderboard', 'time'));
     }
 
     public function updateDemand(Request $request){
@@ -98,7 +100,9 @@ class AcaraController extends Controller
             $p = DB::table('product_batchs')->where('id', $batch)->where('products_id',$demand->id)->sum('price');
             array_push($price, $p);
         }
-        event(new UpdateDemand($demands, $batch, $price));
+        $new_timer = Batch::find(1)->time;
+
+        event(new UpdateDemand($demands, $batch, $price, $new_timer));
 
         return response()->json(array(
             'status' => 'success',

@@ -56,7 +56,8 @@
         <div class="col">
             <div class="row mb-2">
                 <div class="col rounded-start bg-dark ms-2"><h2 class="text-center text-white py-2" id="batch">BATCH {{ $batch }}</h2></div>
-                <div class="col rounded-end bg-dark me-2"><h2 class="text-center text-white py-2">00:00</h2></div>
+                <div class="col rounded-end bg-dark me-2"><h2 class="text-center text-white py-2" id="timer">00:00</h2></div>
+                <input type="hidden" id="time" value="{{ $time }}">
             </div>
          
             <table class="table table-light table-bordered shadow-sm">
@@ -98,6 +99,7 @@
     <script type="text/javascript">
         window.Echo.channel('update-demand').listen('.update', (e) => {
             $(`#batch`).text("BATCH " + e.batch)
+            $(`#time`).val(e.new_timer)
 
             $(`#tbody-demand`).empty()
             $(`#tbody-price`).empty()
@@ -128,6 +130,34 @@
                 $(`<li class="list-group-item text-center fw-bold"><h4>${key}</h4></li>`).appendTo(leaderboard)
             })
         })
+
+        // Update the timer terus menerus
+        let x = setInterval(function() {
+            // dapetin waktu target
+            let time = $(`#time`).val()
+            let countDownDate = new Date(time).getTime();
+        
+            // dapetin waktu sekarang
+            let now = new Date().getTime();
+            
+            // cari jaraknya
+            let distance = countDownDate - now;
+            
+            // ubah ke menit dan detik
+            let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            minutes = minutes < 10 ? '0' + minutes : minutes
+            seconds = seconds < 10 ? '0' + seconds : seconds
+            
+            document.getElementById("timer").innerHTML = minutes + ":" + seconds;
+            
+            // kalau waktu habis, ubah timer jadi 00:00
+            if (distance < 0) {
+                clearInterval(x);
+                document.getElementById("timer").innerHTML = "00:00";
+            }
+        }, 1000);
     </script>
 </body>
 </html>
