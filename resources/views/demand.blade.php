@@ -135,29 +135,29 @@
         let x = setInterval(function() {
             // dapetin waktu target
             let time = $(`#time`).val()
-            let countDownDate = new Date(time).getTime();
+            let countDownDate = new Date(time).getTime()
         
             // dapetin waktu sekarang
-            let now = new Date().getTime();
+            let now = new Date().getTime()
             
             // cari jaraknya
             let distance = countDownDate - now;
             
             // ubah ke menit dan detik
-            let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-            let seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            let minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60))
+            let seconds = Math.floor((distance % (1000 * 60)) / 1000)
 
             minutes = minutes < 10 ? '0' + minutes : minutes
             seconds = seconds < 10 ? '0' + seconds : seconds
             
-            document.getElementById("timer").innerHTML = minutes + ":" + seconds;
+            document.getElementById("timer").innerHTML = minutes + ":" + seconds
             
             // kalau waktu habis, ubah timer jadi 00:00
             if (distance < 0) {
-                clearInterval(x);
-                document.getElementById("timer").innerHTML = "00:00";
+                // clearInterval(x)
+                document.getElementById("timer").innerHTML = "00:00"
             }
-        }, 1000);
+        }, 1000)
     </script>
 </body>
 </html>

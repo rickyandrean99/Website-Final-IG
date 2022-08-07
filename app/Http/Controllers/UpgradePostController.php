@@ -96,6 +96,14 @@ class UpgradePostController extends Controller
         $id = $request->get('id');
         $team = Team::find($id);
         $price = DB::table('machine_types')->where('id', $machine_types_id)->get();
+
+        if($batch == 1){
+            return response()->json(array(
+                'status'=> "failed",
+                'message' => "Tidak dapat melakukan upgrade mesin pada batch 1",
+
+            ), 200);
+        }
         
         $mesin = DB::table('team_machine')
         ->where('id', $machine_id)

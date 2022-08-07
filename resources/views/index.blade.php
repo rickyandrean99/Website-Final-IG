@@ -984,7 +984,7 @@
         })
 
         window.Echo.channel('update-preparation.' + {{ Auth::user()->team }}).listen('.preparation', (e) => {
-            alert(`Masuk ke sesi preparation`)
+            alert(`Masuk sesi cooldown, TO bisa bacakan profit, pangsa, dan level sigma`)
             $(`#batch`).text("Preparation")
             
             $(`#profit`).text(`${e.profit}` + " TC")

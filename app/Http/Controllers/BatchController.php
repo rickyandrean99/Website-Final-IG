@@ -47,9 +47,17 @@ class BatchController extends Controller
             return redirect()->route('score-recap');
         }
         // Update batch dan preparation
+
         $batch = Batch::find(1);
-        $batch->batch = $batch->batch + 1;
-        $batch->preparation = 0;
+        if($batch->batch == 1 && $batch->is_start == 0){
+            $batch->is_start = 1;
+        }else{
+            $batch->batch = $batch->batch + 1;
+            $batch->preparation = 0;
+        }
+
+        // $batch->batch = $batch->batch + 1;
+        // $batch->preparation = 0;
 
         //update timer
         $time = Carbon::now()->format('Y-m-d H:i:s');
@@ -112,18 +120,6 @@ class BatchController extends Controller
             }
         }
 
-        // Buang produk yang melewati 2 batch
-        $product_inventory = DB::table('product_inventory')->get();
-        foreach($product_inventory as $inventory){
-            if ($batch->batch - $inventory->batch >= 2) {
-                DB::table('product_inventory')
-                ->where('teams_id', $inventory->teams_id)
-                ->where('products_id', $inventory->products_id)
-                ->where('batch', $inventory->batch)
-                ->update(["amount" => 0]);
-            }
-        }
-
         //pusher ke demand
         $demands = DB::table('product_demand')->join('products', 'products.id', '=', 'product_demand.products_id')->where('demands_id', $batch->batch)->where('amount', '!=', 0)->get();
         $price = [];
@@ -152,7 +148,19 @@ class BatchController extends Controller
         
         $batch = Batch::find(1);
         $batch->preparation = 1;
+        $time = Carbon::now()->format('Y-m-d H:i:s');
+        $new_timer = Carbon::parse($time)->addMinutes(2)->addSeconds(3)->format('Y-m-d H:i:s');
+        $batch->time = $new_timer;
         $batch->save();
+
+        //pusher ke demand
+        $demands = DB::table('product_demand')->join('products', 'products.id', '=', 'product_demand.products_id')->where('demands_id', $batch->batch)->where('amount', '!=', 0)->get();
+        $price = [];
+        foreach($demands as $demand){
+            $p = DB::table('product_batchs')->where('id', $batch->batch)->where('products_id',$demand->id)->sum('price');
+            array_push($price, $p);
+        }
+        event(new UpdateDemand($demands, $batch->batch, $price, $new_timer));
         
         // Jika Batch 5 (selesai game), Potong saldonya yang belum bayar
         if ($batch->batch == 5) {
