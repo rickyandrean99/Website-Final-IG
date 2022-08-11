@@ -142,12 +142,13 @@ class IngredientController extends Controller
     }
 
     public function importIngredient() {
-        $ingredient = Ingredient::all();
-        // $limit = $team->packages()->wherePivot('packages_id', $batch)->first()->pivot->remaining;
-        $limit = 0;
+        $ingredients = Ingredient::all();
+        $teams = Team::all();
         $batch = Batch::find(1)->batch;
         $ongkir = Package::find($batch)->fee;
 
-        return view('ingredient-import', compact('ingredient', 'limit', 'ongkir'));
+        return view('ingredient-import', compact('ingredients', 'teams', 'ongkir'));
     }
+
+    // $limit = $team->packages()->wherePivot('packages_id', $batch)->first()->pivot->remaining;
 }
