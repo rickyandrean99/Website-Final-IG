@@ -8,7 +8,7 @@
     <title>Bahan Baku Import</title>
     <link rel="stylesheet" href="{{ asset('sandbox/css/plugins.css') }}">
     <link rel="stylesheet" href="{{ asset('sandbox/css/style.css') }}">
-    <link rel="preload" href="./assets/css/fonts/urbanist.css" as="style" onload="this.rel='stylesheet'">
+    <link rel="preload" href="./assets/css/fonts/thicccboi.css" as="style" onload="this.rel='stylesheet'">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <style>
         main, table {
@@ -90,7 +90,7 @@
                                             id="ingredient-amount-{{ $i->id }}" value="0" min="0"
                                             onchange="updateIngredientPriceAndLimit()">
                                     </td>
-                                    <td class="text-center" style='width:25%'>{{ $i->price }} TC</td>
+                                    <td class="text-center" style='width:25%'>{{ $i->import_price }} TC</td>
                                 </tr>
                                 @endforeach
                             </tbody>
@@ -99,7 +99,7 @@
                 </div>
                 <div class="col-5 px-5 pt-5">
                     <label for="pilih-tim">Tim Peserta</label>
-                    <select class="form-select w-100 m-0" id="pilih-tim" style="cursor: pointer">
+                    <select class="form-select w-100 m-0" id="pilih-tim" style="cursor: pointer" onchange="changeTeam()">
                         <option value="0" selected disabled>-- Pilih Tim --</option>
                         @foreach($teams as $team)
                             <option value="{{ $team->id }}">{{ $team->name }}</option>
@@ -108,7 +108,7 @@
 
                     <div class="row mt-4 row-cols-2">
                         <div class="col mb-4">
-                            <div class="card shadow-none bg-orange">
+                            <div class="card shadow-none bg-sky">
                                 <div class="card-body p-3 text-center">
                                     <div class="fw-bold">Limit</div>
                                     <span id="package-limit">-</span>
@@ -118,7 +118,7 @@
                         </div>
 
                         <div class="col mb-4">
-                            <div class="card shadow-none bg-pink">
+                            <div class="card shadow-none bg-ash">
                                 <div class="card-body p-3 text-center">
                                     <div class="fw-bold">Total</div>
                                     <div id="total-ingredient">-</div>
@@ -145,8 +145,9 @@
                             </div>
                         </div>
 
-                        <div class="col-12">
+                        <div class="col-12 mt-9">
                             <button class="btn btn-success fw-bold p-3 text-white w-100" style="font-size: 20px; font-weight: bold" onclick="buyIngredients()">Buy Ingredient</button>
+                            <button class="btn btn-danger fw-bold p-3 text-white w-100 mt-4" style="font-size: 20px; font-weight: bold" onclick="clearMarket()">Clear Market</button>
                         </div>
                     </div>
                 </div>
@@ -156,6 +157,7 @@
 
     <script src="{{ asset('sandbox/js/plugins.js') }}"></script>
     <script src="{{ asset('sandbox/js/theme.js') }}"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script type="text/javascript">
         // Update total bahan baku dan limit
         const updateIngredientPriceAndLimit = () => {
@@ -191,6 +193,62 @@
             $(`#package-limit`).text(remaining)
             $(`#ongkir-ingredient`).text(`${ongkir} TC`)
             $(`#subtotal-ingredient`).text(`${totalPrice+ongkir} TC`)
+        }
+
+        // Change Team
+        const changeTeam = _ => {
+            let teamId = $(`#pilih-tim`).val()
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("change-team") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                    'teamId': teamId,
+                },
+                success: function(data) {
+                    if (data.status == "success") {
+                        $(`#package-limit-hidden`).val(data.limit)
+                        $(`#package-limit`).text(data.limit)
+
+                        Swal.fire({
+                            icon: 'success',
+                            text: data.message,
+                        })
+
+                        updateIngredientPriceAndLimit()
+                    }
+                },
+                error: function(error) {
+                    showError(error)
+                }
+            })
+        }
+
+        // Clear Ingredient Market
+        const clearMarket = _ => {
+            $(`.ingredient-amount`).val(0)
+            $(`#total-ingredient`).text("-")
+            $(`#ongkir-ingredient`).text("-")
+            $(`#subtotal-ingredient`).text("-")
+            $(`#package-limit-hidden`).val(0)
+            $(`#package-limit`).text("-")
+            $('#pilih-tim').prop('selectedIndex', 0);
+
+            Swal.fire({
+                icon: 'success',
+                text: 'Berhasil Clear Market!',
+            })
+        }
+
+        const showError = (error) => {
+            let errorMessage = JSON.parse(error.responseText).message
+            console.log(`Error: ${errorMessage}`)
+
+            Swal.fire({
+                icon: 'error',
+                text: errorMessage,
+            })
         }
     </script>
 </body>

@@ -49,6 +49,7 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/ingredient-lokal', 'IngredientController@localIngredient')->name('ingredient-lokal');
     Route::get('/ingredient-import', 'IngredientController@importIngredient')->name('ingredient-import');
     Route::post('/buy-ingredient', 'IngredientController@buyIngredient')->name('buy-ingredient');
+    Route::post('/change-team', 'IngredientController@changeTeam')->name('change-team');
 
     // Superadmin
     Route::get('/batch', "BatchController@index")->name('batch');

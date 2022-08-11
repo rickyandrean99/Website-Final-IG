@@ -150,5 +150,15 @@ class IngredientController extends Controller
         return view('ingredient-import', compact('ingredients', 'teams', 'ongkir'));
     }
 
-    // $limit = $team->packages()->wherePivot('packages_id', $batch)->first()->pivot->remaining;
+    public function changeTeam(Request $request) {
+        $team = Team::find($request->get('teamId'));
+        $batch = Batch::find(1)->batch;
+        $limit = $team->packages()->wherePivot('packages_id', $batch)->first()->pivot->remaining;
+
+        return response()->json(array(
+            'status' => 'success',
+            'message' => 'Berhasil memperbaharui user',
+            'limit' => $limit
+        ), 200);
+    }
 }
