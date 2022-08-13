@@ -338,6 +338,17 @@
                 text: errorMessage,
             })
         }
+
+        // Update batch
+        window.Echo.channel('update-batch1').listen('.update', (e) => {
+            Swal.fire({
+                icon: 'success',
+                text: `Berhasil update ke batch ${e.batch}`,
+            })
+
+            clearMarket(false)
+            $(`#package-ongkir`).val(e.ongkir)
+        })
     </script>
 </body>
 

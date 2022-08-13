@@ -136,11 +136,42 @@ class IngredientController extends Controller
     }
 
     public function localIngredient() {
-        $ingredient = Ingredient::where('id', '<=', '12')->get();
-        return view('ingredient-lokal', compact('ingredient'));
+        if (Auth::user()->role == "administrator"){
+            return redirect()->route('batch');
+        } else if (Auth::user()->role == "upgrade") {
+            return redirect()->route('upgrade');
+        } else if (Auth::user()->role == "pasar") {
+            return redirect()->route('market');
+        } else if (Auth::user()->role == "acara") {
+            return redirect()->route('score-recap');
+        } else if (Auth::user()->role == "peserta") {
+            return redirect()->route('peserta');
+        } else if (Auth::user()->role == "impor") {
+            return redirect()->route('ingredient-import');
+        }
+        
+        $ingredients = Ingredient::where('id', '<=', '12')->get();
+        $teams = Team::all();
+        $batch = Batch::find(1)->batch;
+        $ongkir = Package::find($batch)->fee;
+        return view('ingredient-lokal', compact('ingredients', 'teams', 'ongkir', 'batch'));
     }
 
     public function importIngredient() {
+        if (Auth::user()->role == "administrator"){
+            return redirect()->route('batch');
+        } else if (Auth::user()->role == "upgrade") {
+            return redirect()->route('upgrade');
+        } else if (Auth::user()->role == "pasar") {
+            return redirect()->route('market');
+        } else if (Auth::user()->role == "acara") {
+            return redirect()->route('score-recap');
+        } else if (Auth::user()->role == "lokal") {
+            return redirect()->route('ingredient-lokal');
+        } else if (Auth::user()->role == "peserta") {
+            return redirect()->route('peserta');
+        }
+
         $ingredients = Ingredient::where('id', '<=', '12')->get();
         $teams = Team::all();
         $batch = Batch::find(1)->batch;
