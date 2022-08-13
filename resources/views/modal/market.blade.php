@@ -7,8 +7,8 @@
             </div>
             <div class="modal-body">
                 <div class="text-center">
-                    <button class="btn btn-primary" data-bs-target="#modalBahanBaku" data-bs-toggle="modal">Bahan
-                        Baku</button>
+                    <!-- <button class="btn btn-primary" data-bs-target="#modalBahanBaku" data-bs-toggle="modal">Bahan
+                        Baku</button> -->
                     <button class="btn btn-primary" data-bs-target="#modalMachine"
                         data-bs-toggle="modal">Machine</button>
                     <button class="btn btn-primary" data-bs-target="#modalMarketTransport"

@@ -37,7 +37,7 @@ class BatchController extends Controller
     }
 
     public function updateBatch() {
-        if (Auth::user()->role == "peserta"){
+        if (Auth::user()->role == "peserta") {
             return redirect()->route('peserta');
         } else if (Auth::user()->role == "upgrade") {
             return redirect()->route('upgrade');
@@ -46,20 +46,15 @@ class BatchController extends Controller
         } else if (Auth::user()->role == "acara") {
             return redirect()->route('score-recap');
         }
-        // Update batch dan preparation
 
+        // Update batch, preparation, dan timer
         $batch = Batch::find(1);
-        if($batch->batch == 1 && $batch->is_start == 0){
+        if ($batch->batch == 1 && $batch->is_start == 0) {
             $batch->is_start = 1;
-        }else{
+        } else {
             $batch->batch = $batch->batch + 1;
             $batch->preparation = 0;
         }
-
-        // $batch->batch = $batch->batch + 1;
-        // $batch->preparation = 0;
-
-        //update timer
         $time = Carbon::now()->format('Y-m-d H:i:s');
         $new_timer = Carbon::parse($time)->addMinutes(20)->addSeconds(3)->format('Y-m-d H:i:s');
         $batch->time = $new_timer;
@@ -74,18 +69,25 @@ class BatchController extends Controller
         ]);
         DB::table('team_machine')->update(['is_upgrade' => 0]);
         
-        // Bayar Sewa Inventory & Tambah bunga hutang
+        // Bayar Sewa Inventory, Tambah bunga hutang, Cek Maintenance, History Fee
         $teams = Team::all();
         $batch1 = Batch::find(1)->batch;
         $ongkir = Package::find($batch1)->fee;
-
         foreach($teams as $team) {
             $rent_price = $team->inventory_ingredient_rent + $team->inventory_product_rent;
             $interest = 0.05 * $team->debt;
             $team->decrement('balance', $rent_price);
             $team->increment('debt', $interest);
 
-            //tambah history fee
+            // Cek Maintenance
+            if ($team->certification_maintenance) {
+                $team->maintenance_time = Carbon::parse($time)->addMinutes(3)->format('Y-m-d H:i:s');
+            } else {
+                $team->maintenance_time = Carbon::parse($time)->addMinutes(5)->format('Y-m-d H:i:s');
+            }
+            $team->save();
+
+            // Tambah history fee
             DB::table('histories')->insert([
                 "teams_id" => $team->id,
                 "kategori" => "FEE",

@@ -105,7 +105,13 @@
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" onclick="loadTransportation()"><i class="bi-truck"></i> Transportation</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalTambahTC"><i class="bi-coin"></i> Tambah TC</button>
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" data-bs-toggle="modal" data-bs-target="#modalInfoHutang" onclick="infoHutang()"><i class="bi-cash-coin"></i> Info Hutang</button>
-            <button type="button" class="btn btn-block btn-outline-primary shadow m-2 disabled" onclick="buySertificate()" id="sert"><i class="bi-postcard"></i> Beli Sertifikat</button>
+            
+            @if (!$team->certification_maintenance && $batch == 3)
+                <button type="button" class="btn btn-block btn-outline-primary shadow m-2" onclick="buySertificate()" id="sert"><i class="bi-postcard"></i> Beli Sertifikat</button>
+            @else
+                <button type="button" class="btn btn-block btn-outline-primary shadow m-2 disabled" onclick="buySertificate()" id="sert"><i class="bi-postcard"></i> Beli Sertifikat</button>
+            @endif
+           
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" onclick="loadHistory()"><i class="bi-list-task"></i> Histori Transaksi</button>
         </div>
     </footer>
@@ -151,43 +157,47 @@
                     '_token': '<?php echo csrf_token() ?>'
                 },
                 success: function(data) {
-                    let counter = parseInt($(`#production-amount`).val())
-                    let products = ""
-                    let ingredients = ""
-                    let machines = ""
+                    if (data.status == "success") {
+                        let counter = parseInt($(`#production-amount`).val())
+                        let products = ""
+                        let ingredients = ""
+                        let machines = ""
 
-                    data.products.forEach(product => {
-                        products += `<option value='${product.id}'>${product.name}</option>`
-                    })
-                    
-                    data.ingredients.forEach(ingredient => {
-                        ingredients += `<div class="text-center my-3">${ingredient.pivot.amount} ${ingredient.unit} ${ingredient.name}</div>`
-                    })
-
-                    data.machines.forEach((machine, index) => {
-                        machines += `<select style="margin: auto" class="w-75 form-select my-3 produksi-${counter+1}-select-machine" id="produksi-${counter+1}-select-machine-${index+1}">`
-                        machines += `<option value="0" selected>-- Pilih ${machine.name} --</option>`
+                        data.products.forEach(product => {
+                            products += `<option value='${product.id}'>${product.name}</option>`
+                        })
                         
-                        data.team_machine.forEach(tm => {
-                            if (machine.id == tm.machines_id) {
-                                machines += `<option value="${tm.id}" teammachineid="${tm.pivot.id}">${tm.name_type} ${tm.pivot.id} (Level ${tm.pivot.level})</option>`
-                            }
+                        data.ingredients.forEach(ingredient => {
+                            ingredients += `<div class="text-center my-3">${ingredient.pivot.amount} ${ingredient.unit} ${ingredient.name}</div>`
                         })
 
-                        machines += `</select>`
-                    })
+                        data.machines.forEach((machine, index) => {
+                            machines += `<select style="margin: auto" class="w-75 form-select my-3 produksi-${counter+1}-select-machine" id="produksi-${counter+1}-select-machine-${index+1}">`
+                            machines += `<option value="0" selected>-- Pilih ${machine.name} --</option>`
+                            
+                            data.team_machine.forEach(tm => {
+                                if (machine.id == tm.machines_id) {
+                                    machines += `<option value="${tm.id}" teammachineid="${tm.pivot.id}">${tm.name_type} ${tm.pivot.id} (Level ${tm.pivot.level})</option>`
+                                }
+                            })
 
-                    $(`#tbody-produksi`).append(`
-                        <tr>
-                            <td class="produksi-number text-center p-0">${counter+1}</td>
-                            <td><select style="margin: auto" class="w-75 form-select produksi-select-produk" id="produksi-${counter+1}-select-produk" row="${counter+1}">${products}</select></td>
-                            <td id="td-produksi-${counter+1}-ingredient">${ingredients}</td>
-                            <td id="td-produksi-${counter+1}-machine">${machines}</td>
-                            <td><input type="number" style="margin: auto" class="form-control w-50 produksi-input-jumlah" id="produksi-${counter+1}-input-jumlah" min="1" value="1"/></td>
-                        </tr>
-                    `)
-                    
-                    $(`#production-amount`).val(counter+1)
+                            machines += `</select>`
+                        })
+
+                        $(`#tbody-produksi`).append(`
+                            <tr>
+                                <td class="produksi-number text-center p-0">${counter+1}</td>
+                                <td><select style="margin: auto" class="w-75 form-select produksi-select-produk" id="produksi-${counter+1}-select-produk" row="${counter+1}">${products}</select></td>
+                                <td id="td-produksi-${counter+1}-ingredient">${ingredients}</td>
+                                <td id="td-produksi-${counter+1}-machine">${machines}</td>
+                                <td><input type="number" style="margin: auto" class="form-control w-50 produksi-input-jumlah" id="produksi-${counter+1}-input-jumlah" min="1" value="1"/></td>
+                            </tr>
+                        `)
+                        
+                        $(`#production-amount`).val(counter+1)
+                    } else {
+                        alert(data.message)
+                    }
                 },
                 error: function(error) {
                     showError(error)
@@ -701,6 +711,9 @@
                     alert(data.message)
                     if(data.status == "success"){
                         $(`#balance`).text(data.balance + " TC")
+
+                        $("#sert").addClass("disabled")
+                        $("#sert").removeClass("enabled")
                     }
                 },
                 error: function(error) {

@@ -8,7 +8,7 @@ use App\MachineType;
 use App\Ingredient;
 use App\DefectiveProduct;
 use Auth;
-
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -17,8 +17,17 @@ class ProductionController extends Controller
     public function addProduction(Request $request) {
         $team_id = Auth::user()->team;
         $team = Team::find($team_id);
-        $products = Product::all();
+        
+        if ($team->maintenance_time != null) {
+            if ((Carbon::now()->format('Y-m-d H:i:s')) < $team->maintenance_time) {
+                return response()->json(array(
+                    'status'=> "failed",
+                    'message' => "Mesin sedang dalam proses maintenance!",
+                ), 200);
+            }
+        }
 
+        $products = Product::all();
         $product = Product::find(1);
         $ingredient_requirement = $product->ingredients;
         $machine_requirement = $product->machines;
