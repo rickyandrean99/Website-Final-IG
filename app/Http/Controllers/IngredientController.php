@@ -14,12 +14,14 @@ use DB;
 class IngredientController extends Controller
 {
     public function buyIngredient(Request $request) {
-        $this->authorize("peserta");
+        $this->authorize("ingredient");
         
         $ingredient_id = $request->get('ingredient_id');
         $ingredient_amount = $request->get('ingredient_amount');
         $ingredient_type = $request->get('ingredient_type');
-        $team = Team::find(Auth::user()->team);
+        $team_id = $request->get('team_id');
+
+        $team = Team::find($team_id);
         $batch = Batch::find(1)->batch;
         $prices = [];
         $amounts = [];
@@ -28,10 +30,10 @@ class IngredientController extends Controller
 
         // Cek harga pembelian
         foreach ($ingredient_id as $index => $id) {
-            if ($ingredient_type[$index] == "true") {
-                array_push($prices, Ingredient::find($id)->import_price * $ingredient_amount[$index]);
+            if ($ingredient_type[$index] == "local") {
+                array_push($prices, Ingredient::find($id)->local_price * $ingredient_amount[$index]);
             } else {
-                array_push($prices, Ingredient::find($id)->price * $ingredient_amount[$index]);
+                array_push($prices, Ingredient::find($id)->import_price * $ingredient_amount[$index]);
             }
         }
 
@@ -54,12 +56,12 @@ class IngredientController extends Controller
 
             // Cek apakah inventory masih cukup untuk menampung bahan baku
             if (($filled_inventory + array_sum($amounts)) <= $team->ingredient_inventory) {
-                // Cek apakah stok impor masih tersedia
+                // Cek apakah stok local masih tersedia
                 $permission = true;
                 foreach ($ingredient_id as $index => $id) {
-                    if ($ingredient_type[$index] == "true") {
-                        $import_stock = Ingredient::find($id)->rounds()->wherePivot("rounds_id", $batch)->first()->pivot->amount;
-                        if ($ingredient_amount[$index] > $import_stock) {
+                    if ($ingredient_type[$index] == "local") {
+                        $local_stock = Ingredient::find($id)->rounds()->wherePivot("rounds_id", $batch)->first()->pivot->amount;
+                        if ($ingredient_amount[$index] > $local_stock) {
                             $permission = false;
                             break;
                         }
@@ -67,9 +69,9 @@ class IngredientController extends Controller
                 }
 
                 if ($permission) {
-                    // Mengurangi stok bahan baku impor
+                    // Mengurangi stok bahan baku lokal
                     foreach ($ingredient_id as $index => $id) {
-                        if ($ingredient_type[$index] == "true") {
+                        if ($ingredient_type[$index] == "local") {
                             Ingredient::find($id)->rounds()->wherePivot("rounds_id", $batch)->decrement("amount", $ingredient_amount[$index]);
                         }
                     }
@@ -107,14 +109,16 @@ class IngredientController extends Controller
                     ]);
 
                     // Realtime Ingredient
-                    $ingredients = DB::table("ingredients")->join("local_ingredient", "local_ingredient.ingredients_id", "=", "ingredients.id")->select("ingredients.id AS id", "local_ingredient.amount AS amount",)->where("local_ingredient.rounds_id", $batch)->get();
-                    event(new UpdateImport($ingredients));
+                    if (in_array("local", $ingredient_type)) {
+                        $ingredients = DB::table("ingredients")->join("local_ingredient", "local_ingredient.ingredients_id", "=", "ingredients.id")->select("ingredients.id AS id", "local_ingredient.amount AS amount",)->where("local_ingredient.rounds_id", $batch)->get();
+                        event(new UpdateImport($ingredients)); // Nama Event seharusnya UpdateLocal
+                    }
 
                     $status = "success";
                     $message = "Berhasil membeli ingredient";
                 } else {
                     $status = "failed";
-                    $message = "Bahan baku impor tidak mencukupi";
+                    $message = "Bahan baku lokal tidak mencukupi";
                 }
             } else {
                 $status = "failed";
@@ -125,28 +129,22 @@ class IngredientController extends Controller
             $message = "Saldo tidak mencukupi";
         }
 
-        $balance = $team->balance;
-
         return response()->json(array(
             'status' => $status,
-            'message' => $message,
-            'balance' => $balance,
-            'limit' => $limit
+            'message' => $message
         ), 200);
     }
 
     public function localIngredient() {
-        $ingredient = Ingredient::all();
-
+        $ingredient = Ingredient::where('id', '<=', '12')->get();
         return view('ingredient-lokal', compact('ingredient'));
     }
 
     public function importIngredient() {
-        $ingredients = Ingredient::all();
+        $ingredients = Ingredient::where('id', '<=', '12')->get();
         $teams = Team::all();
         $batch = Batch::find(1)->batch;
         $ongkir = Package::find($batch)->fee;
-
         return view('ingredient-import', compact('ingredients', 'teams', 'ongkir'));
     }
 
@@ -157,7 +155,7 @@ class IngredientController extends Controller
 
         return response()->json(array(
             'status' => 'success',
-            'message' => 'Berhasil memperbaharui user',
+            'message' => 'Berhasil memperbaharui tim',
             'limit' => $limit
         ), 200);
     }

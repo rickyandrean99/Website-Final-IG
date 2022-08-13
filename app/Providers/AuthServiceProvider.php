@@ -42,6 +42,10 @@ class AuthServiceProvider extends ServiceProvider
             return ($user->role == 'acara' || $user->role == 'administrator') ? Response::allow() : Response::deny('No Access');
         });
 
+        Gate::define('ingredient', function($user) {
+            return ($user->role == 'lokal' || $user->role == 'impor' || $user->role == 'administrator') ? Response::allow() : Response::deny('No Access');
+        });
+
         Gate::define('superadmin', function($user) {
             return ($user->role == 'administrator') ? Response::allow() : Response::deny('No Access');
         });

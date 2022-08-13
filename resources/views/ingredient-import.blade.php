@@ -70,7 +70,7 @@
                                 <tr>
                                     <th class="border-0 rounded-start text-center" style='width:10%'>No</th>
                                     <th class="border-0 text-center" style='width:35%'>Bahan Baku</th>
-                                    <th class="border-0 text-center" style='width:30%'>Jumlah</th>
+                                    <th class="border-0 text-center" style='width:30%'>Jumlah (paket)</th>
                                     <th class="border-0 rounded-end text-center" style='width:25%'>Harga /paket</th>
                                 </tr>
                             </thead>
@@ -83,7 +83,7 @@
                                         value="{{ $i->import_price }}">
 
                                     <td class="text-center" style='width:10%'>{{ $index++ }}</td>
-                                    <td class="text-center" style='width:35%'>{{ $i->name }}</td>
+                                    <td class="text-center" style='width:35%' id="ingredient-name-{{ $i->id }}">{{ $i->name }}</td>
                                     <td class="text-center" style='width:30%'>
                                         <input type="number" style="margin: auto"
                                             class="form-control ingredient-amount w-50 text-center"
@@ -147,7 +147,7 @@
 
                         <div class="col-12 mt-9">
                             <button class="btn btn-success fw-bold p-3 text-white w-100" style="font-size: 20px; font-weight: bold" onclick="buyIngredients()">Buy Ingredient</button>
-                            <button class="btn btn-danger fw-bold p-3 text-white w-100 mt-4" style="font-size: 20px; font-weight: bold" onclick="clearMarket()">Clear Market</button>
+                            <button class="btn btn-danger fw-bold p-3 text-white w-100 mt-4" style="font-size: 20px; font-weight: bold" onclick="clearMarket(true)">Clear Market</button>
                         </div>
                     </div>
                 </div>
@@ -161,6 +161,15 @@
     <script type="text/javascript">
         // Update total bahan baku dan limit
         const updateIngredientPriceAndLimit = () => {
+            if ($(`#pilih-tim`).val() == null) {
+                Swal.fire({
+                    icon: 'error',
+                    text: 'Pilih tim dulu ya!',
+                })
+                $(`.ingredient-amount`).val(0)
+                return
+            }
+
             let ingredientId = $(`.ingredient-id`).map(function() { return $(this).val() }).get()
             let ingredientsAmount = $(`.ingredient-amount`).map(function() { return $(this).val() }).get()
             let ingredientsImportPrice = $(`.import-price`).map(function() { return $(this).val() }).get()
@@ -225,8 +234,84 @@
             })
         }
 
+        // Beli bahan baku
+        const buyIngredients = () => {
+            // Get value
+            let ingredientId = $(`.ingredient-id`).map(function() { return $(this).val() }).get()
+            let ingredientAmount = $(`.ingredient-amount`).map(function() { return $(this).val() }).get()
+            let ingredientType = ingredientId.map(id => { return "import" })
+            let teamId = $(`#pilih-tim`).val()
+
+            // Pengecekan tim
+            if (teamId == null) {
+                Swal.fire({
+                    icon: 'error',
+                    text: 'Pilih tim dulu ya!',
+                })
+                return
+            }
+
+            // Pengecekan apakah ada yang dibeli
+            if (ingredientAmount.reduce((acc, amount) => acc + amount, 0) == 0) {
+                Swal.fire({
+                    icon: 'error',
+                    text: 'Tidak ada bahan baku yang dibeli',
+                })
+                return
+            }
+            
+            // Generate pesan konfirmasi
+            let pesanKonfirmasi = "Yakin membeli"
+            ingredientId.forEach(id => {
+                const amount = parseInt($(`#ingredient-amount-${id}`).val())
+                const name = $(`#ingredient-name-${id}`).text()
+                if (amount > 0) {
+                    pesanKonfirmasi += ` ${amount} ${name},`
+                }
+            })
+
+            Swal.fire({
+                title: 'Konfirmasi pembelian',
+                text: `${pesanKonfirmasi.slice(0, -1)}?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Beli'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: 'POST',
+                        url: '{{ route("buy-ingredient") }}',
+                        data: {
+                            '_token': '<?php echo csrf_token() ?>',
+                            'ingredient_id': ingredientId,
+                            'ingredient_amount': ingredientAmount,
+                            'ingredient_type': ingredientType,
+                            'team_id': teamId
+                        },
+                        success: function(data) {
+                            let icon = 'error'
+                            if (data.status == "success") {
+                                icon = 'success'
+                                clearMarket(false)
+                            }
+
+                            Swal.fire({
+                                icon: icon,
+                                text: data.message,
+                            })
+                        },
+                        error: function(error) {
+                            showError(error)
+                        }
+                    })
+                }
+            })
+        }
+
         // Clear Ingredient Market
-        const clearMarket = _ => {
+        const clearMarket = status => {
             $(`.ingredient-amount`).val(0)
             $(`#total-ingredient`).text("-")
             $(`#ongkir-ingredient`).text("-")
@@ -235,12 +320,15 @@
             $(`#package-limit`).text("-")
             $('#pilih-tim').prop('selectedIndex', 0);
 
-            Swal.fire({
-                icon: 'success',
-                text: 'Berhasil Clear Market!',
-            })
+            if (status) {
+                Swal.fire({
+                    icon: 'success',
+                    text: 'Berhasil Clear Market!',
+                })
+            }
         }
 
+        // Error message
         const showError = (error) => {
             let errorMessage = JSON.parse(error.responseText).message
             console.log(`Error: ${errorMessage}`)
