@@ -80,10 +80,12 @@ class BatchController extends Controller
             $team->increment('debt', $interest);
 
             // Cek Maintenance
-            if ($team->certification_maintenance) {
-                $team->maintenance_time = Carbon::parse($time)->addMinutes(3)->format('Y-m-d H:i:s');
-            } else {
-                $team->maintenance_time = Carbon::parse($time)->addMinutes(5)->format('Y-m-d H:i:s');
+            if ($batch1 == 4) {
+                if ($team->certification_maintenance) {
+                    $team->maintenance_time = Carbon::parse($time)->addMinutes(3)->format('Y-m-d H:i:s');
+                } else {
+                    $team->maintenance_time = Carbon::parse($time)->addMinutes(5)->format('Y-m-d H:i:s');
+                }
             }
             $team->save();
 
