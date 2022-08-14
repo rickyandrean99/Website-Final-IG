@@ -256,6 +256,7 @@ class ProductionController extends Controller
                     }
 
                     // Tambahkan special occassion
+                    // REVISI: gunakan $product_total_amount untuk mendapatkan hasil produksi
                     foreach($apple_need as $product_id => $apple_amount) {
                         $result = floor($apple_amount/2);
                         $id_ingredient = 13;
