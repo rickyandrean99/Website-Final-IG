@@ -14,6 +14,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use App\Jobs\SendCoin;
+use Carbon\Carbon;
 
 class MarketPostController extends Controller
 {
@@ -40,6 +42,7 @@ class MarketPostController extends Controller
         $capacity = $request->get('capacity');
         $batch = Batch::find(1)->batch;
         $subtotal = 0;
+        $longest_duration = 0;
 
         if(array_sum($product_amount) > $capacity){
             return response()->json(array(
@@ -63,8 +66,10 @@ class MarketPostController extends Controller
 
                 if($metode == 1){
                     $ongkir += $transportation_amount[$index] * $trans->self_price;
+                    if ($trans->self_duration > $longest_duration) $longest_duration = $trans->self_duration;
                 }else{
                     $ongkir += $transportation_amount[$index] * $trans->delivery_price;
+                    if ($trans->delivery_duration > $longest_duration) $longest_duration = $trans->delivery_duration;
                 }
 
                 if($transportation_amount[$index] > count($transportation_team)){
@@ -116,16 +121,23 @@ class MarketPostController extends Controller
 
         //jual produk
         //masukkan ke transaksi baru
+        $time_now = Carbon::now()->format('Y-m-d H:i:s');
         DB::table('transactions')->insert([
             'teams_id' => $id,
             'batch' => $batch,
             'subtotal' => $subtotal,
-            'total' => $total
+            'total' => $total,
+            'received' => 0,
+            'delivered_time' => Carbon::parse($time_now)->addSeconds($longest_duration)->format('Y-m-d H:i:s'),
         ]);
         
         $transaction_id = DB::table('transactions')->select('id')->orderBy('id', 'desc')->get();
         $transaction_id = $transaction_id[0]->id;
         
+        // Jalankan job untuk mengirimkan TC secara otomatis berdasarkan durasi transportasi terlama
+        // dispatch(new SendCoin($id, $transaction_id, $total));
+        dispatch(new SendCoin($id, $transaction_id, $total))->delay(now()->addSeconds($longest_duration));
+
         //masukkan ke transaksi produk (row sesuai dengan jumlah jenis produk)
         foreach ($product_id as $index => $product) {
             

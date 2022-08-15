@@ -256,7 +256,7 @@
                     $(`#modalSell`).modal('hide')
                 },
                 error: function(error) {
-                    alert("Gagal menjual produk")
+                    showError(error)
                 }
             })
         }
@@ -338,6 +338,12 @@
             }
 
             $('#kapasitas-transportation').text(totalCapacity)
+        }
+
+        const showError = (error) => {
+            let errorMessage = JSON.parse(error.responseText).message
+            alert(`Error: ${errorMessage}`)
+            console.log(`Error: ${errorMessage}`)
         }
     </script>
 </body>
