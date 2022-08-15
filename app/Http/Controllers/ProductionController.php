@@ -255,17 +255,17 @@ class ProductionController extends Controller
                         $team->ingredients()->wherePivot('ingredients_id', $id)->decrement('ingredient_inventory.amount', $amount);
                     }
 
-                    // Tambahkan special occassion
-                    // REVISI: gunakan $product_total_amount untuk mendapatkan hasil produksi
-                    foreach($apple_need as $product_id => $apple_amount) {
-                        $result = floor($apple_amount/2);
+                    // Tambahkan special occassion atau waste
+                    foreach($productions_id as $index => $product_id) {
+                        $waste = $productions_amount[$index] * 2;
+
                         $id_ingredient = 13;
                         if ($product_id == 3) $id_ingredient = 14;
 
                         if (count($team->ingredients()->wherePivot('ingredients_id', $id_ingredient)->get()) > 0) {
-                            $team->ingredients()->wherePivot('ingredients_id', $id_ingredient)->increment('ingredient_inventory.amount', $result);
+                            $team->ingredients()->wherePivot('ingredients_id', $id_ingredient)->increment('ingredient_inventory.amount', $waste);
                         } else {
-                            $team->ingredients()->attach($id_ingredient, ['amount' => $result]);
+                            $team->ingredients()->attach($id_ingredient, ['amount' => $waste]);
                         }
                     }
 
