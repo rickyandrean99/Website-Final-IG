@@ -9,6 +9,7 @@ use App\Batch;
 use App\Package;
 use App\Ingredient;
 use App\Events\UpdateImport;
+use App\Events\UpdateBalance;
 use DB;
 
 class IngredientController extends Controller
@@ -113,6 +114,9 @@ class IngredientController extends Controller
                         $ingredients = DB::table("ingredients")->join("local_ingredient", "local_ingredient.ingredients_id", "=", "ingredients.id")->select("ingredients.id AS id", "local_ingredient.amount AS amount",)->where("local_ingredient.rounds_id", $batch)->get();
                         event(new UpdateImport($ingredients)); // Nama Event seharusnya UpdateLocal
                     }
+
+                    // Pusher update balance tim
+                    event(new UpdateBalance($team_id, $team->balance));
 
                     $status = "success";
                     $message = "Berhasil membeli ingredient";
