@@ -10,7 +10,7 @@ use Illuminate\Queue\SerializesModels;
 use App\Team;
 use App\Batch;
 use App\Transaction;
-use App\Events\UpdateBalance;
+use App\Events\SendTransactionCoin;
 use DB;
 
 class SendCoin implements ShouldQueue
@@ -50,6 +50,6 @@ class SendCoin implements ShouldQueue
         ]);
 
         // Push balance terbaru ke dashboard TO
-        event(new UpdateBalance($this->team_id, $team->balance));
+        event(new SendTransactionCoin($this->team_id, $team->balance, $this->coin));
     }
 }

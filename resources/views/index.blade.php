@@ -1022,6 +1022,11 @@
             $(`#balance`).text(`${e.balance}` + " TC")
         })
 
+        window.Echo.channel('send-transaction.' + {{ Auth::user()->team }}).listen('.transaction', (e) => {
+            $(`#balance`).text(`${e.balance}` + " TC")
+            alert(`Coin hasil penjualan sudah masuk sebesar ${e.coin} TC`)
+        })
+
         window.Echo.channel('update-import').listen('.import', (e) => {
             e.imports.forEach(ingredient => {
                 $(`#ingredient-import-${ingredient.id}`).text(`${ingredient.amount} Paket`)
