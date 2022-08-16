@@ -135,7 +135,6 @@ class MarketPostController extends Controller
         $transaction_id = $transaction_id[0]->id;
         
         // Jalankan job untuk mengirimkan TC secara otomatis berdasarkan durasi transportasi terlama
-        // dispatch(new SendCoin($id, $transaction_id, $total));
         dispatch(new SendCoin($id, $transaction_id, $total))->delay(now()->addSeconds($longest_duration));
 
         //masukkan ke transaksi produk (row sesuai dengan jumlah jenis produk)
