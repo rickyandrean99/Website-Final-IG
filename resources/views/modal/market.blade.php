@@ -13,8 +13,9 @@
                         data-bs-toggle="modal">Machine</button>
                     <button class="btn btn-primary" data-bs-target="#modalMarketTransport"
                         data-bs-toggle="modal">Transport</button>
-                    <button type="button" class="btn btn-primary m-2" onclick="buyFridge({{ $team->id }})">Fridge</button>
-                    
+                    <button type="button" class="btn btn-info" onclick="buyFridge({{ $team->id }})">
+                        <i class="bi-snow text-white fw-bold"></i>
+                        &nbsp; Beli Kulkas</button>      
                 </div>
             </div>
         </div>

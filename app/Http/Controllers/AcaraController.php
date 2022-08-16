@@ -6,6 +6,7 @@ use App\Batch;
 use App\Demand;
 use App\Team;
 use App\Product;
+use App\DefectiveProduct;
 use App\Events\UpdateDemand;
 use Illuminate\Http\Response;
 use DB;
@@ -75,6 +76,8 @@ class AcaraController extends Controller
         
         $batch = Batch::find(1)->batch;
         $demands = (Demand::find($batch))->products()->wherePivot('amount', '!=', 0)->get();
+        $umkm = (DefectiveProduct::find($batch))->sell_price;
+        $denda = (DefectiveProduct::find($batch))->penalty_price;
         $price = [];
         foreach($demands as $demand){
             $p = DB::table('product_batchs')->where('id', $batch)->where('products_id',$demand->id)->sum('price');
@@ -82,7 +85,7 @@ class AcaraController extends Controller
         }
 
         $time = Batch::find(1)->time;
-        return view('demand', compact('batch', 'demands', 'price', 'leaderboard', 'time'));
+        return view('demand', compact('batch', 'demands', 'umkm', 'denda', 'price', 'leaderboard', 'time'));
     }
 
     public function updateDemand(Request $request){

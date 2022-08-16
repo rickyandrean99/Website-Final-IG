@@ -59,35 +59,46 @@
                 <div class="col rounded-end bg-dark me-2"><h2 class="text-center text-white py-2" id="timer">00:00</h2></div>
                 <input type="hidden" id="time" value="{{ $time }}">
             </div>
-         
-            <table class="table table-light table-bordered shadow-sm">
-                <thead>
-                    <tr class="text-center align-middle">
-                        <th style="width : 50%;"><h2 class="fw-bold" >Produk</h2></th>
-                        <th><h2 class="fw-bold">Sisa Demand</h2></th>
-                    </tr>
-                </thead>
-                <tbody id="tbody-demand">
-                    @foreach ($demands as $demand)
-                        <tr class="text-center align-middle">
-                            <td class="border-0 text-center align-middle"><h3>{{ $demand->name }}</h3></td>
-                            <td class="border-0 text-center align-middle"><h3>{{ $demand->pivot->amount }}</h3></td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+
+            {{-- UMKM & Denda --}}
             <table class="table table-warning table-bordered shadow-sm">
                 <thead>
                     <tr class="text-center align-middle">
-                        <th style="width : 50%;"><h2 class="fw-bold">Produk</h2></th>
-                        <th><h2 class="fw-bold" >Harga</h2></th>
+                        <th><h3 class="fw-bold" >Jenis</h3></th>
+                        <th><h3 class="fw-bold">Harga</h3></th>
                     </tr>
                 </thead>
-                <tbody id="tbody-price">
+                <tbody>
+                        <tr class="text-center align-middle">
+                            <td class="border-0 text-center align-middle"><h4>UMKM</h4></td>
+                            <td class="border-0 text-center align-middle"><h4>{{ $umkm }} TC</h4></td>
+                        </tr>
+                        <tr class="text-center align-middle">
+                            <td class="border-0 text-center align-middle"><h4>Denda</h4></td>
+                            <td class="border-0 text-center align-middle"><h4>{{ $denda }} TC</h4></td>
+                        </tr>
+                </tbody>
+            </table>
+
+            <div class="row mb-2">
+                <div class="col rounded bg-dark mx-2"><h3 class="text-center text-white py-2">DEMAND</h3></div>
+            </div>
+
+            {{-- Demand --}}
+            <table class="table table-light table-bordered shadow-sm">
+                <thead>
+                    <tr class="text-center align-middle">
+                        <th><h3 class="fw-bold" >Produk</h3></th>
+                        <th><h3 class="fw-bold">Harga</h3></th>
+                        <th><h3 class="fw-bold">Sisa Demand</h3></th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-demand">
                     @foreach ($demands as $index=>$demand)
                         <tr class="text-center align-middle">
-                            <td class="border-0 text-center align-middle"><h3>{{ $demand->name }}</h3></td>
-                            <td class="border-0 text-center align-middle"><h3>{{ $price[$index] }} TC</h3></td>
+                            <td class="border-0 text-center align-middle"><h4>{{ $demand->name }}</h4></td>
+                            <td class="border-0 text-center align-middle"><h4>{{ $price[$index] }} TC</h4></td>
+                            <td class="border-0 text-center align-middle"><h4>{{ $demand->pivot->amount }}</h4></td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -106,15 +117,9 @@
             e.demands.forEach((demand,index) => {
                 $(`#tbody-demand`).append(`
                     <tr>
-                        <td class="border-0 text-center align-middle"><h3>${ demand.name }</h3></td>
-                        <td class="border-0 text-center align-middle"><h3>${ demand.amount }</h3></td>
-                    </tr>
-                `)
-
-                $(`#tbody-price`).append(`
-                    <tr>
-                        <td class="border-0 text-center align-middle"><h3>${ demand.name }</h3></td>
-                        <td class="border-0 text-center align-middle"><h3>${ e.price[index] } TC</h3></td>
+                        <td class="border-0 text-center align-middle"><h4>${ demand.name }</h4></td>
+                        <td class="border-0 text-center align-middle"><h4>${ demand.amount }</h4></td>
+                        <td class="border-0 text-center align-middle"><h4>${ e.price[index] } TC</h4></td>
                     </tr>
                 `)
             })
