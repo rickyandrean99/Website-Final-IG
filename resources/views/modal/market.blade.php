@@ -13,6 +13,8 @@
                         data-bs-toggle="modal">Machine</button>
                     <button class="btn btn-primary" data-bs-target="#modalMarketTransport"
                         data-bs-toggle="modal">Transport</button>
+                    <button type="button" class="btn btn-primary m-2" onclick="buyFridge({{ $team->id }})">Fridge</button>
+                    
                 </div>
             </div>
         </div>

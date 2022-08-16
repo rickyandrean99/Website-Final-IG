@@ -29,7 +29,7 @@
                 <p class="card-text text-center">Tombol dibawah untuk ganti-ganti batch</p>
                 <div class="d-flex justify-content-center">
                     <button type="button" class="btn btn-block btn-outline-success m-2" onclick="updateBatch()">Update</button>
-                    <button type="button" class="btn btn-block btn-outline-warning m-2" onclick="updatePreperation()">Preparation</button>
+                    <button type="button" class="btn btn-block btn-outline-warning m-2" onclick="updatePreperation()">Cooldown</button>
                     <button type="button" class="btn btn-block btn-outline-danger m-2" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="text-danger">Logout</button>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
                 </div>

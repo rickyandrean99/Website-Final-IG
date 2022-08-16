@@ -52,7 +52,7 @@ class UpgradePostController extends Controller
                 $message = "Saldo TC tidak mencukupi";
             }
         } else {
-            $message = "Anda sudah membeli kulkas";
+            $message = "Perusahaan sudah memiliki kulkas";
         }
 
         return response()->json(array(

@@ -28,7 +28,6 @@
                 <th scope="col">Defect</th>
                 <th scope="col">Limit</th>
                 <th scope="col"><i class="bi-arrow-up-right-square-fill text-success fw-bold"></th>
-                <th scope="col"><i class="bi-snow text-primary fw-bold"></i></th>
             </tr>
         </thead>
         <tbody>
@@ -56,9 +55,6 @@
                         <button type="button" class="btn btn-block btn-success m-2" 
                         data-bs-target="#modalJualMachine" data-bs-toggle="modal"
                         onclick="showMachineUpgrade({{ $team->id }})">Upgrade</button>
-                    </td>
-                    <td>
-                        <button type="button" class="btn btn-block btn-primary m-2" onclick="buyFridge({{ $team->id }})">Buy Fridge</button>
                     </td>
                 </tr>
             @endforeach
@@ -97,25 +93,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
     <script type="text/javascript">
-        // beli kulkas
-        const buyFridge = (id) => {
-            if (!confirm("Are you sure?")) return
-
-            $.ajax({
-                type: 'POST',
-                url: '{{ route("buy-fridge") }}',
-                data: {
-                    '_token': '<?php echo csrf_token() ?>',
-                    'id': id
-                },
-                success: function(data) {
-                    alert(data.message)
-                },
-                error: function(error) {
-                    showError(error)
-                }
-            })
-        }
 
         // update level
         const updateLevel = (id) => {

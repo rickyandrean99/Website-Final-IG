@@ -722,6 +722,26 @@
             })
         }
 
+        // beli kulkas
+        const buyFridge = (id) => {
+            if (!confirm("Are you sure?")) return
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("buy-fridge") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                    'id': id
+                },
+                success: function(data) {
+                    alert(data.message)
+                },
+                error: function(error) {
+                    showError(error)
+                }
+            })
+        }
+
         const showError = (error) => {
             let errorMessage = JSON.parse(error.responseText).message
             alert(`Error: ${errorMessage}`)
@@ -998,7 +1018,7 @@
 
         window.Echo.channel('update-preparation.' + {{ Auth::user()->team }}).listen('.preparation', (e) => {
             alert(`Masuk sesi cooldown, TO bisa bacakan profit, pangsa, dan level sigma`)
-            $(`#batch`).text("Preparation")
+            $(`#batch`).text("Cooldown")
             
             $(`#profit`).text(`${e.profit}` + " TC")
             if(`${e.profit}` < 0){
