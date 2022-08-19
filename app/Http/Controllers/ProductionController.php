@@ -292,7 +292,12 @@ class ProductionController extends Controller
                         $remaining = ($productions_amount[$i]*10-$amount);
                         $message .= "- ".$amount." ".Product::find($id)->name." (".$remaining." gagal)\n";
                         $history .= $amount." ".Product::find($id)->name.", ";
-                        $defective_product += $remaining;
+
+                        // Jika waste product, maka tidak ada UMKM dan Denda
+                        if (!in_array($id, [4,5])) {
+                            $defective_product += $remaining;
+                        }
+                        
                         $i++;
                     }
                     
