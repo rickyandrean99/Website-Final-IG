@@ -218,6 +218,17 @@ class ProductionController extends Controller
                     
                     // Lakukan proses produksi berdasarkan spesifikasi mesin
                     foreach($machine_process as $index => $machine) {
+                        // Jika jumlah pcs yang ingin diproduksi melebihi kapasitas mesin urutan pertama, batalkan produksi
+                        if ($index == 0) {
+                            if ($product_amount > $machine["capacity"]) {
+                                return response()->json(array(
+                                    'status' => "failed",
+                                    'message' => "Jumlah produk yang ingin diproduksi melebihi kapasitas mesin dengan urutan pertama!",
+                                    'balance' => $team->balance
+                                ), 200);
+                            }
+                        }
+
                         if ($product_amount > $machine["capacity"]) {
                             $product_amount = $machine["capacity"];
                         }
@@ -228,7 +239,7 @@ class ProductionController extends Controller
                         }
                     }
 
-                    // Simpan di array 
+                    // Simpan di array
                     $product_total_amount[$id] = floor($product_amount);
                 }
 
