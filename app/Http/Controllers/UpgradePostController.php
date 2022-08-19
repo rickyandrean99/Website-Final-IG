@@ -125,6 +125,14 @@ class UpgradePostController extends Controller
         }else{
             $price = 0;
         }
+
+        // Jika Harga 0, maka mesin tersebut merupakan mesin untuk waste product karena mesin tersebut defactnya sudah 0 (Kecuali Cooking Mixer)
+        if ($price == 0) {
+            return response()->json(array(
+                'status'=> "failed",
+                'message' => "Mesin ini merupakan mesin untuk waste product yang tidak perlu diupgrade karena defactnya 0!",
+            ), 200);
+        }
         
         if (count($mesin) > 0) {
             if ($mesin[0]->is_upgrade == 0){
