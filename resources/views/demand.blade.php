@@ -118,8 +118,8 @@
                 $(`#tbody-demand`).append(`
                     <tr>
                         <td class="border-0 text-center align-middle"><h4>${ demand.name }</h4></td>
-                        <td class="border-0 text-center align-middle"><h4>${ demand.amount }</h4></td>
                         <td class="border-0 text-center align-middle"><h4>${ e.price[index] } TC</h4></td>
+                        <td class="border-0 text-center align-middle"><h4>${ demand.amount }</h4></td>
                     </tr>
                 `)
             })
