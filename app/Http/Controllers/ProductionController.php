@@ -257,15 +257,17 @@ class ProductionController extends Controller
 
                     // Tambahkan special occassion atau waste
                     foreach($productions_id as $index => $product_id) {
-                        $waste = $productions_amount[$index] * 2;
+                        if (in_array($product_id, [1,2,3])) {
+                            $waste = $productions_amount[$index] * 2;
 
-                        $id_ingredient = 13;
-                        if ($product_id == 3) $id_ingredient = 14;
+                            $id_ingredient = 13;
+                            if ($product_id == 3) $id_ingredient = 14;
 
-                        if (count($team->ingredients()->wherePivot('ingredients_id', $id_ingredient)->get()) > 0) {
-                            $team->ingredients()->wherePivot('ingredients_id', $id_ingredient)->increment('ingredient_inventory.amount', $waste);
-                        } else {
-                            $team->ingredients()->attach($id_ingredient, ['amount' => $waste]);
+                            if (count($team->ingredients()->wherePivot('ingredients_id', $id_ingredient)->get()) > 0) {
+                                $team->ingredients()->wherePivot('ingredients_id', $id_ingredient)->increment('ingredient_inventory.amount', $waste);
+                            } else {
+                                $team->ingredients()->attach($id_ingredient, ['amount' => $waste]);
+                            }
                         }
                     }
 
