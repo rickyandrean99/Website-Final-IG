@@ -27,7 +27,17 @@ class AcaraController extends Controller
         }
 
         $teams = Team::all();
-        return view('score-recap', compact('teams'));
+        $array_sigma = $array_pangsa = $array_profit = [];
+        $most_sigma = $most_pangsa = $most_profit = 0.0;
+        foreach($teams as $team){
+            array_push($array_sigma, round($team ->rounds()->sum("six_sigma"),2));
+            array_push($array_pangsa, round($team ->rounds()->sum("market_share"),2));
+            array_push($array_profit, round($team ->rounds()->sum("profit"),2));
+        }
+        $most_sigma = max($array_sigma);
+        $most_pangsa = max($array_pangsa);
+        $most_profit= max($array_profit);
+        return view('score-recap', compact('teams', 'most_sigma', 'most_pangsa', 'most_profit'));
     }
 
     public function demand(){
