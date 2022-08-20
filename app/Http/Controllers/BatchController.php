@@ -190,9 +190,16 @@ class BatchController extends Controller
         
 
         $teams = Team::all();
+
+        //kalkulasi total penjualan semua tim
+        $sales_total = 0;
+        foreach ($teams as $team){
+            $sales_total += $team->transactions()->where("batch", $batch)->whereNotIn('products_id', [4,5])->sum("subtotal");
+        }
+
         foreach ($teams as $team) {
             $profit = self::calculateProfit($team, $batch->batch);
-            $market_share = self::calculatePangsaPasar($team, $batch->batch);
+            $market_share = self::calculatePangsaPasar($team, $batch->batch, $sales_total);
 
             $team->rounds()->wherePivot('rounds_id', $batch->batch)->update([
                 'profit' => $profit,
@@ -243,12 +250,10 @@ class BatchController extends Controller
         return ($hasil_penjualan + $hasil_penjualan2 - $total_pengeluaran - $total_pengeluaran2);
     }
 
-    public function calculatePangsaPasar($team, $batch) {
-        //kalkulasi total penjualan semua tim
-        $sales_total = Transaction::where("batch", $batch)->sum("subtotal");
+    public function calculatePangsaPasar($team, $batch, $sales_total) {
             
         //Kalkulasi total penjualan tim
-        $sales_team = $team->transactions()->where("batch", $batch)->sum("subtotal");
+        $sales_team = $team->transactions()->where("batch", $batch)->whereNotIn('products_id', [4,5])->sum("subtotal");
             
         //Market share = penjualan tim / penjualan keseluruhan tim
         if ($sales_total != 0) {
