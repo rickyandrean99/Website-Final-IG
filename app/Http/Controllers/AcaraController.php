@@ -37,6 +37,15 @@ class AcaraController extends Controller
         $most_sigma = max($array_sigma);
         $most_pangsa = max($array_pangsa);
         $most_profit= max($array_profit);
+        if($most_sigma == 0){
+            $most_sigma = 1;
+        }
+        if($most_pangsa == 0){
+            $most_pangsa = 1;
+        }
+        if($most_profit == 0){
+            $most_profit = 1;
+        }
         return view('score-recap', compact('teams', 'most_sigma', 'most_pangsa', 'most_profit'));
     }
 

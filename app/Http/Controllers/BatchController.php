@@ -19,6 +19,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Auth;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class BatchController extends Controller
 {
@@ -194,8 +195,14 @@ class BatchController extends Controller
         //kalkulasi total penjualan semua tim
         $sales_total = 0;
         foreach ($teams as $team){
-            $sales_total += $team->transactions()->where("batch", $batch)->whereNotIn('products_id', [4,5])->sum("subtotal");
+            $get = DB::table('transactions')->where('teams_id', $team->id)->where('batch', $batch)->get();
+            foreach($get as $trans){
+                $amount = DB::table('product_transaction')
+                    ->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->sum('amount');
+                $sales_total += $amount;
+            }
         }
+
 
         foreach ($teams as $team) {
             $profit = self::calculateProfit($team, $batch->batch);
@@ -253,8 +260,13 @@ class BatchController extends Controller
     public function calculatePangsaPasar($team, $batch, $sales_total) {
             
         //Kalkulasi total penjualan tim
-        $sales_team = $team->transactions()->where("batch", $batch)->whereNotIn('products_id', [4,5])->sum("subtotal");
-            
+        $get = DB::table('transactions')->where('teams_id', $team->id)->where('batch', $batch)->get();
+        $sales_team = 0;
+        foreach($get as $trans){
+            $amount = DB::table('product_transaction')
+                ->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->sum('amount');
+            $sales_team += $amount;
+        }            
         //Market share = penjualan tim / penjualan keseluruhan tim
         if ($sales_total != 0) {
             return ($sales_team/$sales_total);
