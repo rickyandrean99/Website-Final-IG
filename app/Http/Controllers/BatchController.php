@@ -19,7 +19,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Auth;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
 
 class BatchController extends Controller
 {
@@ -116,10 +115,7 @@ class BatchController extends Controller
                 $ingredients = Ingredient::all();
                 foreach($ingredients as $ingredient) {
                     if($ingredient->is_fruit) {
-                        DB::table('ingredient_inventory')
-                        ->where('teams_id', $team->id)
-                        ->where('ingredients_id', $ingredient->id)
-                        ->update(['amount'=>0]);
+                        DB::table('ingredient_inventory')->where('teams_id', $team->id)->where('ingredients_id', $ingredient->id)->update(['amount'=>0]);
                     }
                 }
             }
@@ -197,8 +193,7 @@ class BatchController extends Controller
         foreach ($teams as $team){
             $get = DB::table('transactions')->where('teams_id', $team->id)->where('batch', $batch)->get();
             foreach($get as $trans){
-                $amount = DB::table('product_transaction')
-                    ->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->sum('amount');
+                $amount = DB::table('product_transaction')->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->sum('amount');
                 $sales_total += $amount;
             }
         }
@@ -263,8 +258,7 @@ class BatchController extends Controller
         $get = DB::table('transactions')->where('teams_id', $team->id)->where('batch', $batch)->get();
         $sales_team = 0;
         foreach($get as $trans){
-            $amount = DB::table('product_transaction')
-                ->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->sum('amount');
+            $amount = DB::table('product_transaction')->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->sum('amount');
             $sales_team += $amount;
         }            
         //Market share = penjualan tim / penjualan keseluruhan tim

@@ -57,9 +57,7 @@ class MarketPostController extends Controller
         //mengecek apakah transportasi dimiliki tim atau tidak
         foreach ($transportation_id as $index => $transportation){
             if($transportation_amount[$index] > 0){
-                $transportation_team = DB::table('team_transportation')
-                ->where('teams_id', $id)
-                ->where('transportations_id', $transportation)->where('exist', 1)->get();
+                $transportation_team = DB::table('team_transportation')->where('teams_id', $id)->where('transportations_id', $transportation)->where('exist', 1)->get();
 
                 //hitung ongkir
                 $trans = Transportation::where('id', $index + 1)->first();
@@ -88,13 +86,10 @@ class MarketPostController extends Controller
 
                 $current_demand = DB::table('product_demand')->where('products_id', $product)->where('demands_id', $batch)->get();
 
-                $current_price = DB::table('product_batchs')
-                    ->where('products_id', $product)->where('id', $batch)->get();
+                $current_price = DB::table('product_batchs')->where('products_id', $product)->where('id', $batch)->get();
 
                 //isinya jumlah produk dengan ID terkecil yang amountnya tidak 0
-                $product_team = $team->products()
-                ->wherePivot('products_id', $product)->where('amount', '>', 0)
-                ->first()->pivot->amount;
+                $product_team = $team->products()->wherePivot('products_id', $product)->where('amount', '>', 0)->first()->pivot->amount;
 
                 //cek apakah produk cukup atau tidak
                 if($product_amount[$index] <= $product_team){
@@ -143,24 +138,16 @@ class MarketPostController extends Controller
             
             if($product_amount[$index] > 0){
                 //keluarkan sigma level
-                $sigma_level = ($team->products()
-                ->wherePivot('products_id', $product)->where('amount', '>', 0)
-                ->first()->pivot->sigma_level) / 100;
+                $sigma_level = ($team->products()->wherePivot('products_id', $product)->where('amount', '>', 0)->first()->pivot->sigma_level) / 100;
 
                 //kurangi demand
-                DB::table('product_demand')
-                ->where('products_id', $product)
-                ->where('demands_id', $batch)->decrement('amount', $product_amount[$index]);
+                DB::table('product_demand')->where('products_id', $product)->where('demands_id', $batch)->decrement('amount', $product_amount[$index]);
                 
                 // kurangi produk inventory
                 $amount = $product_amount[$index];
-                $prod_id = $team->products()
-                    ->wherePivot('products_id', $product)->where('amount', '>', 0)
-                    ->first()->pivot->id;
+                $prod_id = $team->products()->wherePivot('products_id', $product)->where('amount', '>', 0)->first()->pivot->id;
                 
-                $team->products()
-                    ->wherePivot('products_id', $product)
-                    ->wherePivot('id', $prod_id)->decrement('amount', $amount);
+                $team->products()->wherePivot('products_id', $product)->wherePivot('id', $prod_id)->decrement('amount', $amount);
 
                 
                 //masukkan ke transaksi produk
@@ -177,15 +164,13 @@ class MarketPostController extends Controller
 
         $total_product = 0;
         foreach($get as $trans){
-            $amount = DB::table('product_transaction')
-                ->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->sum('amount');
+            $amount = DB::table('product_transaction')->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->sum('amount');
             $total_product += $amount;
         }
 
         $sigma_team = 0;
         foreach($get as $trans){
-            $get2 = DB::table('product_transaction')
-                ->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->get();
+            $get2 = DB::table('product_transaction')->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->get();
             foreach($get2 as $detail){
                 $amount = $detail->amount;
                 $sigma = $detail->sigma_level;
@@ -256,16 +241,13 @@ class MarketPostController extends Controller
             if(count($transactions) > 0){
                 //tambah jumlah team
                 foreach($transactions as $transaction){
-                    $amount = DB::table('product_transaction')
-                        ->where('transactions_id', $transaction->id)->sum('amount');
+                    $amount = DB::table('product_transaction')->where('transactions_id', $transaction->id)->sum('amount');
                     $jumlah_team += $amount;
                 }
 
                 //tambah keripik team
                 foreach($transactions as $transaction){
-                    $amount = DB::table('product_transaction')
-                        ->where('products_id', 1)
-                        ->where('transactions_id', $transaction->id)->get();
+                    $amount = DB::table('product_transaction')->where('products_id', 1)->where('transactions_id', $transaction->id)->get();
                     if(count($amount) >0){
                         $keripik_team += $amount[0]->amount;
                     }
@@ -273,9 +255,7 @@ class MarketPostController extends Controller
                 
                 //tambah dodol team
                 foreach($transactions as $transaction){
-                    $amount = DB::table('product_transaction')
-                        ->where('products_id', 2)
-                        ->where('transactions_id', $transaction->id)->get();
+                    $amount = DB::table('product_transaction')->where('products_id', 2)->where('transactions_id', $transaction->id)->get();
                     if(count($amount) >0){
                         $dodol_team += $amount[0]->amount;
                     }
@@ -283,9 +263,7 @@ class MarketPostController extends Controller
 
                 //tambah sari team
                 foreach($transactions as $transaction){
-                    $amount = DB::table('product_transaction')
-                        ->where('products_id', 3)
-                        ->where('transactions_id', $transaction->id)->get();
+                    $amount = DB::table('product_transaction')->where('products_id', 3)->where('transactions_id', $transaction->id)->get();
                     if(count($amount) >0){
                         $sari_team += $amount[0]->amount;
                     }
@@ -293,9 +271,7 @@ class MarketPostController extends Controller
 
                 //tambah selai team
                 foreach($transactions as $transaction){
-                    $amount = DB::table('product_transaction')
-                        ->where('products_id', 4)
-                        ->where('transactions_id', $transaction->id)->get();
+                    $amount = DB::table('product_transaction')->where('products_id', 4)->where('transactions_id', $transaction->id)->get();
                     if(count($amount) >0){
                         $selai_team += $amount[0]->amount;
                     }
@@ -303,9 +279,7 @@ class MarketPostController extends Controller
 
                 //tambah cuka team
                 foreach($transactions as $transaction){
-                    $amount = DB::table('product_transaction')
-                        ->where('products_id', 5)
-                        ->where('transactions_id', $transaction->id)->get();
+                    $amount = DB::table('product_transaction')->where('products_id', 5)->where('transactions_id', $transaction->id)->get();
                     if(count($amount) >0){
                         $cuka_team += $amount[0]->amount;
                     }
@@ -342,15 +316,13 @@ class MarketPostController extends Controller
 
             $total_product = 0;
             foreach($get as $trans){
-                $amount = DB::table('product_transaction')
-                    ->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->sum('amount');
+                $amount = DB::table('product_transaction')->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->sum('amount');
                 $total_product += $amount;
             }
 
             $sigma_team = 0;
             foreach($get as $trans){
-                $get2 = DB::table('product_transaction')
-                    ->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->get();
+                $get2 = DB::table('product_transaction')->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->get();
                 foreach($get2 as $detail){
                     $amount = $detail->amount;
                     $sigma = $detail->sigma_level;

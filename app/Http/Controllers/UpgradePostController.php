@@ -65,12 +65,7 @@ class UpgradePostController extends Controller
         $machine_types_id = $request->get('machine_types_id');
         $id = $request->get('id');
 
-        $mesin = DB::table('team_machine')
-            ->where('id', $machine_id)
-            ->where('machine_types_id', $machine_types_id)
-            ->where('teams_id', $id)
-            ->where('exist', '1')
-            ->get();
+        $mesin = DB::table('team_machine')->where('id', $machine_id)->where('machine_types_id', $machine_types_id)->where('teams_id', $id)->where('exist', '1')->get();
 
         if (count($mesin) > 0) {
             $status = "success";
@@ -105,12 +100,7 @@ class UpgradePostController extends Controller
             ), 200);
         }
         
-        $mesin = DB::table('team_machine')
-        ->where('id', $machine_id)
-        ->where('machine_types_id', $machine_types_id)
-        ->where('teams_id', $id)
-        ->where('exist', 1)
-        ->get();
+        $mesin = DB::table('team_machine')->where('id', $machine_id)->where('machine_types_id', $machine_types_id)->where('teams_id', $id)->where('exist', 1)->get();
 
         $level = $mesin[0]->level;
         $limit = $team->upgrade_machine_limit;
@@ -142,36 +132,17 @@ class UpgradePostController extends Controller
                             $team->decrement('balance', $price);
                             $team->decrement('upgrade_machine_limit', 1);
             
-                            DB::table('team_machine')
-                            ->where('id', $machine_id)
-                            ->where('machine_types_id', $machine_types_id)
-                            ->where('teams_id', $id)
-                            ->increment('level', 1);
+                            DB::table('team_machine')->where('id', $machine_id)->where('machine_types_id', $machine_types_id)->where('teams_id', $id)->increment('level', 1);
         
-                            DB::table('team_machine')
-                            ->where('id', $machine_id)
-                            ->where('machine_types_id', $machine_types_id)
-                            ->where('teams_id', $id)
-                            ->increment('is_upgrade', 1);
+                            DB::table('team_machine')->where('id', $machine_id)->where('machine_types_id', $machine_types_id)->where('teams_id', $id)->increment('is_upgrade', 1);
             
                             $type = DB::table('machine_types')->where('id', $machine_types_id)->get();
             
-                            $new_defact = DB::table('machine_level')
-                                ->where('machines_id', $type[0]->machines_id)
-                                ->where('levels_id', $mesin[0]->level + 1)->get();
+                            $new_defact = DB::table('machine_level')->where('machines_id', $type[0]->machines_id)->where('levels_id', $mesin[0]->level + 1)->get();
             
-                            DB::table('team_machine')
-                            ->where('id', $machine_id)
-                            ->where('machine_types_id', $machine_types_id)
-                            ->where('teams_id', $id)
-                            ->update(['defact' => $new_defact[0]->defact]);
+                            DB::table('team_machine')->where('id', $machine_id)->where('machine_types_id', $machine_types_id)->where('teams_id', $id)->update(['defact' => $new_defact[0]->defact]);
                             
-                            $mesin = DB::table('team_machine')
-                            ->where('id', $machine_id)
-                            ->where('machine_types_id', $machine_types_id)
-                            ->where('teams_id', $id)
-                            ->where('exist', 1)
-                            ->get();
+                            $mesin = DB::table('team_machine')->where('id', $machine_id)->where('machine_types_id', $machine_types_id)->where('teams_id', $id)->where('exist', 1)->get();
 
                             $status = "success";
                             $message = "Berhasil upgrade machine";
@@ -229,12 +200,7 @@ class UpgradePostController extends Controller
         $id = $request->get('id');
         $price = DB::table('machine_types')->where('id', $machine_types_id)->get();
         
-        $mesin = DB::table('team_machine')
-        ->where('id', $machine_id)
-        ->where('machine_types_id', $machine_types_id)
-        ->where('teams_id', $id)
-        ->where('exist', 1)
-        ->get();
+        $mesin = DB::table('team_machine')->where('id', $machine_id)->where('machine_types_id', $machine_types_id)->where('teams_id', $id)->where('exist', 1)->get();
 
         $machine = DB::table('machine_types')->where('id', $machine_types_id)->get();
         $level = $mesin[0]->level;

@@ -30,9 +30,7 @@ class MachineController extends Controller
 
             foreach ($machine_id as $index => $id) {
                 // ambil id terbaru
-                $new_id = DB::table('team_machine')->select('id')
-                ->where('teams_id', $team->id)
-                ->where('machine_types_id', $id)->orderBy('id', 'desc')->get();
+                $new_id = DB::table('team_machine')->select('id')->where('teams_id', $team->id)->where('machine_types_id', $id)->orderBy('id', 'desc')->get();
 
                 if (count($new_id) > 0) {
                     $new_id = $new_id[0]->id + 1;
@@ -94,11 +92,7 @@ class MachineController extends Controller
         
         // var_dump($id);
 
-        $machine = DB::table("team_machine")
-                    ->where('id', $id)
-                    ->where('machine_types_id', $type_id)
-                    ->where('teams_id', $team->id)->get();
-
+        $machine = DB::table("team_machine")->where('id', $id)->where('machine_types_id', $type_id)->where('teams_id', $team->id)->get();
 
         $nama = DB::table('machine_types')->where('id', $machine[0]->machine_types_id)->get();
         
@@ -121,10 +115,7 @@ class MachineController extends Controller
         $team = Team::find(Auth::user()->team);
         $type_id = $request->get("type_id");
         
-        $machine = DB::table("team_machine")
-        ->where('teams_id', $team->id)
-        ->where('id', $id)
-        ->where('machine_types_id', $type_id)->get();
+        $machine = DB::table("team_machine")->where('teams_id', $team->id)->where('id', $id)->where('machine_types_id', $type_id)->get();
         $nama = DB::table('machine_types')->where('id', $machine[0]->machine_types_id)->get();
         
         $lifetime = $batch - $machine[0]->batch + 1;
@@ -133,11 +124,7 @@ class MachineController extends Controller
         $team->increment('balance', $price);
         $team->save();
 
-        DB::table("team_machine")
-        ->where('teams_id', $team->id)
-        ->where('id', $id)
-        ->where('machine_types_id', $type_id)
-        ->update(['exist'=>0]);
+        DB::table("team_machine")->where('teams_id', $team->id)->where('id', $id)->where('machine_types_id', $type_id)->update(['exist'=>0]);
 
         //tambah  history jual machine
         DB::table('histories')->insert([

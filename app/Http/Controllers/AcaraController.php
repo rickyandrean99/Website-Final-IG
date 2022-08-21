@@ -30,9 +30,9 @@ class AcaraController extends Controller
         $array_sigma = $array_pangsa = $array_profit = [];
         $most_sigma = $most_pangsa = $most_profit = 0.0;
         foreach($teams as $team){
-            array_push($array_sigma, round($team ->rounds()->sum("six_sigma"),2));
-            array_push($array_pangsa, round($team ->rounds()->sum("market_share"),2));
-            array_push($array_profit, round($team ->rounds()->sum("profit"),2));
+            array_push($array_sigma, round($team->rounds()->sum("six_sigma"),2));
+            array_push($array_pangsa, round($team->rounds()->sum("market_share"),2));
+            array_push($array_profit, round($team->rounds()->sum("profit"),2));
         }
         $most_sigma = max($array_sigma);
         $most_pangsa = max($array_pangsa);
@@ -69,15 +69,13 @@ class AcaraController extends Controller
 
             $total_product = 0;
             foreach($get as $trans){
-                $amount = DB::table('product_transaction')
-                    ->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->sum('amount');
+                $amount = DB::table('product_transaction')->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->sum('amount');
                 $total_product += $amount;
             }
 
             $sigma_team = 0;
             foreach($get as $trans){
-                $get2 = DB::table('product_transaction')
-                    ->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->get();
+                $get2 = DB::table('product_transaction')->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->get();
                 foreach($get2 as $detail){
                     $amount = $detail->amount;
                     $sigma = $detail->sigma_level;

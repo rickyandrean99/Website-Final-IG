@@ -40,10 +40,10 @@
                 <tbody>
                     @foreach($teams as $team)
                     <tr class="text-center align-middle">
-                        <td style="width: 40%;">Perusahaan {{ $team -> id }}</td>
+                        <td style="width: 40%;">Perusahaan {{ $team-> id }}</td>
                         <td> 
                             {{ 
-                                round($team ->rounds()->where('batch',$i)->sum("six_sigma"),2) 
+                                round($team->rounds()->where('batch',$i)->sum("six_sigma"),2) 
                             }} 
                         </td>
                         <td> 
@@ -79,16 +79,16 @@
                 <tbody>
                     @foreach($teams as $team)
                     <tr class="text-center align-middle">
-                        <td style="width: 40%;">Perusahaan {{ $team ->id }}</td>
-                        <td>{{ $team ->balance }}</td>
-                        <td>{{ round($team ->rounds()->sum("six_sigma"),2) / $most_sigma }}</td>
-                        <td>{{ round($team ->rounds()->sum("market_share"),2) / $most_pangsa }}</td>
-                        <td>{{ round($team ->rounds()->sum("profit"),2) / $most_profit }}</td>
+                        <td style="width: 40%;">Perusahaan {{ $team->id }}</td>
+                        <td>{{ $team->balance }}</td>
+                        <td>{{ round($team->rounds()->sum("six_sigma"),2) / $most_sigma }}</td>
+                        <td>{{ round($team->rounds()->sum("market_share"),2) / $most_pangsa }}</td>
+                        <td>{{ round($team->rounds()->sum("profit"),2) / $most_profit }}</td>
                         <td>
                             {{ 
-                                (round($team ->rounds()->sum("six_sigma"),2) / $most_sigma * 60) +
-                                (round($team ->rounds()->sum("market_share"),2) / $most_pangsa * 20) +
-                                (round($team ->rounds()->sum("profit"),2) / $most_profit * 20)
+                                (round($team->rounds()->sum("six_sigma"),2) / $most_sigma * 60) +
+                                (round($team->rounds()->sum("market_share"),2) / $most_pangsa * 20) +
+                                (round($team->rounds()->sum("profit"),2) / $most_profit * 20)
                             }}
                         </td>
                     </tr>
