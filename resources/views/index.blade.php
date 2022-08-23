@@ -839,7 +839,7 @@
                     data.products.forEach(product => {
                         console.log(product)
                         let textAdditional = ""
-                        if ([1,2,3].includes(product.pivot.products_id)) {
+                        if ([1,2,3].includes(parseInt(product.pivot.products_id))) {
                             textAdditional += `${product.pivot.id} (Sigma: ${product.pivot.sigma_level/100})`
                         }
 
