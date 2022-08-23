@@ -184,18 +184,16 @@ class BatchController extends Controller
                 }
             }
         }
-        
 
         $teams = Team::all();
 
-        //kalkulasi total penjualan semua tim
+        // kalkulasi total penjualan semua tim
         $sales_total = 0;
         $get = DB::table('transactions')->where('batch', $batch)->get();
         foreach($get as $trans){
             $amount = DB::table('product_transaction')->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->sum('amount');
             $sales_total += $amount;
         }
-
 
         foreach ($teams as $team) {
             $profit = self::calculateProfit($team, $batch->batch);
@@ -216,34 +214,18 @@ class BatchController extends Controller
     }
     
     public function calculateProfit($team, $batch) {
-        // PROFIT VERSI 1.0
-        // // Hitung hasil penjualan
-        // $hasil_penjualan = (int)($team->transactions()->where("batch", $batch)->sum("subtotal"));
-        
-        // // Hitung harga pokok produksi
-        // $ingredients_price = $team->histories()->where("batch", $batch)->where("kategori", "INGREDIENT")->sum("amount");
-        // $current_transportations = $team->transportations()->where("batch", $batch)->where("exist", 1)->sum("price");
-        // $current_machines = $team->machineTypes()->where("batch", $batch)->where("exist", 1)->sum("price");
-        // $previously_transportation = DB::table("team_transportation")->join("transportations", "transportations.id", "=", "team_transportation.transportations_id")->where('teams_id', $team->id)->where("batch", "<", $batch)->where("exist", 1)->select(DB::raw('sum((price - residual_price)/5) AS total'))->first();
-        // $previously_machines = DB::table("team_machine")->join("machine_types", "machine_types.id", "=", "team_machine.machine_types_id")->where('teams_id', $team->id)->where("batch", "<", $batch)->where("exist", 1)->select(DB::raw('sum((price - residual_price)/5) AS total'))->first();
-        
-        // $harga_pokok_produksi = (int)($ingredients_price + $current_transportations + $current_machines + $previously_transportation->total + $previously_machines->total);
-
-        // return ($hasil_penjualan - $harga_pokok_produksi);
-
-        // ----------------------------------------------
-
-        // PROFIT VERSI 2.0
         // 1. Beli (transport + mesin + bahan baku)
         $ingredients_price = $team->histories()->where("batch", $batch)->where("kategori", "INGREDIENT")->sum("amount");
         $transportations_price = $team->transportations()->where("batch", $batch)->where("exist", 1)->sum("price");
         $machines_price = $team->machineTypes()->where("batch", $batch)->where("exist", 1)->sum("price");
         $total_pengeluaran = (int)($ingredients_price + $transportations_price + $machines_price);
+        
         // 2. Upgrade (mesin + kulkas + inventory + sertifikasi)
         $total_pengeluaran2 = (int)($team->histories()->where("batch", $batch)->where("kategori", "UPGRADE")->sum("amount"));
 
         // 3. Hasil jual produk - Denda ruang kosong - Biaya kirim
         $hasil_penjualan = (int)($team->transactions()->where("batch", $batch)->sum("total"));
+        
         // 4. Hasil jual UMKM - Denda pemerintah
         $hasil_penjualan2 = (int)($team->histories()->where("batch",$batch)->where("kategori","PRODUCTION")->sum("amount"));
 
@@ -251,15 +233,15 @@ class BatchController extends Controller
     }
 
     public function calculatePangsaPasar($team, $batch, $sales_total) {
-            
-        //Kalkulasi total penjualan tim
+        // Kalkulasi total penjualan tim
         $get = DB::table('transactions')->where('teams_id', $team->id)->where('batch', $batch)->get();
         $sales_team = 0;
         foreach($get as $trans){
             $amount = DB::table('product_transaction')->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->sum('amount');
             $sales_team += $amount;
         }            
-        //Market share = penjualan tim / penjualan keseluruhan tim
+        
+        // Market share = penjualan tim / penjualan keseluruhan tim
         if ($sales_total != 0) {
             return ($sales_team/$sales_total);
         }
