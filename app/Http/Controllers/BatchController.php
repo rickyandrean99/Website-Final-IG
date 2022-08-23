@@ -189,7 +189,7 @@ class BatchController extends Controller
 
         // kalkulasi total penjualan semua tim
         $sales_total = 0;
-        $get = DB::table('transactions')->where('batch', $batch)->get();
+        $get = DB::table('transactions')->where('batch', $batch->batch)->get();
         foreach($get as $trans){
             $amount = DB::table('product_transaction')->where('transactions_id', $trans->id)->whereNotIn('products_id', [4,5])->sum('amount');
             $sales_total += $amount;
