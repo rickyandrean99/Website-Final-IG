@@ -35,7 +35,7 @@ class ToPostController extends Controller
         $preparation = Batch::find(1)->preparation;
         $team = Team::find(Auth::user()->team);
         $ingredient = Ingredient::where('id', '<=', '12')->get();
-        $machines = MachineType::all();
+        $machines = MachineType::orderBy('name_type')->get();
         $transportations = Transportation::all();
         $products = Product::all();
         $limit = $team->packages()->wherePivot('packages_id', $batch)->first()->pivot->remaining;

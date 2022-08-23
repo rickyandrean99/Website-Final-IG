@@ -22,9 +22,10 @@
                                     </tr>
                                 </thead>
                                 <tbody>
+                                    @php $index = 1 @endphp
                                     @foreach($machines as $machine)
                                     <tr>
-                                        <td class="border-0 text-center align-middle">{{ $machine->id }}
+                                        <td class="border-0 text-center align-middle">{{ $index++ }}
                                             <input type="hidden" class="machine-id" value="{{ $machine->id }}">
                                         </td>
                                         <td class="border-0 text-center align-middle">
