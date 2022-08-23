@@ -74,9 +74,7 @@ class BatchController extends Controller
         $batch1 = Batch::find(1)->batch;
         $ongkir = Package::find($batch1)->fee;
         foreach($teams as $team) {
-            $rent_price = $team->inventory_ingredient_rent + $team->inventory_product_rent;
             $interest = 0.05 * $team->debt;
-            $team->decrement('balance', $rent_price);
             $team->increment('debt', $interest);
 
             // Cek Maintenance
@@ -89,17 +87,7 @@ class BatchController extends Controller
             }
             $team->save();
 
-            // Tambah history fee
-            DB::table('histories')->insert([
-                "teams_id" => $team->id,
-                "kategori" => "FEE",
-                "batch" => $batch1,
-                "type" => "OUT",
-                "amount" => $rent_price,
-                "keterangan" => "Biaya simpan inventory bahan baku & produk sejumlah ".$rent_price." TC"
-            ]);
-
-            //pusher update batch
+            // pusher update batch
             $limit = ($team->packages()->wherePivot('packages_id', $batch->batch)->select('remaining')->first())->remaining;
             event(new UpdateBatch($team->id, $batch->batch, $team->balance, $limit, $ongkir));
         }
@@ -196,15 +184,27 @@ class BatchController extends Controller
         }
 
         foreach ($teams as $team) {
+            // Inventory Fee
+            $rent_price = $team->inventory_ingredient_rent + $team->inventory_product_rent;
+            $team->decrement('balance', $rent_price);
+            DB::table('histories')->insert([
+                "teams_id" => $team->id,
+                "kategori" => "FEE",
+                "batch" => $batch->batch,
+                "type" => "OUT",
+                "amount" => $rent_price,
+                "keterangan" => "Biaya simpan inventory bahan baku & produk sejumlah ".$rent_price." TC"
+            ]);
+
+            // Komponen Penilaian
             $profit = self::calculateProfit($team, $batch->batch);
             $market_share = self::calculatePangsaPasar($team, $batch->batch, $sales_total);
-
             $team->rounds()->wherePivot('rounds_id', $batch->batch)->update([
                 'profit' => $profit,
                 'market_share' => $market_share
             ]);
 
-            event(new UpdatePreparation($team->id, $profit, $market_share));
+            event(new UpdatePreparation($team->id, $profit, $market_share, $rent_price));
         }
 
         return response()->json(array(
