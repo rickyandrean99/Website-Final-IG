@@ -55,6 +55,7 @@ Route::middleware(['auth'])->group(function() {
     Route::get('/batch', "BatchController@index")->name('batch');
     Route::post('/update-batch', "BatchController@updateBatch")->name('update-batch');
     Route::post('/update-preparation', "BatchController@updatePreparation")->name('update-preparation');
+    Route::post('/send-tc', "BatchController@sendTC")->name('send-tc');
     Route::post('/update-demand', "AcaraController@updateDemand")->name('update-demand');
 
     // Rekap Skor

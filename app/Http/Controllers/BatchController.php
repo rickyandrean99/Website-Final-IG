@@ -33,7 +33,9 @@ class BatchController extends Controller
             return redirect()->route('score-recap');
         }
 
-        return view('update-batch');
+        $transaction = Transaction::where('received', 0)->get();
+
+        return view('update-batch', compact('transaction'));
     }
 
     public function updateBatch() {
@@ -210,6 +212,19 @@ class BatchController extends Controller
         return response()->json(array(
             'status' => 'success',
             'message' => "Berhasil update preparation"
+        ), 200);
+    }
+
+    public function sendTC(Request $request){
+        $amount = Transaction::find($request->trans_id)->total;
+        $team_id = Transaction::find($request->trans_id)->teams_id;
+        
+        Team::find($team_id)->increment('balance', $amount);
+        Transaction::find($request->trans_id)->increment('received');
+
+        return response()->json(array(
+            'status' => 'success',
+            'message' => "Berhasil mengirim TC"
         ), 200);
     }
     

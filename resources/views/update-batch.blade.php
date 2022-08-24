@@ -21,7 +21,7 @@
     </style>
 </head>
 <body>
-    <div class="d-flex justify-content-center p-5">
+    <div class="d-flex justify-content-center p-3">
         <div class="card " style="width: 400px;">
             <img src="https://c.tenor.com/MgVKRHA7lUcAAAAd/tentara-itu-harus-hitam-meme-tentara.gif" class="card-img-top" alt="updet">
             <div class="card-body">
@@ -45,10 +45,26 @@
                     </select>
                 </div>
                 <div class="col-3">
-                    <input type="number" class="form-control product-amount w-" id="demand" placeholder=0 min=0>
+                    <input type="number" class="form-control product-amount w-70" id="demand" placeholder=0 min=0>
                 </div>
                 <div class="col-2">
                     <button type="submit" class="btn btn-block btn-outline-primary mb-3" onclick="updateDemand()">Update</button>
+                </div>
+            </div>
+            <div class="row ps-3">
+                <div class="col-8">    
+                    <select name="selectID" id="selectID" class="form-select w-90">
+                        <option value="0" disabled selected>Pilih Transaksi</option>    
+                        @foreach ($transaction as $t)
+                        @php
+                            $time = date('H:i:s', strtotime($t->delivered_time))
+                        @endphp
+                        <option value="{{$t->id}}">Tim {{ $t->teams_id }} -> {{ $time }} = {{ $t->total }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-4">
+                    <button type="submit" class="btn btn-block btn-outline-primary mb-3" onclick="sendTC()">Send TC</button>
                 </div>
             </div>
         </div>
@@ -109,6 +125,26 @@
                 success: function(data) {
                     alert(data.message)
                     $(`#demand`).val(0)
+                },
+                error: function(error){
+                    showError(error)
+                }
+            })
+        }
+
+        const sendTC = () => {
+            if (!confirm("Are you sure?")) return
+            let trans_id = $(`#selectID`).val()
+
+            $.ajax({
+                type: 'POST',
+                url: '{{ route("send-tc") }}',
+                data: {
+                    '_token': '<?php echo csrf_token() ?>',
+                    'trans_id': trans_id,
+                },
+                success: function(data) {
+                    alert(data.message)
                 },
                 error: function(error){
                     showError(error)
