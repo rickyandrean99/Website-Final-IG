@@ -6,6 +6,7 @@ use DB;
 use App\Team;
 use App\Batch;
 use App\Demand;
+use App\Events\SendTransactionCoin;
 use App\Transportation;
 use App\Transaction;
 use App\MachineType;
@@ -219,8 +220,25 @@ class BatchController extends Controller
         $amount = Transaction::find($request->trans_id)->total;
         $team_id = Transaction::find($request->trans_id)->teams_id;
         
+        // Update balance team + ubah 'received'
         Team::find($team_id)->increment('balance', $amount);
         Transaction::find($request->trans_id)->increment('received');
+
+        $balance = Team::find($team_id)->balance;
+        $batch = Batch::find(1)->batch;
+
+        // Menambahkan Histori
+        DB::table('histories')->insert([
+            "teams_id" => $team_id,
+            "kategori" => "PENJUALAN",
+            "batch" => $batch,
+            "type" => "IN",
+            "amount" => $amount,
+            "keterangan" => "Berhasil mendapatkan coin sejumlah ".$amount." TC dari hasil penjualan"
+        ]);
+
+        // Push balance terbaru ke dashboard TO
+        event(new SendTransactionCoin($team_id, $balance, $amount));
 
         return response()->json(array(
             'status' => 'success',
