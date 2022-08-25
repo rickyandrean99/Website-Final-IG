@@ -24,13 +24,15 @@ class UpdateDemand implements ShouldBroadcast
     public $price;
     public $batch;
     public $new_timer;
+    public $preparation;
 
-    public function __construct($demands, $batch, $price, $new_timer)
+    public function __construct($demands, $batch, $price, $new_timer, $preparation)
     {
         $this->demands = $demands;
         $this->batch = $batch;
         $this->price = $price;
         $this->new_timer = $new_timer;
+        $this->preparation = $preparation;
     }
 
     /**

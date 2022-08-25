@@ -119,7 +119,7 @@ class BatchController extends Controller
             $p = DB::table('product_batchs')->where('id', $batch1)->where('products_id',$demand->id)->sum('price');
             array_push($price, $p);
         }
-        event(new UpdateDemand($demands, $batch->batch, $price, $new_timer));
+        event(new UpdateDemand($demands, $batch->batch, $price, $new_timer, $batch->preparation));
 
         return response()->json(array(
             'status' => 'success',
@@ -152,7 +152,7 @@ class BatchController extends Controller
             $p = DB::table('product_batchs')->where('id', $batch->batch)->where('products_id',$demand->id)->sum('price');
             array_push($price, $p);
         }
-        event(new UpdateDemand($demands, $batch->batch, $price, $new_timer));
+        event(new UpdateDemand($demands, $batch->batch, $price, $new_timer, $batch->preparation));
         
         // Jika Batch 5 (selesai game), Potong saldonya yang belum bayar
         if ($batch->batch == 5) {

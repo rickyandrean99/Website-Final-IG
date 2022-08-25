@@ -55,8 +55,15 @@
         </div>
         <div class="col">
             <div class="row mb-2">
-                <div class="col rounded-start bg-dark ms-2"><h2 class="text-center text-white py-2" id="batch">BATCH {{ $batch }}</h2></div>
-                <div class="col rounded-end bg-dark me-2"><h2 class="text-center text-white py-2" id="timer">00:00</h2></div>
+                <div class="col rounded-start bg-dark ms-2"><h1 class="text-center text-white py-2" id="batch">
+                    @if($preparation)
+                        Cooldown
+                    @else
+                        BATCH-{{ $batch }}
+                    @endif
+                    </h1>
+                </div>
+                <div class="col rounded-end bg-dark me-2"><h1 class="text-center text-white fw-bold py-2" id="timer">00:00</h1></div>
                 <input type="hidden" id="time" value="{{ $time }}">
             </div>
 
@@ -81,7 +88,7 @@
             </table>
 
             <div class="row mb-2">
-                <div class="col rounded bg-dark mx-2"><h3 class="text-center text-white py-2">DEMAND</h3></div>
+                <div class="col rounded bg-dark mx-2"><h2 class="text-center text-white py-2">DEMAND</h2></div>
             </div>
 
             {{-- Demand --}}
@@ -109,7 +116,12 @@
     <script src="../js/app.js"></script>
     <script type="text/javascript">
         window.Echo.channel('update-demand').listen('.update', (e) => {
-            $(`#batch`).text("BATCH " + e.batch)
+            if(e.preparation){
+                $(`#batch`).text("BATCH " + e.batch)
+            }else{
+                $(`#batch`).text("Cooldown")            
+            }
+
             $(`#time`).val(e.new_timer)
 
             $(`#tbody-demand`).empty()

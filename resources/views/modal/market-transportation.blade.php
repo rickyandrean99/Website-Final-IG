@@ -70,6 +70,12 @@
                     </div>
                 </div>
             </div>
+            <div class="modal-footer">
+                <div class="col text-end">
+                    <button class="btn btn-primary" data-bs-target="#modalMarketMenu"
+																				data-bs-toggle="modal">Kembali</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>

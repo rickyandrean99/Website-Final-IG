@@ -102,7 +102,8 @@ class AcaraController extends Controller
         }
 
         $time = Batch::find(1)->time;
-        return view('demand', compact('batch', 'demands', 'umkm', 'denda', 'price', 'leaderboard', 'time'));
+        $preparation = Batch::find(1)->preparation;
+        return view('demand', compact('batch', 'demands', 'umkm', 'denda', 'price', 'leaderboard', 'time', 'preparation'));
     }
 
     public function updateDemand(Request $request){
@@ -121,8 +122,9 @@ class AcaraController extends Controller
             array_push($price, $p);
         }
         $new_timer = Batch::find(1)->time;
+        $preparation = Batch::find(1)->preparation;
 
-        event(new UpdateDemand($demands, $batch, $price, $new_timer));
+        event(new UpdateDemand($demands, $batch, $price, $new_timer, $preparation));
 
         return response()->json(array(
             'status' => 'success',

@@ -6,16 +6,25 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <div class="text-center">
+                <div class="row px-4">
                     <!-- <button class="btn btn-primary" data-bs-target="#modalBahanBaku" data-bs-toggle="modal">Bahan
                         Baku</button> -->
-                    <button class="btn btn-primary" data-bs-target="#modalMachine"
-                        data-bs-toggle="modal">Machine</button>
-                    <button class="btn btn-primary" data-bs-target="#modalMarketTransport"
-                        data-bs-toggle="modal">Transport</button>
-                    <button type="button" class="btn btn-info" onclick="buyFridge({{ $team->id }})">
-                        <i class="bi-snow text-white fw-bold"></i>
+                    <button class="col-12 btn btn-outline-primary my-2" data-bs-target="#modalMachine"
+                        data-bs-toggle="modal">
+												<i class="bi-tools fw-bold"></i>
+												Machine</button>
+                    <button class="col-12 btn btn-outline-primary my-2" data-bs-target="#modalMarketTransport"
+                        data-bs-toggle="modal">
+												<i class="bi-truck fw-bold"></i>
+												Transport</button>
+                    <button type="button" class="col-12 btn btn-outline-info my-2" onclick="buyFridge({{ $team->id }})">
+                        <i class="bi-snow fw-bold"></i>
                         &nbsp; Beli Kulkas</button>      
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col text-end">
+										<button class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
                 </div>
             </div>
         </div>

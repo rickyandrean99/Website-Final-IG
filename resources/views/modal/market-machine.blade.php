@@ -3,7 +3,7 @@
         <div class="modal-content rounded">
             <div class="modal-header d-flex align-items-center justify-content-center position-relative">
                 <div>
-                    <h5 class="modal-title text-center fw-bolder">Mesin</h5>
+                    <h5 class="modal-title text-center fw-bolder">Machine</h5>
                 </div>
 
                 <button type="button" class="btn-close position-absolute" data-bs-dismiss="modal" aria-label="Close"
@@ -65,6 +65,12 @@
                                                 data-bs-target="#modalBeliMachine" style="font-size: 20px; font-weight: bold">Buy</button> -->
                         </div>
                     </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="col text-end">
+                    <button class="btn btn-primary" data-bs-target="#modalMarketMenu"
+                    data-bs-toggle="modal">Kembali</button>
                 </div>
             </div>
         </div>

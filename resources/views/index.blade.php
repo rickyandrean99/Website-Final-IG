@@ -31,7 +31,7 @@
 
                 <div class="text-white rounded shadow p-3 border border-white" id="batch">
                     @if($preparation)
-                        Preparation
+                        Cooldown
                     @else
                         BATCH-{{ $batch }}
                     @endif
@@ -113,7 +113,7 @@
             @endif
            
             <button type="button" class="btn btn-block btn-outline-primary shadow m-2" onclick="loadHistory()"><i class="bi-list-task"></i> Histori Transaksi</button>
-        </div>
+        </div>  
     </footer>
 
     @include("modal.debt")
