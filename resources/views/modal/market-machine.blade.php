@@ -59,7 +59,7 @@
                         <!-- Buy Button -->
                         <div class="row mt-5 pt-3 position-fixed" style="width:160px;">
                             <button class="btn btn-success fw-bold p-3 text-white"
-                                style="font-size: 20px; font-weight: bold"
+                                style="font-size: 20px; font-weight: bold" data-bs-toggle="modal"
                                 onclick="buyMachine({{ $batch }})">Buy</button>
                             <!-- <button class="col-12 btn btn-success fw-bold p-3 text-white" data-bs-toggle="modal"
                                                 data-bs-target="#modalBeliMachine" style="font-size: 20px; font-weight: bold">Buy</button> -->

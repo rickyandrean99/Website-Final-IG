@@ -14,7 +14,7 @@
                         <div class="d-flex flex-row">
                             <input type="number" class="form-control w-50" id="jumlah-bayar">
                             <button type="button" class="btn btn-success w-25 ms-2" id="btnBayarHutang"
-                                onclick="bayarHutang()">Bayar</button>
+                            data-bs-toggle="modal" onclick="bayarHutang()">Bayar</button>
                         </div>
                     </div>
                 </div>

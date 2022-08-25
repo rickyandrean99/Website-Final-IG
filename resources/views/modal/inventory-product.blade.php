@@ -23,7 +23,7 @@
                             <td>{{ $inventory->upgrade_price }}</td>
                             <td>{{ $inventory->rent_price }}</td>
                             <td>
-                                <button type="button" class="btn btn-success"
+                                <button type="button" class="btn btn-success" data-bs-toggle="modal"
                                     onclick="upgradeInventory(2, {{$inventory->id}})">Beli</button>
                             </td>
                         </tr>

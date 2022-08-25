@@ -17,7 +17,7 @@
                         data-bs-toggle="modal">
 												<i class="bi-truck fw-bold"></i>
 												Transport</button>
-                    <button type="button" class="col-12 btn btn-outline-info my-2" onclick="buyFridge({{ $team->id }})">
+                    <button type="button" class="col-12 btn btn-outline-info my-2" data-bs-toggle="modal" onclick="buyFridge({{ $team->id }})">
                         <i class="bi-snow fw-bold"></i>
                         &nbsp; Beli Kulkas</button>      
                 </div>

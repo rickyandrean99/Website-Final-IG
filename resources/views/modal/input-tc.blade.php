@@ -25,7 +25,7 @@
                     <div class="d-flex flex-row">
                         <input type="number" class="form-control w-50" id="jumlah-tc">
                         <button type="button" class="btn btn-success w-25 ms-2" id="btnTambahTC"
-                            onclick="addCoin()">Tambah</button>
+                        data-bs-toggle="modal" onclick="addCoin()">Tambah</button>
                     </div>
                 </div>
             </div>

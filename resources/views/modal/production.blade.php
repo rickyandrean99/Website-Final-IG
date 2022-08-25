@@ -18,7 +18,7 @@
                     </div>
                     <div class="col text-end">
                         <button class="btn btn-primary" data-bs-dismiss="modal">Tutup</button>
-                        <button class='btn btn-success' id='btnProduksi' onclick="startProduction()">Mulai
+                        <button class='btn btn-success' data-bs-toggle="modal" id='btnProduksi' onclick="startProduction()">Mulai
                             Produksi</button>
                     </div>
                 </div>

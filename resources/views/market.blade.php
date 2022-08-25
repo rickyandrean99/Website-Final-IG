@@ -145,7 +145,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                        <button type="button" class="btn btn-danger w-20" id="btnTambahTC" onclick = "sellProducts()">Jual</button>
+                        <button type="button" data-bs-toggle="modal" class="btn btn-danger w-20" id="btnTambahTC" onclick = "sellProducts()">Jual</button>
                     </div>
                 </div>
             </div>
