@@ -98,6 +98,9 @@ class IngredientController extends Controller
                         $limit = 0;
                     }
 
+                    $keterangan = "Berhasil membeli bahan baku ";
+
+
                     // History beli ingredient
                     $team->packages()->wherePivot('packages_id', $batch)->update(['team_package.remaining' => $limit]);
                     DB::table('histories')->insert([

@@ -39,16 +39,6 @@ class SendCoin implements ShouldQueue
         $transaction->received = true;
         $transaction->save();
 
-        // Menambahkan Histori
-        DB::table('histories')->insert([
-            "teams_id" => $this->team_id,
-            "kategori" => "PENJUALAN",
-            "batch" => Batch::find(1)->batch,
-            "type" => "IN",
-            "amount" => $this->coin,
-            "keterangan" => "Berhasil mendapatkan coin sejumlah ".$this->coin." TC dari hasil penjualan"
-        ]);
-
         // Push balance terbaru ke dashboard TO
         event(new SendTransactionCoin($this->team_id, $team->balance, $this->coin));
     }

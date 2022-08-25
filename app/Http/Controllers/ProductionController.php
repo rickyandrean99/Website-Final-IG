@@ -250,6 +250,8 @@ class ProductionController extends Controller
                     foreach ($product_total_amount as $product_id => $product_amount) {
                         $sigma = (int)($sigma_produk[$product_id]*100);
 
+                        if (in_array($product_id, [4,5])) $sigma = 700;
+
                         if (count($team->products()->wherePivot('products_id', $product_id)->wherePivot('sigma_level', $sigma)->get()) > 0) {
                             $team->products()->wherePivot('products_id', $product_id)->wherePivot('sigma_level', $sigma)->increment('product_inventory.amount', $product_amount);
                         } else {

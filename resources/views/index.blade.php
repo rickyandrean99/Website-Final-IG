@@ -21,6 +21,13 @@
 </head>
 
 <body class="d-flex flex-column h-100">
+    <div class="w-100 h-100 position-fixed align-items-center justify-content-center" id="loading-animation" style="background: rgba(0,0,0,0.5); z-index: 999; display:none; flex-direction: column">
+        <h3 class="fw-bolder text-white">Loading</h3><br>
+        <div class="spinner-border text-white" role="status">
+            <span class="visually-hidden"></span>
+        </div>
+    </div>
+
     <nav class="navbar navbar-top navbar-expand navbar-dashboard navbar-dark ps-0 pe-2 pb-0">
         <div class="container-fluid px-0">
             <div class="d-flex flex-row justify-content-between w-100" id="navbarSupportedContent">
@@ -148,6 +155,14 @@
                 $("#profit").prepend("+");             
             }   
         })
+
+        const enableLoading = _ => {
+            $(`#loading-animation`).css(`display`, `flex`)
+        }
+
+        const disableLoading = _ => {
+            $(`#loading-animation`).css(`display`, `none`)
+        }
         
         const addProduction = () => {
             $.ajax({

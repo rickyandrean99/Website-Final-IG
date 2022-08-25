@@ -44,6 +44,7 @@ class MarketPostController extends Controller
         $batch = Batch::find(1)->batch;
         $subtotal = 0;
         $longest_duration = 0;
+        $detail = "Berhasil Menjual ";
 
         if(array_sum($product_amount) > $capacity){
             return response()->json(array(
@@ -86,8 +87,8 @@ class MarketPostController extends Controller
             if($product_amount[$index] > 0){
 
                 $current_demand = DB::table('product_demand')->where('products_id', $product)->where('demands_id', $batch)->get();
-
                 $current_price = DB::table('product_batchs')->where('products_id', $product)->where('id', $batch)->get();
+                $name = Product::find($product)->name;
 
                 //isinya jumlah produk dengan ID terkecil yang amountnya tidak 0
                 $product_team = $team->products()->wherePivot('products_id', $product)->where('amount', '>', 0)->first()->pivot->amount;
@@ -97,6 +98,8 @@ class MarketPostController extends Controller
                     //cek apakah sudah memenuhi demand atau belum
                     if ($product_amount[$index] <= $current_demand[0]->amount){
                         $subtotal += $current_price[0]->price *  $product_amount[$index];
+                        $amount = $product_amount[$index];
+                        $detail .= "$name ($amount), ";
                     }else{
                         return response()->json(array(
                             'status' =>  "failed",
@@ -114,6 +117,7 @@ class MarketPostController extends Controller
 
         //hitung total yak => subtotal - ongkir - denda
         $total = $subtotal - $ongkir - $denda;
+        $detail .= "seharga $subtotal TC. Ongkir $ongkir TC. Denda $denda TC. Perusahaan mendapatkan $total TC";
 
         //jual produk
         //masukkan ke transaksi baru
@@ -129,6 +133,16 @@ class MarketPostController extends Controller
         
         $transaction_id = DB::table('transactions')->select('id')->orderBy('id', 'desc')->get();
         $transaction_id = $transaction_id[0]->id;
+
+        // Menambahkan Histori
+        DB::table('histories')->insert([
+            "teams_id" => $id,
+            "kategori" => "PENJUALAN",
+            "batch" => $batch,
+            "type" => "IN",
+            "amount" => $total,
+            "keterangan" => $detail
+        ]);
         
         // Jalankan job untuk mengirimkan TC secara otomatis berdasarkan durasi transportasi terlama
         dispatch(new SendCoin($id, $transaction_id, $total))->delay(now()->addSeconds($longest_duration));
@@ -190,7 +204,7 @@ class MarketPostController extends Controller
         $message = "Berhasil menjual produk, detail transaksi:\n
                 -Hasil jual produk: $subtotal TC\n
                 -Ongkos kirim: $ongkir TC\n
-                -Denda: $denda TC\n\nSehingga tim mendapatkan koin sejumlah $total TC";
+                -Denda: $denda TC\n\nSehingga perusahaan mendapatkan koin sejumlah $total TC";
 
         //pusher ke demand
         $demands = DB::table('product_demand')->join('products', 'products.id', '=', 'product_demand.products_id')->where('demands_id', $batch)->where('amount', '!=', 0)->get();
@@ -200,7 +214,7 @@ class MarketPostController extends Controller
             array_push($price, $p);
         }
         $new_timer = Batch::find(1)->time;
-        event(new UpdateDemand($demands, $batch, $price, $new_timer));
+        event(new UpdateDemand($demands, $batch, $price, $new_timer, 0));
         
         //update leaderboard
         $leaderboard = self::calculateSigma();
