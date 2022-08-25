@@ -18,6 +18,13 @@
 </head>
 
 <body style="background: url('{{ asset('assets/img/bgpos.jpg') }}')">
+    <div class="w-100 h-100 position-fixed align-items-center justify-content-center" id="loading-animation" style="background: rgba(0,0,0,0.5); z-index: 999; display:none; flex-direction: column">
+        <h3 class="fw-bolder text-white">Loading</h3><br>
+        <div class="spinner-border text-white" role="status">
+            <span class="visually-hidden"></span>
+        </div>
+    </div>
+
     <!-- Navigation Section -->
     <nav class="navbar navbar-expand-lg fancy navbar-light navbar-bg-light" style="z-index: 100">
         <div class="container w-100">
@@ -164,6 +171,14 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../js/app.js"></script>
     <script type="text/javascript">
+        const enableLoading = _ => {
+            $(`#loading-animation`).css(`display`, `flex`)
+        }
+
+        const disableLoading = _ => {
+            $(`#loading-animation`).css(`display`, `none`)
+        }
+        
         // Update total bahan baku dan limit
         const updateIngredientPriceAndLimit = () => {
             if ($(`#pilih-tim`).val() == null) {
@@ -213,6 +228,7 @@
         const changeTeam = _ => {
             let teamId = $(`#pilih-tim`).val()
 
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("change-team") }}',
@@ -221,6 +237,7 @@
                     'teamId': teamId,
                 },
                 success: function(data) {
+                    disableLoading()
                     if (data.status == "success") {
                         $(`#package-limit-hidden`).val(data.limit)
                         $(`#package-limit`).text(data.limit)
@@ -285,6 +302,7 @@
                 confirmButtonText: 'Beli'
             }).then((result) => {
                 if (result.isConfirmed) {
+                    enableLoading()
                     $.ajax({
                         type: 'POST',
                         url: '{{ route("buy-ingredient") }}',
@@ -296,6 +314,8 @@
                             'team_id': teamId
                         },
                         success: function(data) {
+                            disableLoading()
+                            
                             let icon = 'error'
                             if (data.status == "success") {
                                 icon = 'success'

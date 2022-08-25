@@ -12,6 +12,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body style="background-color: #FAF0DC">
+    <div class="w-100 h-100 position-fixed align-items-center justify-content-center" id="loading-animation" style="background: rgba(0,0,0,0.5); z-index: 999; display:none; flex-direction: column">
+        <h3 class="fw-bolder text-white">Loading</h3><br>
+        <div class="spinner-border text-white" role="status">
+            <span class="visually-hidden"></span>
+        </div>
+    </div>
+
     <button type="button" class="btn btn-block btn-outline-danger m-2" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="text-danger">Logout</button>
     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
     
@@ -201,6 +208,14 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
     <script type="text/javascript">
+        const enableLoading = _ => {
+            $(`#loading-animation`).css(`display`, `flex`)
+        }
+
+        const disableLoading = _ => {
+            $(`#loading-animation`).css(`display`, `none`)
+        }
+        
         //jual produk
         const sellProducts = () => {
             if (!confirm("Are you sure?")) return
@@ -231,7 +246,7 @@
                 return $(this).val()
             }).get()
 
-
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("product.sell") }}',
@@ -247,6 +262,7 @@
 
                 },
                 success: function(data) {
+                    disableLoading()
                     alert(data.message)
                     updateMarket('no')
                     $(`.product-amount`).val(0)
@@ -270,6 +286,7 @@
             let subtotals = 0;
             let is_info = info;
 
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("update-market") }}',
@@ -278,6 +295,7 @@
                     'batch' : batch
                 },
                 success: function(data) {
+                    disableLoading()
                     if(is_info == 'yes'){
                         alert("Berhasil update product batch")
                     }
@@ -341,6 +359,8 @@
         }
 
         const showError = (error) => {
+            disableLoading()
+            
             let errorMessage = JSON.parse(error.responseText).message
             alert(`Error: ${errorMessage}`)
             console.log(`Error: ${errorMessage}`)

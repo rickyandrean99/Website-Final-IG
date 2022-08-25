@@ -12,6 +12,13 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 <body>
+    <div class="w-100 h-100 position-fixed align-items-center justify-content-center" id="loading-animation" style="background: rgba(0,0,0,0.5); z-index: 999; display:none; flex-direction: column">
+        <h3 class="fw-bolder text-white">Loading</h3><br>
+        <div class="spinner-border text-white" role="status">
+            <span class="visually-hidden"></span>
+        </div>
+    </div>
+
     <button type="button" class="btn btn-block btn-outline-danger m-2" href="{{ route('logout') }}" onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="text-danger">Logout</button>
     <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">@csrf</form>
     
@@ -93,12 +100,20 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
     <script type="text/javascript">
+        const enableLoading = _ => {
+            $(`#loading-animation`).css(`display`, `flex`)
+        }
+
+        const disableLoading = _ => {
+            $(`#loading-animation`).css(`display`, `none`)
+        }
 
         // update level
         const updateLevel = (id) => {
             let machine_id = $(`#select-machine-${id}`).val()
             let machine_types_id = $(`#select-machine-${id}`).find(":selected").attr("machinetypeid")
 
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("update-level") }}',
@@ -109,6 +124,7 @@
                     'id': id
                 },
                 success: function(data) {
+                    disableLoading()
                     $(`#level-mesin-${id}`).text(data.level)
                     $(`#defect-mesin-${id}`).text(data.defect)
                 },
@@ -128,6 +144,7 @@
                 return
             }
 
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("machine.getbyid2") }}',
@@ -138,6 +155,7 @@
                     'id': id
                 },
                 success: function(data) {
+                    disableLoading()
                     $(`#sell-machine-team`).val(id)
                     $(`#sell-machine-id`).val(machine_id)
                     $(`#sell-machine-type`).val(machine_types_id)
@@ -163,6 +181,7 @@
                 return
             }
 
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("upgrade-machine") }}',
@@ -173,6 +192,7 @@
                     'id': id
                 },
                 success: function(data) {
+                    disableLoading()
                     alert(data.message)
                     if (data.status == "success") {
                         $(`#level-mesin-${id}`).text(data.level)
@@ -187,6 +207,8 @@
         }
 
         const showError = (error) => {
+            disableLoading()
+
             let errorMessage = JSON.parse(error.responseText).message
             alert(`Error: ${errorMessage}`)
             console.log(`Error: ${errorMessage}`)

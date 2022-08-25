@@ -99,6 +99,11 @@ class IngredientController extends Controller
                     }
 
                     $keterangan = "Berhasil membeli bahan baku ";
+                    foreach ($ingredient_id as $index => $id) {
+                        $ingredient_name = Ingredient::find($id)-> name;
+                        $keterangan .= " ";
+                    }
+                    $keterangan .= "Berhasil membeli bahan baku seharga ".(array_sum($prices)+$ongkir)." TC";
 
 
                     // History beli ingredient
@@ -109,7 +114,7 @@ class IngredientController extends Controller
                         "batch" => $batch,
                         "type" => "OUT",
                         "amount" => (array_sum($prices)+$ongkir),
-                        "keterangan" => "Berhasil membeli bahan baku seharga ".(array_sum($prices)+$ongkir)." TC"
+                        "keterangan" => $keterangan
                     ]);
 
                     // Realtime Ingredient

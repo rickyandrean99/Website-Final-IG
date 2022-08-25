@@ -21,6 +21,13 @@
     </style>
 </head>
 <body>
+    <div class="w-100 h-100 position-fixed align-items-center justify-content-center" id="loading-animation" style="background: rgba(0,0,0,0.5); z-index: 999; display:none; flex-direction: column">
+        <h3 class="fw-bolder text-white">Loading</h3><br>
+        <div class="spinner-border text-white" role="status">
+            <span class="visually-hidden"></span>
+        </div>
+    </div>
+
     <div class="d-flex justify-content-center p-3">
         <div class="card " style="width: 400px;">
             <img src="https://c.tenor.com/MgVKRHA7lUcAAAAd/tentara-itu-harus-hitam-meme-tentara.gif" class="card-img-top" alt="updet">
@@ -72,10 +79,19 @@
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
     <script type="text/javascript">
+        const enableLoading = _ => {
+            $(`#loading-animation`).css(`display`, `flex`)
+        }
+
+        const disableLoading = _ => {
+            $(`#loading-animation`).css(`display`, `none`)
+        }
+        
         //update preperation
         const updatePreperation = () => {
             if (!confirm("Are you sure?")) return
 
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("update-preparation") }}',
@@ -83,6 +99,7 @@
                     '_token': '<?php echo csrf_token() ?>',
                 },
                 success: function(data) {
+                    disableLoading()
                     alert(data.message)
                 },
                 error: function(error){
@@ -94,6 +111,7 @@
         const updateBatch = () => {
             if (!confirm("Are you sure?")) return
 
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("update-batch") }}',
@@ -101,6 +119,7 @@
                     '_token': '<?php echo csrf_token() ?>',
                 },
                 success: function(data) {
+                    disableLoading()
                     alert(data.message)
                 },
                 error: function(error){
@@ -114,6 +133,7 @@
             let id = $(`#selectProduct`).val()
             let demand = $(`#demand`).val()
 
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("update-demand") }}',
@@ -123,6 +143,7 @@
                     'demand': demand
                 },
                 success: function(data) {
+                    disableLoading()
                     alert(data.message)
                     $(`#demand`).val(0)
                 },
@@ -136,6 +157,7 @@
             if (!confirm("Are you sure?")) return
             let trans_id = $(`#selectID`).val()
 
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("send-tc") }}',
@@ -144,6 +166,7 @@
                     'trans_id': trans_id,
                 },
                 success: function(data) {
+                    disableLoading()
                     alert(data.message)
                 },
                 error: function(error){
@@ -153,6 +176,8 @@
         }
 
         const showError = (error) => {
+            disableLoading()
+            
             let errorMessage = JSON.parse(error.responseText).message
             alert(`Error: ${errorMessage}`)
             console.log(`Error: ${errorMessage}`)

@@ -165,6 +165,7 @@
         }
         
         const addProduction = () => {
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("add-production") }}',
@@ -172,6 +173,7 @@
                     '_token': '<?php echo csrf_token() ?>'
                 },
                 success: function(data) {
+                    disableLoading()
                     if (data.status == "success") {
                         let counter = parseInt($(`#production-amount`).val())
                         let products = ""
@@ -223,7 +225,7 @@
         // Mengubah produksi
         $(document).on('change', '.produksi-select-produk', function(){
             const row = $(this).attr('row')
-
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("change-production") }}',
@@ -232,6 +234,7 @@
                     'id': $(this).val()
                 },
                 success: function(data) {
+                    disableLoading()
                     let ingredients = ""
                     let machines = ""
 
@@ -320,6 +323,7 @@
                     })
 
                     if (machineUnique) {
+                        enableLoading()
                         $.ajax({
                             type: 'POST',
                             url: '{{ route("start-production") }}',
@@ -331,6 +335,7 @@
                                 'production_team_machine': productionsTeamMachines 
                             },
                             success: function(data) {
+                                disableLoading()
                                 alert(data.message)
                                 if (data.status == "success") {
                                     $(`#balance`).text(`${data.balance}` + " TC")
@@ -399,7 +404,8 @@
             let ingredientId = $(`.ingredient-id`).map(function() { return $(this).val() }).get()
             let ingredientAmount = $(`.ingredient-amount`).map(function() { return $(this).val() }).get()
             let ingredientType = ingredientId.map(id => { return $(`#ingredient-type-${id}`).is(':checked') })
-
+            
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("buy-ingredient") }}',
@@ -410,6 +416,7 @@
                     'ingredient_type': ingredientType
                 },
                 success: function(data) {
+                    disableLoading()
                     if (data.status == "success") {
                         $(`.ingredient-amount`).val(0)
                         $('.ingredient-type').prop('checked', false);
@@ -439,6 +446,7 @@
                 return $(this).val()
             }).get()
 
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("buy-machine") }}',
@@ -448,6 +456,7 @@
                     'machine_amount': machineAmount
                 },
                 success: function(data) {
+                    disableLoading()
                     if (data.status == "success") {
                         $(`.machine-amount`).val(0)
                         $(`#pengeluaran-machine`).text("0 TC")
@@ -507,6 +516,7 @@
                 return $(this).val()
             }).get()
 
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("buy-transportation") }}',
@@ -516,6 +526,7 @@
                     'transportation_amount': transportationAmount
                 },
                 success: function(data) {
+                    disableLoading()
                     alert(data.message) 
                     if (data.status == "success") {
                         $(`.transportation-amount`).val(0)
@@ -531,6 +542,7 @@
 
         // showTransportSell
         const showTransportSell = (id) => {
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("transportation.getbyid") }}',
@@ -539,6 +551,7 @@
                     'id': id
                 },
                 success: function(data) {
+                    disableLoading()
                     $(`#sell-transport-name`).text(data.nama)
                     $(`#sell-transport-lifetime`).text(data.lifetime + " Batch")
                     $(`#sell-transport-price`).text(data.price + " TC")
@@ -552,7 +565,8 @@
 
         const sellTransportations = (batch) => {
             let id = $(`#sell-transport-id`).val()
-
+            
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("transportation.sell") }}',
@@ -561,6 +575,7 @@
                     'id': id
                 },
                 success: function(data) {
+                    disableLoading()
                     $(`#transport-${data.id}`).remove()
                     if (data.status == "success"){
                         $(`#balance`).text(data.balance + " TC")
@@ -575,6 +590,7 @@
         
         // show machine sell
         const showMachineSell = (id, type_id) => {
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("machine.getbyid") }}',
@@ -584,6 +600,7 @@
                     'type_id': type_id
                 },
                 success: function(data) {
+                    disableLoading()
                     $(`#sell-machine-name`).text(data.nama)
                     $(`#sell-machine-lifetime`).text(data.lifetime + " Batch")
                     $(`#sell-machine-price`).text(data.price + " TC")
@@ -600,6 +617,7 @@
             let id = $(`#sell-machine-id`).val()
             let type_id = $(`#sell-machine-type-id`).val()
 
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("machine.sell") }}',
@@ -609,6 +627,7 @@
                     'type_id': type_id
                 },
                 success: function(data) {
+                    disableLoading()
                     $(`#machine-${data.type}-${data.id}`).remove()
                     if (data.status == "success") {
                         $(`#balance`).text(data.balance + " TC")
@@ -628,6 +647,7 @@
             let coin = $('#jumlah-tc').val()
             let metode = $('input[name="metode"]:checked').val()
            
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("add-coin") }}',
@@ -637,6 +657,7 @@
                     'metode': metode,
                 },
                 success: function(data) {
+                    disableLoading()
                     $('#modalTambahTC').modal('hide')
                     alert(data.message)
                     if (data.status == "success"){
@@ -651,6 +672,7 @@
         }
 
         const infoHutang = () =>{
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("info-hutang") }}',
@@ -658,6 +680,7 @@
                     '_token': '<?php echo csrf_token() ?>',
                 },
                 success: function(data) {
+                    disableLoading()
                     $(`#jumlahHutang`).text(data.info)
                 },
                 error: function(error) {
@@ -670,6 +693,7 @@
             if (!confirm("Are you sure?")) return
             let bayar = $('#jumlah-bayar').val()
             
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("bayar-hutang") }}',
@@ -678,6 +702,7 @@
                     'bayar' : bayar
                 },
                 success: function(data) {
+                    disableLoading()
                     alert(data.message)
                     $('#modalInfoHutang').modal('hide')
                     if (data.status == "success"){
@@ -695,6 +720,7 @@
         const upgradeInventory = (id, up_id) =>{
             if (!confirm("Are you sure?")) return
 
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("upgrade-inventory") }}',
@@ -704,6 +730,7 @@
                     'up_id': up_id 
                 },
                 success: function(data) {
+                    disableLoading()
                     alert(data.message)
                     $(`#balance`).text(data.balance + " TC")
                 },
@@ -716,6 +743,7 @@
         const buySertificate = () =>{
             if (!confirm("Are you sure?")) return
 
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("buy-certificate") }}',
@@ -723,6 +751,7 @@
                     '_token': '<?php echo csrf_token() ?>'
                 },
                 success: function(data) {
+                    disableLoading()
                     alert(data.message)
                     if(data.status == "success"){
                         $(`#balance`).text(data.balance + " TC")
@@ -741,6 +770,7 @@
         const buyFridge = (id) => {
             if (!confirm("Are you sure?")) return
 
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("buy-fridge") }}',
@@ -749,6 +779,7 @@
                     'id': id
                 },
                 success: function(data) {
+                    disableLoading()
                     alert(data.message)
                 },
                 error: function(error) {
@@ -758,12 +789,15 @@
         }
 
         const showError = (error) => {
+            disableLoading()
+            
             let errorMessage = JSON.parse(error.responseText).message
             alert(`Error: ${errorMessage}`)
             console.log(`Error: ${errorMessage}`)
         }
 
         const loadTransportation = _ => {
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("load-transportation") }}',
@@ -771,6 +805,7 @@
                     '_token': '<?php echo csrf_token() ?>'
                 },
                 success: function(data) {
+                    disableLoading()
                     let transportationText = ""
                     
                     data.transportations.forEach(transportation => {
@@ -813,6 +848,7 @@
         }
 
         const loadInventory = _ => {
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("load-inventory") }}',
@@ -820,6 +856,7 @@
                     '_token': '<?php echo csrf_token() ?>'
                 },
                 success: function(data) {
+                    disableLoading()
                     let counter1 = 1
                     let counter2 = 1
                     let ingredientText = ""
@@ -947,6 +984,7 @@
         }
 
         const loadHistory = _ => {
+            enableLoading()
             $.ajax({
                 type: 'POST',
                 url: '{{ route("load-history") }}',
@@ -954,6 +992,7 @@
                     '_token': '<?php echo csrf_token() ?>'
                 },
                 success: function(data) {
+                    disableLoading()
                     let historyText = ""
                     
                     data.histories.forEach(history => {
