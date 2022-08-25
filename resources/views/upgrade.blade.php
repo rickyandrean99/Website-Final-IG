@@ -33,7 +33,7 @@
         <tbody>
             @foreach($teams as $team)
                 <tr class="text-center align-middle">
-                    <td class="w-25">Perusahaan {{ $team->id }}</td>
+                    <td class="w-25">{{ $team->name }}</td>
                     <td class="w-25">
                         <select name="selectMachine" id="select-machine-{{$team->id}}" class="form-select fw-bold" onchange="updateLevel({{ $team->id }})">
                             <option value="" disabled selected>Pilih Mesin</option>

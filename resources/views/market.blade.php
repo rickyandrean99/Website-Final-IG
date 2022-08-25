@@ -44,9 +44,9 @@
                         <div class="mb-3">
                             <label for="selectTim" class="col-form-label fw-bold">Nama Tim</label>
                             <select name="selectTim" id="selectTim" class="form-select w-50 mb-3">
-                                @for ($i = 1; $i < 11; $i++)
-                                    <option value="{{$i}}">Perusahaan {{$i}}</option>
-                                @endfor
+                                @foreach($teams as $team)
+                                    <option value="{{ $team->id }}">{{ $team->name }}</option>
+                                @endforeach
                             </select>
                             <table class="table table-hover bg-white rounded">
                                 <thead>
@@ -160,32 +160,32 @@
             </tr>
         </thead>
         <tbody>
-            @for ($i = 1; $i <= 10; $i++)
+            @foreach($teams as $team)
                 <tr class = "text-center align-middle">
-                    <td>Perusahaan {{ $i }}</td>
+                    <td>{{ $team->name }}</td>
                     <td>
-                        <span id="keripik-{{ $i }}">0</span>
+                        <span id="keripik-{{ $team->id }}">0</span>
                     </td>
                     <td>
-                        <span id="dodol-{{ $i }}">0</span>
+                        <span id="dodol-{{ $team->id }}">0</span>
                     </td>
                     <td>
-                        <span id="sari-{{ $i }}">0</span>
+                        <span id="sari-{{ $team->id }}">0</span>
                     </td>
                     <td>
-                        <span id="selai-{{ $i }}">0</span>
+                        <span id="selai-{{ $team->id }}">0</span>
                     </td>
                     <td>
-                        <span id="cuka-{{ $i }}">0</span>
+                        <span id="cuka-{{ $team->id }}">0</span>
                     </td>
                     <td>
-                        <span id="jumlah-{{ $i }}">0</span>
+                        <span id="jumlah-{{ $team->id }}">0</span>
                     </td>
                     <td>
-                        <span id="subtotal-{{ $i }}">0</span>
+                        <span id="subtotal-{{ $team->id }}">0</span>
                     </td>
                 </tr>
-            @endfor
+            @endforeach
             <tr class = "text-center align-middle">
                 <td>Total</td>
                 <td id = "keripiks">0</td>

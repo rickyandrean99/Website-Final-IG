@@ -28,7 +28,8 @@ class MarketPostController extends Controller
 
         $products = Product::all();
         $transportations = Transportation::all();
-        return view('market', compact('products', 'transportations'));
+        $teams = Team::all();
+        return view('market', compact('products', 'transportations', 'teams'));
     }
 
     public function sellProduct(Request $request){
