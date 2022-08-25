@@ -124,8 +124,8 @@
                         <div class="col mb-4">
                             <div class="card shadow-none bg-ash">
                                 <div class="card-body p-3 text-center">
-                                    <div class="fw-bold">Total</div>
-                                    <div id="total-ingredient">-</div>
+                                    <div class="fw-bold">Subtotal</div>
+                                    <div id="subtotal-ingredient">-</div>
                                 </div>
                             </div>
                         </div>
@@ -143,8 +143,8 @@
                         <div class="col mb-4">
                             <div class="card shadow-none bg-navy">
                                 <div class="card-body p-3 text-center">
-                                    <div class="fw-bold">Subtotal</div>
-                                    <div id="subtotal-ingredient">-</div>
+                                    <div class="fw-bold">Total Akhir</div>
+                                    <div id="total-akhir-ingredient">-</div>
                                 </div>
                             </div>
                         </div>
@@ -203,10 +203,10 @@
             }
             if (quantity == 0) ongkir = 0
 
-            $(`#total-ingredient`).text(`${totalPrice} TC`)
+            $(`#subtotal-ingredient`).text(`${totalPrice} TC`)
             $(`#package-limit`).text(remaining)
             $(`#ongkir-ingredient`).text(`${ongkir} TC`)
-            $(`#subtotal-ingredient`).text(`${totalPrice+ongkir} TC`)
+            $(`#total-akhir-ingredient`).text(`${totalPrice+ongkir} TC`)
         }
 
         // Change Team
@@ -318,9 +318,9 @@
         // Clear Ingredient Market
         const clearMarket = status => {
             $(`.ingredient-amount`).val(0)
-            $(`#total-ingredient`).text("-")
-            $(`#ongkir-ingredient`).text("-")
             $(`#subtotal-ingredient`).text("-")
+            $(`#ongkir-ingredient`).text("-")
+            $(`#total-akhir-ingredient`).text("-")
             $(`#package-limit-hidden`).val(0)
             $(`#package-limit`).text("-")
             $('#pilih-tim').prop('selectedIndex', 0);
