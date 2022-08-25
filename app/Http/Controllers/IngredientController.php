@@ -98,12 +98,14 @@ class IngredientController extends Controller
                         $limit = 0;
                     }
 
-                    $keterangan = "Berhasil membeli bahan baku ";
+                    $keterangan = "Berhasil membeli bahan baku: ";
                     foreach ($ingredient_id as $index => $id) {
-                        $ingredient_name = Ingredient::find($id)-> name;
-                        $keterangan .= " ";
+                        $ingredient_history = Ingredient::find($id);
+                        if($ingredient_amount[$index]!= 0){
+                            $keterangan .= $ingredient_history->name . "(" . $ingredient_amount[$index]. "),";
+                        }
                     }
-                    $keterangan .= "Berhasil membeli bahan baku seharga ".(array_sum($prices)+$ongkir)." TC";
+                    $keterangan .= " seharga ".(array_sum($prices)+$ongkir)." TC";
 
 
                     // History beli ingredient
