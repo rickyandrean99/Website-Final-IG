@@ -117,9 +117,9 @@
     <script type="text/javascript">
         window.Echo.channel('update-demand').listen('.update', (e) => {
             if(e.preparation){
-                $(`#batch`).text("BATCH " + e.batch)
+                $(`#batch`).text("Cooldown")
             }else{
-                $(`#batch`).text("Cooldown")            
+                $(`#batch`).text("BATCH-" + e.batch)        
             }
 
             $(`#time`).val(e.new_timer)
