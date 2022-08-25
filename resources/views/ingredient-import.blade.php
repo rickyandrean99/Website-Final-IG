@@ -158,6 +158,7 @@
     <script src="{{ asset('sandbox/js/plugins.js') }}"></script>
     <script src="{{ asset('sandbox/js/theme.js') }}"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../js/app.js"></script>
     <script type="text/javascript">
         // Update total bahan baku dan limit
         const updateIngredientPriceAndLimit = () => {
