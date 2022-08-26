@@ -234,7 +234,7 @@ class BatchController extends Controller
                 "batch" => Batch::find(1)->batch,
                 "type" => "IN",
                 "amount" => $transaction->total,
-                "keterangan" => "Berhasil mendapatkan coin sejumlah ".$transaction->total." TC dari hasil penjualan"
+                "keterangan" => "Uang hasil penjualan Transaction ID ".$transaction->id." sebesar ".$transaction->total." TC berhasil masuk"
             ]);
 
             // Push balance terbaru ke dashboard TO

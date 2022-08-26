@@ -45,7 +45,7 @@ class MarketPostController extends Controller
         $preparation = Batch::find(1)->preparation;
         $subtotal = 0;
         $longest_duration = 0;
-        $detail = "Berhasil Menjual ";
+        $detail = "Memproses Penjualan ";
 
         if(array_sum($product_amount) > $capacity){
             return response()->json(array(
@@ -118,7 +118,7 @@ class MarketPostController extends Controller
 
         //hitung total yak => subtotal - ongkir - denda
         $total = $subtotal - $ongkir - $denda;
-        $detail .= "seharga $subtotal TC. Ongkir $ongkir TC. Denda $denda TC. Perusahaan mendapatkan $total TC";
+        $detail .= "seharga $subtotal TC dengan ongkir sebesar $ongkir TC dan denda sebesar $denda TC. Perusahaan akan mendapatkan $total TC setelah pengiriman berhasil";
 
         //jual produk
         //masukkan ke transaksi baru
@@ -141,8 +141,8 @@ class MarketPostController extends Controller
             "kategori" => "PENJUALAN",
             "batch" => $batch,
             "type" => "IN",
-            "amount" => $total,
-            "keterangan" => $detail
+            "amount" => 0,
+            "keterangan" => $detail." (Transaction ID: ".$transaction_id.")"
         ]);
         
         // Jalankan job untuk mengirimkan TC secara otomatis berdasarkan durasi transportasi terlama
