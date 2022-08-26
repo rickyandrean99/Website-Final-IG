@@ -217,32 +217,38 @@ class BatchController extends Controller
     }
 
     public function sendTC(Request $request){
-        $amount = Transaction::find($request->trans_id)->total;
-        $team_id = Transaction::find($request->trans_id)->teams_id;
-        
-        // Update balance team + ubah 'received'
-        Team::find($team_id)->increment('balance', $amount);
-        Transaction::find($request->trans_id)->increment('received');
+        $transaction = Transaction::find($request->trans_id);
 
-        $balance = Team::find($team_id)->balance;
-        $batch = Batch::find(1)->batch;
+        if (!$transaction->received) {
+            $team = Team::find($transaction->teams_id);
 
-        // Menambahkan Histori
-        DB::table('histories')->insert([
-            "teams_id" => $team_id,
-            "kategori" => "PENJUALAN",
-            "batch" => $batch,
-            "type" => "IN",
-            "amount" => $amount,
-            "keterangan" => "Berhasil mendapatkan coin sejumlah ".$amount." TC dari hasil penjualan"
-        ]);
+            // Update balance team + ubah 'received'
+            $team->increment('balance', $transaction->total);
+            $transaction->received = true;
+            $transaction->save();
 
-        // Push balance terbaru ke dashboard TO
-        event(new SendTransactionCoin($team_id, $balance, $amount));
+            // Menambahkan Histori
+            DB::table('histories')->insert([
+                "teams_id" => $team->id,
+                "kategori" => "PENJUALAN",
+                "batch" => Batch::find(1)->batch,
+                "type" => "IN",
+                "amount" => $transaction->total,
+                "keterangan" => "Berhasil mendapatkan coin sejumlah ".$transaction->total." TC dari hasil penjualan"
+            ]);
+
+            // Push balance terbaru ke dashboard TO
+            event(new SendTransactionCoin($team->id, $team->balance, $transaction->total));
+
+            return response()->json(array(
+                'status' => 'success',
+                'message' => "Berhasil mengirim TC"
+            ), 200);
+        }
 
         return response()->json(array(
             'status' => 'success',
-            'message' => "Berhasil mengirim TC"
+            'message' => "Uang dari transaksi ini sudah masuk sebelumnya!"
         ), 200);
     }
     
