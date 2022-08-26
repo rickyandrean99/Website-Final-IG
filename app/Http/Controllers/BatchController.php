@@ -207,7 +207,7 @@ class BatchController extends Controller
                 'market_share' => $market_share
             ]);
 
-            event(new UpdatePreparation($team->id, $profit, $market_share, $rent_price));
+            event(new UpdatePreparation($team->id, $profit, $market_share, $rent_price, $team->balance));
         }
 
         return response()->json(array(

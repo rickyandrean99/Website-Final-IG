@@ -23,13 +23,15 @@ class UpdatePreparation implements ShouldBroadcast
     public $profit;
     public $market_share;
     public $rent_price;
+    public $balance;
 
-    public function __construct($team, $profit, $market_share, $rent_price)
+    public function __construct($team, $profit, $market_share, $rent_price, $balance)
     {
         $this->team = $team;
         $this->profit = $profit;
         $this->market_share = $market_share;
         $this->rent_price = $rent_price;
+        $this->balance = $balance;
     }
 
     /**
