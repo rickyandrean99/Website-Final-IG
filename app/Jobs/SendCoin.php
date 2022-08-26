@@ -30,16 +30,19 @@ class SendCoin implements ShouldQueue
 
     public function handle()
     {
-        // Update balance team
-        $team = Team::find($this->team_id);
-        $team->increment('balance', $this->coin);
-
-        // Ubah status transaksi menjadi sukses
         $transaction = Transaction::find($this->transaction_id);
-        $transaction->received = true;
-        $transaction->save();
 
-        // Push balance terbaru ke dashboard TO
-        event(new SendTransactionCoin($this->team_id, $team->balance, $this->coin));
+        if (!$transaction->received) {
+            // Update balance team
+            $team = Team::find($this->team_id);
+            $team->increment('balance', $this->coin);
+
+            // Ubah status transaksi menjadi sukses jika sebelumnya gagal
+            $transaction->received = true;
+            $transaction->save();
+    
+            // Push balance terbaru ke dashboard TO
+            event(new SendTransactionCoin($this->team_id, $team->balance, $this->coin));
+        }
     }
 }
