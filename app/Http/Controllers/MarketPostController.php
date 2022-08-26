@@ -42,6 +42,7 @@ class MarketPostController extends Controller
         $metode = $request->get('metode');
         $capacity = $request->get('capacity');
         $batch = Batch::find(1)->batch;
+        $preparation = Batch::find(1)->preparation;
         $subtotal = 0;
         $longest_duration = 0;
         $detail = "Berhasil Menjual ";
@@ -214,7 +215,7 @@ class MarketPostController extends Controller
             array_push($price, $p);
         }
         $new_timer = Batch::find(1)->time;
-        event(new UpdateDemand($demands, $batch, $price, $new_timer, 0));
+        event(new UpdateDemand($demands, $batch, $price, $new_timer, $preparation));
         
         //update leaderboard
         $leaderboard = self::calculateSigma();
