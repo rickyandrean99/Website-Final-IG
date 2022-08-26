@@ -1079,7 +1079,7 @@
         window.Echo.channel('update-preparation.' + {{ Auth::user()->team }}).listen('.preparation', (e) => {
             alert(`Fee Inventory pada batch ini sebesar ${e.rent_price} TC. \nMasuk sesi cooldown, TO bisa bacakan profit, pangsa, dan level sigma. `)
             $(`#batch`).text("Cooldown")
-            $(`#balance`).text(data.balance + " TC")
+            $(`#balance`).text(e.balance + " TC")
             $(`#profit`).text(`${e.profit}` + " TC")
             if(`${e.profit}` < 0){
                 $("#profit").addClass("text-danger")
