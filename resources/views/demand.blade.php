@@ -116,6 +116,7 @@
     <script src="../js/app.js"></script>
     <script type="text/javascript">
         window.Echo.channel('update-demand').listen('.update', (e) => {
+            console.log(e.preparation)
             if(e.preparation){
                 $(`#batch`).text("Cooldown")
             }else{
