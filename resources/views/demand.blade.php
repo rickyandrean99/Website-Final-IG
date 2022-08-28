@@ -117,7 +117,7 @@
     <script type="text/javascript">
         window.Echo.channel('update-demand').listen('.update', (e) => {
             console.log(e.preparation)
-            if(e.preparation){
+            if(e.preparation == 1){
                 $(`#batch`).text("Cooldown")
             }else{
                 $(`#batch`).text("BATCH-" + e.batch)        
